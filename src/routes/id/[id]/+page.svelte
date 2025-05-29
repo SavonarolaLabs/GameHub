@@ -45,7 +45,7 @@
 					<div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
 						{#each directors as p}
 							<div class="flex items-center space-x-3">
-								<div class="h-12 w-12 rounded-full bg-gray-600"></div>
+								<div class="h-12 w-12 shrink-0 rounded-full bg-gray-600"></div>
 								<div>
 									<div class="font-semibold">{p.full_name}</div>
 									<div class="text-sm text-gray-400">Директор</div>
@@ -54,7 +54,7 @@
 						{/each}
 						{#each artisticDirectors as p}
 							<div class="flex items-center space-x-3">
-								<div class="h-12 w-12 rounded-full bg-gray-600"></div>
+								<div class="h-12 w-12 shrink-0 rounded-full bg-gray-600"></div>
 								<div>
 									<div class="font-semibold">{p.full_name}</div>
 									<div class="text-sm text-gray-400">Художественный руководитель</div>
