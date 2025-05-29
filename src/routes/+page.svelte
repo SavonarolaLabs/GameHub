@@ -1,200 +1,180 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import { theaters, type Theater } from '$lib/theaters-data';
 	import { goto } from '$app/navigation';
+	import { theaters } from '$lib/theaters-data';
 
+	/* ---------------- helpers ---------------- */
 	let searchQuery = '';
 	let filteredTheaters: Theater[] = theaters;
 
-	$: {
+	const norm = (v: unknown) => String(v ?? '').toLowerCase();
+	const seats = (t: Theater) => t.spaces.reduce((s, v) => s + (v.total_capacity ?? 0), 0);
+	const dir = (t: Theater) =>
+		t.hr.find((h) => h.position.trim().toLowerCase().startsWith('директор'))?.full_name ?? '—';
+	const artDir = (t: Theater) =>
+		t.hr.find((h) => h.position.trim().toLowerCase().includes('художественный'))?.full_name ?? '—';
+	const img = (file: string) => `/images/${file}.jpg`;
+
+	function filter() {
 		if (searchQuery.trim() === '') {
 			filteredTheaters = theaters;
-		} else {
-			const query = searchQuery.toLowerCase();
-			filteredTheaters = theaters.filter(
-				(theater) =>
-					theater.name.toLowerCase().includes(query) ||
-					theater.fullName.toLowerCase().includes(query) ||
-					theater.description.toLowerCase().includes(query) ||
-					theater.genre.toLowerCase().includes(query)
-			);
+			return;
 		}
+
+		const q = norm(searchQuery);
+		filteredTheaters = theaters.filter((t) =>
+			[
+				t.name,
+				t.address,
+				...t.spaces.map((s) => s.venue_space_short_name),
+				...t.productions.map((p) => p.name)
+			]
+				.map(norm)
+				.some((v) => v.includes(q))
+		);
 	}
 
-	function navigateToTheater(theaterId: number) {
-		goto(`${base}/id/${theaterId}`);
+	function navigate(id: number) {
+		goto(`${base}/id/${id}`);
 	}
 
-	function handleKeydown(event: KeyboardEvent, theaterId: number) {
+	function handleKey(event: KeyboardEvent, id: number) {
 		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault();
-			navigateToTheater(theaterId);
+			navigate(id);
 		}
 	}
+
+	$: filter();
 </script>
 
 <svelte:head>
-	<title>Театры Москвы - Справочник театров Москвы</title>
+	<title>Театры Москвы — Справочник</title>
 	<meta
 		name="description"
-		content="Справочник театров Москвы с информацией о спектаклях, рейтингах и отзывах"
+		content="Справочник театров Москвы с рейтингами, спектаклями и адресами"
 	/>
 </svelte:head>
 
 <div class="min-h-screen bg-slate-900">
-	<!-- Header Section -->
+	<!-- header -->
 	<div class="flex w-full justify-center bg-gradient-to-b from-slate-800 to-slate-900">
-		<header class="w-full max-w-6xl px-6 py-12">
-			<div class="text-center text-white">
-				<h1 class="mb-4 text-5xl font-bold">Театры Москвы</h1>
-				<p class="mb-8 text-xl text-gray-300">Справочник театров Москвы</p>
+		<header class="w-full max-w-6xl px-6 py-12 text-center text-white">
+			<h1 class="mb-4 text-5xl font-bold">Театры Москвы</h1>
+			<p class="mb-8 text-xl text-gray-300">Справочник театров Москвы</p>
 
-				<!-- Search Bar -->
-				<div class="mx-auto mb-8 max-w-2xl">
-					<div class="relative">
-						<input
-							type="text"
-							bind:value={searchQuery}
-							placeholder="Поиск театров..."
-							class="w-full rounded-lg bg-slate-700 px-6 py-4 text-lg text-white placeholder-gray-400 transition-all duration-300 focus:bg-slate-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-						/>
-						<div class="absolute top-1/2 right-4 -translate-y-1/2">
-							<svg
-								class="h-6 w-6 text-gray-400"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-								/>
-							</svg>
-						</div>
-					</div>
-				</div>
+			<!-- search -->
+			<div class="relative mx-auto mb-8 max-w-2xl">
+				<input
+					class="w-full rounded-lg bg-slate-700 px-6 py-4 text-lg text-white placeholder-gray-400 transition-all duration-300 focus:bg-slate-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					type="text"
+					bind:value={searchQuery}
+					placeholder="Поиск театров…"
+					on:input={filter}
+				/>
+				<svg
+					class="absolute top-1/2 right-4 h-6 w-6 -translate-y-1/2 text-gray-400"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+					/>
+				</svg>
 			</div>
 		</header>
 	</div>
 
-	<!-- Theater Grid Section -->
+	<!-- grid -->
 	<div class="flex w-full justify-center bg-slate-900">
 		<main class="w-full max-w-6xl px-6 py-8">
-			{#if filteredTheaters.length > 0}
+			{#if filteredTheaters.length}
 				<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-					{#each filteredTheaters as theater}
+					{#each filteredTheaters as t}
 						<div
 							class="group relative cursor-pointer overflow-hidden rounded-lg bg-slate-800 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-							on:click={() => navigateToTheater(theater.id)}
-							on:keydown={(e) => handleKeydown(e, theater.id)}
-							role="button"
 							tabindex="0"
-							aria-label="Перейти к театру {theater.name}"
+							role="button"
+							aria-label="Перейти к театру {t.name}"
+							on:click={() => navigate(t.id)}
+							on:keydown={(e) => handleKey(e, t.id)}
 						>
-							<!-- Theater Image -->
+							<!-- image -->
 							<div class="relative h-48 overflow-hidden">
 								<img
-									src={theater.imageUrl}
-									alt={theater.name}
+									src={img(t.photo)}
+									alt={t.name}
 									class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
 								/>
 								<div
 									class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"
 								></div>
-
-								<!-- Rating Badge -->
-								<div class="absolute top-4 right-4">
-									<span class="rounded-full bg-yellow-500 px-3 py-1 text-sm font-bold text-black">
-										★ {theater.rating}
-									</span>
-								</div>
+								<span
+									class="absolute top-4 right-4 rounded-full bg-yellow-500 px-3 py-1 text-sm font-bold text-black"
+									>★ {t.yandex_rating}</span
+								>
 							</div>
 
-							<!-- Theater Info -->
+							<!-- content -->
 							<div class="p-6">
 								<h2
 									class="mb-2 text-xl font-bold text-white transition-colors duration-300 group-hover:text-blue-400"
 								>
-									{theater.name}
+									{t.name}
 								</h2>
+								<p class="mb-3 line-clamp-2 text-sm text-gray-400">{t.address}</p>
 
-								<p class="mb-3 line-clamp-2 text-sm text-gray-400">
-									{theater.description}
+								<!-- stats -->
+								<div class="mb-4 flex items-center justify-between text-sm text-gray-300">
+									<span class="rounded bg-slate-700 px-2 py-1"
+										>Посещаемость {t.occupancy_percent}%</span
+									>
+									<div class="flex space-x-3">
+										<span>{t.yandex_reviews_count} отзывов</span>
+										<span>{t.yandex_ratings_count} оценок</span>
+									</div>
+								</div>
+
+								<!-- venues -->
+								<p class="mb-4 text-sm text-gray-400">
+									{t.spaces.length} площадки / {seats(t)} мест
 								</p>
 
-								<!-- Theater Stats -->
-								<div class="mb-4 flex items-center justify-between text-sm text-gray-300">
-									<span class="rounded bg-slate-700 px-2 py-1">{theater.genre}</span>
-									<div class="flex space-x-3">
-										<span>{theater.reviews} отзывов</span>
-										<span>{theater.scores} оценок</span>
-									</div>
-								</div>
-
-								<!-- Venues Info -->
-								<div class="mb-4">
-									<div class="text-sm text-gray-400">
-										{theater.venues.length} площадки / {theater.venues.reduce(
-											(s, v) => s + v.seats,
-											0
-										)} мест
-									</div>
-								</div>
-
-								<!-- Management -->
+								<!-- hr -->
 								<div class="space-y-1 text-xs text-gray-400">
-									<div><span class="font-semibold">Директор:</span> {theater.director}</div>
-									<div>
-										<span class="font-semibold">Худ. руководитель:</span>
-										{theater.artisticDirector}
-									</div>
-								</div>
-
-								<!-- Renovation Status -->
-								<div class="mt-4">
-									{#if theater.renovation === 'planned'}
-										<span class="inline-block rounded bg-yellow-600 px-2 py-1 text-xs text-white">
-											Запланирован ремонт
-										</span>
-									{:else if theater.renovation === 'not_planned'}
-										<span class="inline-block rounded bg-green-600 px-2 py-1 text-xs text-white">
-											Ремонт не требуется
-										</span>
-									{:else}
-										<span class="inline-block rounded bg-red-600 px-2 py-1 text-xs text-white">
-											Неудовлетворительное состояние
-										</span>
-									{/if}
+									<div><span class="font-semibold">Директор:</span> {dir(t)}</div>
+									<div><span class="font-semibold">Худ. руководитель:</span> {artDir(t)}</div>
 								</div>
 							</div>
 
-							<!-- Hover Effect Overlay -->
+							<!-- hover overlay -->
 							<div
 								class="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
 							>
 								<div class="absolute inset-0 bg-blue-600/10"></div>
-								<div class="absolute right-4 bottom-4">
-									<svg
-										class="h-6 w-6 text-blue-400"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M9 5l7 7-7 7"
-										/>
-									</svg>
-								</div>
+								<svg
+									class="absolute right-4 bottom-4 h-6 w-6 text-blue-400"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M9 5l7 7-7 7"
+									/>
+								</svg>
 							</div>
 						</div>
 					{/each}
 				</div>
 			{:else}
+				<!-- empty -->
 				<div class="py-16 text-center text-gray-400">
 					<svg class="mx-auto mb-4 h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
@@ -209,20 +189,15 @@
 				</div>
 			{/if}
 
-			<!-- Results Count -->
-			{#if searchQuery.trim() !== ''}
-				<div class="mt-8 text-center text-gray-400">
-					Найдено театров: {filteredTheaters.length}
-				</div>
+			{#if searchQuery.trim()}
+				<p class="mt-8 text-center text-gray-400">Найдено театров: {filteredTheaters.length}</p>
 			{/if}
 		</main>
 	</div>
 
-	<!-- Footer -->
+	<!-- footer -->
 	<footer class="bg-slate-800 py-8">
-		<div class="mx-auto max-w-6xl px-6 text-center text-gray-400">
-			<p>&copy; 2025 Театры Москвы. Справочник театров Москвы.</p>
-		</div>
+		<p class="mx-auto max-w-6xl px-6 text-center text-gray-400">&copy;&nbsp;2025 Театры Москвы</p>
 	</footer>
 </div>
 
