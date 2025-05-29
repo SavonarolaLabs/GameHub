@@ -13,7 +13,7 @@
 		t.hr.find((h) => h.position.trim().toLowerCase().startsWith('директор'))?.full_name ?? '—';
 	const artDir = (t: Theater) =>
 		t.hr.find((h) => h.position.trim().toLowerCase().includes('художественный'))?.full_name ?? '—';
-	const img = (file: string) => `/images/${file}.jpg`;
+	const img = (file: string) => `${base}/theaters/${file}.jpg`;
 
 	function filter() {
 		if (searchQuery.trim() === '') {
