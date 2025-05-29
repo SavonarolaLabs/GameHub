@@ -7,7 +7,7 @@ export const theaters = [
 		audience_thousands: 200.3,
 		occupancy_percent: 72.0,
 		ticket_price_rub: 4500.0,
-		photo: '7703035553_5',
+		photo: '7703035553_1',
 		productions: [
 			{
 				id: 1,

@@ -13,7 +13,7 @@
 		t.hr.find((h) => h.position.trim().toLowerCase().startsWith('директор'))?.full_name ?? '—';
 	const artDir = (t: Theater) =>
 		t.hr.find((h) => h.position.trim().toLowerCase().includes('художественный'))?.full_name ?? '—';
-	const img = (file: string) => `${base}/theaters/${file}.jpg`;
+	const img = (file: string) => `${base}/theaters/${file}_1.jpg`;
 
 	function filter() {
 		if (searchQuery.trim() === '') {
@@ -106,7 +106,7 @@
 							<!-- image -->
 							<div class="relative h-48 overflow-hidden">
 								<img
-									src={img(t.photo)}
+									src={img(t.id)}
 									alt={t.name}
 									class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
 								/>

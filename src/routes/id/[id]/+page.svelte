@@ -8,7 +8,7 @@
 	$: theater = theaters.find((t) => t.id === Number($page.params.id)) || theater;
 
 	/* --------- helpers --------- */
-	const theaterimg = (file: string) => `${base}/theaters/${file}.jpg`;
+	const theaterimg = (file: string) => `${base}/theaters/${file}_1.jpg`;
 	const spaceimg = (file: string) => `${base}/spaces/${file}.jpg`;
 	const productionimg = (file: string) => `${base}/productions/${file}.jpg`;
 	$: totalSeats = theater.spaces.reduce((s, v) => s + (v.total_capacity ?? 0), 0);
@@ -83,11 +83,7 @@
 
 					<!-- фото -->
 					<div class="mb-4 overflow-hidden rounded-lg bg-slate-700">
-						<img
-							class="h-48 w-full object-cover"
-							src={theaterimg(theater.photo)}
-							alt={theater.name}
-						/>
+						<img class="h-48 w-full object-cover" src={theaterimg(theater.id)} alt={theater.name} />
 					</div>
 
 					<button
