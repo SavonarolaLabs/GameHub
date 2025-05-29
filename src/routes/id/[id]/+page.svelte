@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import { theaters } from '$lib/theaters-data';
 
@@ -7,7 +8,9 @@
 	$: theater = theaters.find((t) => t.id === Number($page.params.id)) || theater;
 
 	/* --------- helpers --------- */
-	const img = (file: string) => `/images/${file}.jpg`;
+	const theaterimg = (file: string) => `${base}/theaters/${file}.jpg`;
+	const spaceimg = (file: string) => `${base}/spaces/${file}.jpg`;
+	const productionimg = (file: string) => `${base}/productions/${file}.jpg`;
 	$: totalSeats = theater.spaces.reduce((s, v) => s + (v.total_capacity ?? 0), 0);
 
 	$: directors = theater.hr.filter((h) => h.position.trim().toLowerCase().startsWith('директор'));
@@ -80,7 +83,11 @@
 
 					<!-- фото -->
 					<div class="mb-4 overflow-hidden rounded-lg bg-slate-700">
-						<img class="h-48 w-full object-cover" src={img(theater.photo)} alt={theater.name} />
+						<img
+							class="h-48 w-full object-cover"
+							src={theaterimg(theater.photo)}
+							alt={theater.name}
+						/>
 					</div>
 
 					<button
@@ -147,7 +154,7 @@
 									{#if s.photo}
 										<img
 											class="h-full w-full object-cover"
-											src={img(s.photo)}
+											src={spaceimg(s.photo)}
 											alt={s.venue_space_short_name}
 										/>
 									{:else}
@@ -167,7 +174,7 @@
 				{#each theater.productions as p}
 					<div
 						class="relative h-80 overflow-hidden rounded-lg bg-cover bg-center transition-transform duration-300 hover:scale-105"
-						style="background-image:url('{img(p.foto)}')"
+						style="background-image:url('{productionimg(p.foto)}')"
 					>
 						<div
 							class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
