@@ -3,6 +3,48 @@
 	import { goto } from '$app/navigation';
 	import { theaters } from '$lib/theaters-data';
 
+	interface Production {
+		id: number;
+		name: string;
+		foto: string;
+	}
+
+	interface Space {
+		id: number;
+		district: string;
+		okrug: string;
+		type: string;
+		venue_space_short_name: string;
+		commercial_capacity: number | null;
+		inconvenient_seats: number | null;
+		total_capacity: number | null;
+		venue_space_id: string | null;
+		photo: string;
+	}
+
+	interface HRPerson {
+		full_name: string;
+		position: string;
+		photo: string | null;
+	}
+
+	interface Theater {
+		id: number;
+		name: string;
+		address: string;
+		photo: string;
+		capacity: number | null;
+		audience_thousands: number | null;
+		occupancy_percent: number | null;
+		ticket_price_rub: number | null;
+		productions: Production[];
+		spaces: Space[];
+		hr: HRPerson[];
+		maps_link: string;
+		yandex_ratings_count: number | null;
+		yandex_reviews_count: number | null;
+		yandex_rating: number | null;
+	}
 	/* ---------------- helpers ---------------- */
 	let searchQuery = '';
 	let filteredTheaters: Theater[] = theaters;
@@ -16,21 +58,25 @@
 	const img = (file: string) => `${base}/theaters/${file}_1.jpg`;
 
 	function filter() {
-		if (searchQuery.trim() === '') {
+		const query = searchQuery.trim().toLowerCase();
+
+		if (!query) {
 			filteredTheaters = theaters;
 			return;
 		}
 
-		const q = norm(searchQuery);
 		filteredTheaters = theaters.filter((t) =>
 			[
 				t.name,
 				t.address,
-				...t.spaces.map((s) => s.venue_space_short_name),
-				...t.productions.map((p) => p.name)
+				t.maps_link,
+				...(t.spaces?.flatMap((s) => [s.venue_space_short_name, s.district, s.okrug, s.type]) ??
+					[]),
+				...(t.productions?.map((p) => p.name) ?? []),
+				...(t.hr?.flatMap((h) => [h.full_name, h.position]) ?? [])
 			]
 				.map(norm)
-				.some((v) => v.includes(q))
+				.some((v) => v.includes(query))
 		);
 	}
 
