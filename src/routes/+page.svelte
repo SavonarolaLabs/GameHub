@@ -175,10 +175,10 @@
 								<p class="mb-3 line-clamp-2 text-sm text-gray-400">{t.address}</p>
 
 								<!-- stats -->
-								<div class="mb-4 flex items-center justify-between text-sm text-gray-300">
-									<span class="rounded bg-slate-700 px-2 py-1"
-										>Посещаемость {t.occupancy_percent}%</span
-									>
+								<div
+									class="mb-4 flex items-center justify-between rounded-md bg-slate-700 text-sm text-gray-300"
+								>
+									<span class="rounded px-2 py-1">{t.occupancy_percent}% посещаемость</span>
 									<div class="flex space-x-3">
 										<span>{t.yandex_reviews_count} отзывов</span>
 										<span>{t.yandex_ratings_count} оценок</span>
