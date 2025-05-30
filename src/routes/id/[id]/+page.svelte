@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import { theaters } from '$lib/theaters-data';
+	import { ArrowLeft } from 'lucide-svelte';
 
 	/* --------- данные театра --------- */
 	let theater: Theater = theaters[0];
@@ -20,12 +21,16 @@
 
 	/* раскрытие площадок */
 	let expanded = -1; // индекс раскрытой площадки
+
+	const goToMain = () => {
+		window.location.href = '/';
+	};
 </script>
 
 <div class="flex min-h-screen w-full flex-col items-center">
 	<!-- header -->
 	<div class="w-full bg-slate-900 text-white">
-		<header class="mx-auto w-full max-w-6xl p-6">
+		<header class="mx-auto w-full max-w-6xl p-6 pt-25">
 			<div class="flex flex-col justify-between lg:flex-row">
 				<!-- left -->
 				<div class="flex-1">
@@ -115,7 +120,7 @@
 				<div class="mb-6 rounded-lg bg-red-500">
 					<button
 						class="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-red-600"
-						on:click={() => (expanded = expanded === i ? -1 : i)}
+						onclick={() => (expanded = expanded === i ? -1 : i)}
 					>
 						<span class="text-xl font-semibold"
 							>{s.venue_space_short_name} / {s.total_capacity} мест</span
@@ -194,4 +199,35 @@
 			</div>
 		</section>
 	</div>
+
+	<!-- Back to main button -->
+	<button class="back-to-main-btn" onclick={goToMain} aria-label="Back to main">
+		<ArrowLeft size={24} />
+	</button>
 </div>
+
+<style>
+	.back-to-main-btn {
+		position: fixed;
+		left: 1.5rem;
+		top: 1.5rem;
+		width: 56px;
+		height: 56px;
+		border-radius: 50%;
+		background: #374151;
+		color: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+		cursor: pointer;
+		transition: all 0.15s ease;
+		border: none;
+		outline: none;
+		z-index: 50;
+	}
+	.back-to-main-btn:hover {
+		transform: scale(1.08);
+		background: #4b5563;
+	}
+</style>
