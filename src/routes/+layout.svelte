@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import { BarChart2 } from 'lucide-svelte';
 	import '../app.css';
 
@@ -7,34 +8,39 @@
 	const USERNAME = 'aki';
 	const PASSWORD = 'aki2025test';
 
-	let authenticated = false;
-	let showPdf = false;
-	let pdfUrl = '';
+	/* -----------------------------
+	 * Runes-mode reactive state
+	 * ---------------------------*/
+	let authenticated = $state(false);
+	let showPdf = $state(false);
 
-	// Check stored session first
-	if (typeof localStorage !== 'undefined' && localStorage.getItem('auth') === 'true') {
-		authenticated = true;
-	} else {
-		// Otherwise run prompt flow once
-		onMount(() => {
+	const pdfFilename = 'Sales_27.05.pdf';
+
+	// Derive the PDF URL from the current route
+	let pdfUrl = $derived(`${$page.url.pathname.replace(/\/$/, '')}/${pdfFilename}`);
+
+	/* -----------------------------
+	 * Authentication flow
+	 * ---------------------------*/
+	onMount(() => {
+		if (typeof localStorage !== 'undefined' && localStorage.getItem('auth') === 'true') {
+			authenticated = true;
+		} else {
 			const user = prompt('Username:');
 			if (user === USERNAME) {
 				const pass = prompt('Password:');
 				if (pass === PASSWORD) {
 					localStorage.setItem('auth', 'true');
-					location.reload(); // Refresh so prompts disappear and state is re-evaluated
+					location.reload(); // refresh so prompts disappear
 				}
 			}
-			// If wrong / canceled, remain unauthenticated and lock screen renders
-		});
-	}
-
-	// Build PDF URL relative to current page on first mount (works regardless of router)
-	onMount(() => {
-		pdfUrl = `${window.location.pathname.replace(/\/$/, '')}/asdf.pdf`;
+			// remain locked if cancelled / incorrect
+		}
 	});
 
-	const togglePdf = () => (showPdf = !showPdf);
+	const togglePdf = () => {
+		showPdf = !showPdf;
+	};
 
 	// Svelte 5 children slot support
 	let { children } = $props();
@@ -44,16 +50,16 @@
 	{@render children()}
 
 	<!-- Floating action button -->
-	<button class="fab" on:click={togglePdf} aria-label="Show statistics PDF">
+	<button class="fab" onclick={togglePdf} aria-label="Show statistics PDF">
 		<BarChart2 size={24} />
 	</button>
 
 	{#if showPdf}
 		<!-- Modal / backdrop -->
-		<div class="modal-backdrop" on:click={togglePdf} />
+		<div class="modal-backdrop" onclick={togglePdf} role="button" tabindex="0"></div>
 		<div class="modal" role="dialog" aria-modal="true" aria-label="Statistics PDF">
-			<button class="close" on:click={togglePdf} aria-label="Close">✕</button>
-			<iframe class="pdf-frame" src={pdfUrl} title="Statistics" />
+			<button class="close" onclick={togglePdf} aria-label="Close">✕</button>
+			<iframe class="pdf-frame" src={pdfUrl} title="Statistics"></iframe>
 		</div>
 	{/if}
 {:else}
@@ -75,7 +81,7 @@
 		width: 56px;
 		height: 56px;
 		border-radius: 50%;
-		background: #2563eb; /* ~tailwind blue-600 */
+		background: #2563eb; /* tailwind blue-600 */
 		color: #fff;
 		display: flex;
 		align-items: center;
@@ -94,6 +100,7 @@
 		inset: 0;
 		background: rgba(0, 0, 0, 0.5);
 		z-index: 40;
+		cursor: pointer;
 	}
 	.modal {
 		position: fixed;
