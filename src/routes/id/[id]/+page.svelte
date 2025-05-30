@@ -41,6 +41,7 @@
 					{/if}
 
 					<!-- hr -->
+					<div class="mb-8 opacity-[0.7]">{theater.description}</div>
 					<h3 class="mb-4 text-xl font-semibold">РУКОВОДСТВО</h3>
 					<div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
 						{#each directors as p}
@@ -72,8 +73,18 @@
 							>★ {theater.yandex_rating}</span
 						>
 
+						{#if theater.revenueRank || theater.attendanceRank}
+							<div class="font-bold text-pink-500">
+								#{theater.revenueRank} <span class="text-gray-300">по выручке</span>
+							</div>
+							<div class="font-bold text-pink-500">
+								#{theater.attendanceRank} <span class="text-gray-300">по посещаемости</span>
+							</div>
+							<div class="mb-2"></div>
+						{/if}
+
 						<div class="space-y-2 text-sm text-gray-300">
-							<p>
+							<p class="hidden">
 								Средняя цена билета: <strong>{theater.ticket_price_rub.toLocaleString()} ₽</strong>
 							</p>
 							<p><strong>Отзывы:</strong> {theater.yandex_reviews_count}</p>
