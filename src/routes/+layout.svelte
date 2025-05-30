@@ -16,8 +16,8 @@
 
 	const pdfFilename = 'Sales_27.05.pdf';
 
-	// Derive the PDF URL from the current route
-	let pdfUrl = $derived(`${$page.url.pathname.replace(/\/$/, '')}/${pdfFilename}`);
+	// PDF URL with sidebar hidden
+	let pdfUrl = $derived(`/${pdfFilename}#toolbar=0&navpanes=0&scrollbar=0`);
 
 	/* -----------------------------
 	 * Authentication flow
