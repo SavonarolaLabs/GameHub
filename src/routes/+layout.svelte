@@ -33,6 +33,14 @@
 
 {#if authenticated}
 	{@render children()}
+{:else}
+	<div
+		class="lock-screen flex h-[100vh] w-full items-center justify-center"
+		style="font-size:100px"
+		aria-label="Locked – authentication required"
+	>
+		🔒
+	</div>
 {/if}
 
 <!-- No visible markup when unauthenticated -->
