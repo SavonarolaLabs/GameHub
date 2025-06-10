@@ -1,42 +1,13 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
 	import { BarChart2 } from 'lucide-svelte';
 	import '../app.css';
 
-	// ⚠️ Client-side only — *not* secure for production!
-	const USERNAME = 'aki';
-	const PASSWORD = 'aki2025test';
-
-	/* -----------------------------
-	 * Runes-mode reactive state
-	 * ---------------------------*/
-	let authenticated = $state(false);
 	let showPdf = $state(false);
 
 	const pdfFilename = 'Sales_27.05.pdf';
 
 	// PDF URL with sidebar hidden
 	let pdfUrl = $derived(`/${pdfFilename}#toolbar=0&navpanes=0&scrollbar=0`);
-
-	/* -----------------------------
-	 * Authentication flow
-	 * ---------------------------*/
-	onMount(() => {
-		if (typeof localStorage !== 'undefined' && localStorage.getItem('auth') === 'true') {
-			authenticated = true;
-		} else {
-			const user = prompt('Username:');
-			if (user === USERNAME) {
-				const pass = prompt('Password:');
-				if (pass === PASSWORD) {
-					localStorage.setItem('auth', 'true');
-					location.reload(); // refresh so prompts disappear
-				}
-			}
-			// remain locked if cancelled / incorrect
-		}
-	});
 
 	const togglePdf = () => {
 		showPdf = !showPdf;
@@ -46,30 +17,19 @@
 	let { children } = $props();
 </script>
 
-{#if authenticated}
-	{@render children()}
+{@render children()}
 
-	<!-- Floating action button -->
-	<button class="fab" onclick={togglePdf} aria-label="Show statistics PDF">
-		<BarChart2 size={24} />
-	</button>
+<!-- Floating action button -->
+<!-- <button class="fab" onclick={togglePdf} aria-label="Show statistics PDF">
+	<BarChart2 size={24} />
+</button> -->
 
-	{#if showPdf}
-		<!-- Modal / backdrop -->
-		<div class="modal-backdrop" onclick={togglePdf} role="button" tabindex="0"></div>
-		<div class="modal" role="dialog" aria-modal="true" aria-label="Statistics PDF">
-			<button class="close" onclick={togglePdf} aria-label="Close">✕</button>
-			<iframe class="pdf-frame" src={pdfUrl} title="Statistics"></iframe>
-		</div>
-	{/if}
-{:else}
-	<!-- Lock screen when unauthenticated -->
-	<div
-		class="lock-screen flex h-[100vh] w-full items-center justify-center"
-		style="font-size:10rem"
-		aria-label="Locked – authentication required"
-	>
-		🔒
+{#if showPdf}
+	<!-- Modal / backdrop -->
+	<div class="modal-backdrop" onclick={togglePdf} role="button" tabindex="0"></div>
+	<div class="modal" role="dialog" aria-modal="true" aria-label="Statistics PDF">
+		<button class="close" onclick={togglePdf} aria-label="Close">✕</button>
+		<iframe class="pdf-frame" src={pdfUrl} title="Statistics"></iframe>
 	</div>
 {/if}
 
