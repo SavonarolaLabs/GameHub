@@ -266,16 +266,24 @@
 								<div>
 									<p class="mb-4">
 										<span class="text-sm text-gray-400">Тип:</span>
-										<span class="font-semibold">{s.type}</span>
+										<span class="">{s.type}</span>
+									</p>
+									<p class="mb-4">
+										<span class="text-sm text-gray-400">Жанр:</span>
+										<span class="">{titleCase(s.genre)}</span>
 									</p>
 									<p class="mb-4">
 										<span class="text-sm text-gray-400">Округ / район:</span>
 										{s.okrug} / {s.district}
 									</p>
-									<p class="mb-4 text-sm text-gray-300">
+									<p class="mb-4">
+										<span class="text-sm text-gray-400">Адресс:</span>
+										<span class="">{titleCase(s.address)}</span>
+									</p>
+									<!-- <p class="mb-4 text-sm text-gray-300">
 										Коммерческих мест: <strong>{s.commercial_capacity}</strong><br />
 										Неудобных мест: <strong>{s.inconvenient_seats}</strong>
-									</p>
+									</p> -->
 								</div>
 
 								<!-- фото площадки -->

@@ -77,7 +77,10 @@ export const theaters = [
 				inconvenient_seats: 0,
 				total_capacity: 62,
 				venue_space_id: 'kassir.ru_307452',
-				photo: '7703035553_94'
+				photo: '7703035553_94',
+				genre: 'драма',
+				maps_link: 'https://yandex.ru/maps/-/CHsbAKpn',
+				address: 'Сытинский пер., 3/25'
 			},
 			{
 				id: 96,
@@ -89,7 +92,10 @@ export const theaters = [
 				inconvenient_seats: 0,
 				total_capacity: 824,
 				venue_space_id: 'kassir.ru_28527',
-				photo: '7703035553_96'
+				photo: '7703035553_96',
+				genre: 'драма',
+				maps_link: 'https://yandex.ru/maps/-/CHsbEZ1n',
+				address: 'Тверской бульвар 23 строение 1'
 			}
 		],
 
