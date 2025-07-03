@@ -65,12 +65,22 @@
 	<!-- header -->
 	<div class="w-full bg-slate-900 text-white">
 		<header class="mx-auto w-full max-w-6xl p-6 pt-25">
+			<div class="mb-2 flex flex-col">
+				{#each ticketOperator.filter((s) => s.id == theater.id) as s}
+					<div class="flex gap-4">
+						{#each s.operators as operators}
+							<div class="rounded-sm bg-slate-600 px-3">{operators.name}</div>
+						{/each}
+					</div>
+				{/each}
+			</div>
 			<div class="flex flex-col justify-between lg:flex-row">
 				<!-- left -->
 				<div class="flex-1">
 					<!-- Социальные сети театра -->
+					<h1 class="mb-4 text-4xl font-bold">{theater.name}</h1>
 					{#each theaterSocials.filter((s) => s.id == theater.id) as s}
-						<div class="absolute top-16 flex gap-4">
+						<div class="top-16 my-4 flex gap-4">
 							{#each s.socials as social}
 								<a href={social.link}
 									><img class="size-6" src={socialsimg(social.photo)} alt="" />
@@ -78,22 +88,10 @@
 							{/each}
 						</div>
 					{/each}
-
-					<h1 class="mb-4 text-4xl font-bold">{theater.name}</h1>
 					<p class="mb-2 text-gray-400">{theater.address}</p>
 
 					<!-- hr -->
 					<div class="mb-8 opacity-[0.7]">{theater.description}</div>
-				</div>
-
-				<div>
-					{#each ticketOperator.filter((s) => s.id == theater.id) as s}
-						<div class="absolute top-16 flex gap-4">
-							{#each s.operators as operators}
-								<p>{operators.name}</p>
-							{/each}
-						</div>
-					{/each}
 				</div>
 
 				<!-- right -->
@@ -137,6 +135,7 @@
 					>
 				</div>
 			</div>
+
 			<h3 class="mt-10 mb-4 text-xl font-semibold">РУКОВОДСТВО</h3>
 			<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
 				{#each hr.filter((h) => h.organizationInn == theater.id && (h.position == 'директор' || h.position.startsWith('художественный'))) as p}
