@@ -86,13 +86,20 @@
 	const goToMain = () => {
 		window.location.href = '/';
 	};
+	function showPersonBio(p) {
+		selectedPerson.name = p.fullName;
+		selectedPerson.position = p.position;
+		selectedPerson.photo = hrimg(p.photo);
+		selectedPerson.biography = p.biography;
+		showPopup = true;
+	}
 
 	let showPopup = false;
 	let selectedPerson = {
 		name: 'Жуков Владимир Иванович',
 		position: 'Директор',
 		photo: 'path/to/photo.jpg',
-		biography: 'Биография персонажа...'
+		biography: 'Биография ...'
 	};
 </script>
 
@@ -193,11 +200,7 @@
 				{#each hr.filter((h) => h.organizationInn == theater.id && (h.position == 'директор' || h.position.startsWith('художественный'))) as p}
 					<div class="relative h-30">
 						<div class="flex items-start space-x-3">
-							<button
-								onclick={() => {
-									showPopup = true;
-								}}
-							>
+							<button onclick={() => showPersonBio(p)}>
 								<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
 							</button>
 
@@ -263,7 +266,10 @@
 				{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
 					<div class="relative h-30">
 						<div class="flex items-start space-x-3">
-							<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
+							<button class="size-16" onclick={() => showPersonBio(p)}>
+								<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
+							</button>
+
 							<div>
 								<div class="font-semibold">{p.fullName}</div>
 								<div class="line-clamp-3 text-sm text-gray-400">{p.titles}</div>

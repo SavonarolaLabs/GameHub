@@ -12,7 +12,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -28,7 +28,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -44,7 +44,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -60,7 +60,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -76,7 +76,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -92,7 +92,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -108,7 +108,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -124,7 +124,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -140,7 +140,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -156,7 +156,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -172,7 +172,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -188,7 +188,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -204,7 +204,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -220,7 +220,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -236,7 +236,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -252,7 +252,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -268,7 +268,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -284,7 +284,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -300,7 +300,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -316,7 +316,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -332,7 +332,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -348,7 +348,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -364,7 +364,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -380,7 +380,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -396,7 +396,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -412,7 +412,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -428,7 +428,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -444,7 +444,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -460,7 +460,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -476,7 +476,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -492,7 +492,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -508,7 +508,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -524,7 +524,7 @@ export const hr = [
 		phone: '79629135575',
 		email: 'ZhukovVI1@culture.mos.ru',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -540,7 +540,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -556,7 +556,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -572,7 +572,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -588,7 +588,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -604,7 +604,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -620,7 +620,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -636,7 +636,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -652,7 +652,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -668,7 +668,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -684,7 +684,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -700,7 +700,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -716,7 +716,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -732,7 +732,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -748,7 +748,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -764,7 +764,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -780,7 +780,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -796,7 +796,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -812,7 +812,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -828,7 +828,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -844,7 +844,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -860,7 +860,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -876,7 +876,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -892,7 +892,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -908,7 +908,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -924,7 +924,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -940,7 +940,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -956,7 +956,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -972,7 +972,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -988,7 +988,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1004,7 +1004,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1020,7 +1020,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1036,7 +1036,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1052,7 +1052,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1068,7 +1068,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1084,7 +1084,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1100,7 +1100,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1116,7 +1116,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1132,7 +1132,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1148,7 +1148,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1164,7 +1164,7 @@ export const hr = [
 		phone: '74956941338',
 		email: 'pisarev@teatrpushkin.ru',
 		titles: 'Заслуженный артист России (2006)',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/pisarev-evgeniy-aleksandrovich/',
 		wikiUrl:
 			'https://ru.wikipedia.org/wiki/%D0%9F%D0%B8%D1%81%D0%B0%D1%80%D0%B5%D0%B2,_%D0%95%D0%B2%D0%B3%D0%B5%D0%BD%D0%B8%D0%B9_%D0%90%D0%BB%D0%B5%D0%BA%D1%81%D0%B0%D0%BD%D0%B4%D1%80%D0%BE%D0%B2%D0%B8%D1%87'
@@ -1181,7 +1181,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1197,7 +1197,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1213,7 +1213,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1229,7 +1229,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1245,7 +1245,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1261,7 +1261,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1277,7 +1277,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1293,7 +1293,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1309,7 +1309,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1325,7 +1325,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1341,7 +1341,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1357,7 +1357,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1373,7 +1373,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1389,7 +1389,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1405,7 +1405,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1421,7 +1421,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1437,7 +1437,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1453,7 +1453,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1469,7 +1469,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1485,7 +1485,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1501,7 +1501,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1517,7 +1517,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1533,7 +1533,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1549,7 +1549,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1565,7 +1565,7 @@ export const hr = [
 		phone: '74956941695',
 		email: 'press@teatrpushkin.ru',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: '',
 		wikiUrl: ''
 	},
@@ -1582,7 +1582,7 @@ export const hr = [
 		email: '',
 		titles:
 			'Народная артистка России (1992)\n\nЛауреат Государственной премии СССР\n\nЛауреат Государственной премии им. братьев Васильевых',
-		ssylkaNaBiografiyuPoNazhatiyu:
+		biography:
 			'После окончания Школы-студии МХАТ в 1965 году Вера Алентова была принята в труппу Театра имени Пушкина. Ее первой ролью на сцене нашего театра стала Райна в спектакле «Шоколадный солдатик» режиссера Бориса Равенских.\n\nС 2009 года руководит актерско-режиссерской мастерской во ВГИКе.\n\nДебют в кино состоялся в 1965 году в фильме о советских пилотах «Дни летные». Самой знаменитой картиной с Верой Алентовой в главной роли стала режиссерская работа Владимира Меньшова — фильм «Москва слезам не верит» (1979).\n\nСреди других киноработ — роли в фильмах «Завтра была война», «Жених из Майами», «Ширли-мырли», «Зависть богов», «Серебряная свадьба», «Дар божий», «И все-таки я люблю...», «Бальзаковский возраст, или все мужики сво...», «Дорога без конца», «Воскресенье» и др.',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/alentova-vera-valentinovna/',
 		wikiUrl:
@@ -1600,7 +1600,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Заслуженный артист России (2021)\n\nПочётный деятель искусств города Москвы (2017)',
-		ssylkaNaBiografiyuPoNazhatiyu:
+		biography:
 			'В 1999-2001 гг. — актер МХТ им. А. П. Чехова. Дебютировал на сцене Художественного театра в спектакле «Маленькие трагедии» (Альберт). Играл в спектаклях: «Пролетный гусь», «Сонечка», «Лесная песня», «Сирано де Бержерак» и др.\n\nС 2001 года Александр Арсентьев — актер труппы театра имени А. С. Пушкина. Его первая роль в нашем театра — Печорин в спектакле Михаила Мокеева «Зовите Печориным» , затем — Меркуцио в спектакле Романа Козака «Ромео и Джульетта».\n\nИсполнил роль герцога Орсино в спектакле Деклана Доннеллана «Двенадцатая ночь» (Международная конфедерация театральных союзов).\n\nВ мюзикле «Чикаго» (Стейдж Энтертейнмент) исполнил роль Билла Финна.\n\nВ кино Александр Арсентьев дебютировал в 1998 году, сыграв роль поручика Сокольского в многосерийной киноленте «Чехов и Ко».\nСнимался в фильмах: «Марш Турецкого», «МУР есть МУР», «Атлантида», «Тяжелый песок», «Новая жизнь сыщика Гурова», «Институт благородных девиц», «Любовь по расписанию», «Государыня и разбойник», «Танго с ангелом», «Новогодняя жена», «Поцелуй в голову», «Под небом Вероны», «Адъютанты любви», «Юрочка», «Ангелина», «Почти семейный детектив» и др.',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/arsentiev-aleksandr-sergeevich/',
 		wikiUrl:
@@ -1618,7 +1618,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Заслуженная артистка России',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/byakova-irina-aleksandrovna/',
 		wikiUrl:
 			'https://ru.wikipedia.org/wiki/%D0%91%D1%8F%D0%BA%D0%BE%D0%B2%D0%B0,_%D0%98%D1%80%D0%B8%D0%BD%D0%B0_%D0%90%D0%BB%D0%B5%D0%BA%D1%81%D0%B0%D0%BD%D0%B4%D1%80%D0%BE%D0%B2%D0%BD%D0%B0'
@@ -1635,7 +1635,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Почётный деятель искусств города Москвы (2021)',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/zherebtsov-vladimir-evgenievich/',
 		wikiUrl:
 			'https://ru.wikipedia.org/wiki/%D0%96%D0%B5%D1%80%D0%B5%D0%B1%D1%86%D0%BE%D0%B2,_%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80_%D0%95%D0%B2%D0%B3%D0%B5%D0%BD%D1%8C%D0%B5%D0%B2%D0%B8%D1%87'
@@ -1652,7 +1652,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Заслуженный артист России (2018)\n\nПочётный деятель искусств города Москвы (2016)',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/zavodyuk-andrey-valerievich/',
 		wikiUrl:
 			'https://ru.wikipedia.org/wiki/%D0%97%D0%B0%D0%B2%D0%BE%D0%B4%D1%8E%D0%BA,_%D0%90%D0%BD%D0%B4%D1%80%D0%B5%D0%B9_%D0%92%D0%B0%D0%BB%D0%B5%D1%80%D1%8C%D0%B5%D0%B2%D0%B8%D1%87'
@@ -1669,7 +1669,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Заслуженная артистка России (2019)',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/isakova-viktoriya-evgenievna/',
 		wikiUrl:
 			'https://ru.wikipedia.org/wiki/%D0%98%D1%81%D0%B0%D0%BA%D0%BE%D0%B2%D0%B0,_%D0%92%D0%B8%D0%BA%D1%82%D0%BE%D1%80%D0%B8%D1%8F_%D0%95%D0%B2%D0%B3%D0%B5%D0%BD%D1%8C%D0%B5%D0%B2%D0%BD%D0%B0'
@@ -1686,7 +1686,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Заслуженная артистка России',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/kara-mosko-inna-vitalievna/',
 		wikiUrl:
 			'https://ru.wikipedia.org/wiki/%D0%9A%D0%B0%D1%80%D0%B0-%D0%9C%D0%BE%D1%81%D0%BA%D0%BE,_%D0%98%D0%BD%D0%BD%D0%B0_%D0%92%D0%B8%D1%82%D0%B0%D0%BB%D1%8C%D0%B5%D0%B2%D0%BD%D0%B0'
@@ -1703,7 +1703,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Почётный деятель искусств города Москвы (2023)',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/kuzichev-andrey-vladimirovich/',
 		wikiUrl:
 			'https://ru.wikipedia.org/wiki/%D0%9A%D1%83%D0%B7%D0%B8%D1%87%D0%B5%D0%B2,_%D0%90%D0%BD%D0%B4%D1%80%D0%B5%D0%B9_%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B8%D1%87'
@@ -1720,7 +1720,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Заслуженный артист России (2019)',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/mayzinger-vladimir-aleksandrovich/',
 		wikiUrl: 'https://www.kino-teatr.ru/kino/acter/m/ros/302269/bio/'
 	},
@@ -1736,7 +1736,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Заслуженная артистка России (1995)',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/marushina-nina-aleksandrovna/',
 		wikiUrl: 'https://www.kino-teatr.ru/kino/acter/w/ros/2724/works/'
 	},
@@ -1752,7 +1752,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Почётный деятель искусств города Москвы (2020)',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/matrosov-aleksandr-valerievich/',
 		wikiUrl: 'https://www.kino-teatr.ru/kino/acter/m/ros/2764/bio/'
 	},
@@ -1768,7 +1768,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Заслуженная артистка России',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/nikolaeva-natalya-ivanovna/',
 		wikiUrl: 'https://www.kino-teatr.ru/teatr/acter/w/sov/40963/bio/'
 	},
@@ -1784,7 +1784,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: '',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/panina-anastasiya-vladimirovna/',
 		wikiUrl:
 			'https://ru.wikipedia.org/wiki/%D0%9F%D0%B0%D0%BD%D0%B8%D0%BD%D0%B0,_%D0%90%D0%BD%D0%B0%D1%81%D1%82%D0%B0%D1%81%D0%B8%D1%8F_%D0%92%D0%BB%D0%B0%D0%B4%D0%B8%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%BD%D0%B0'
@@ -1801,7 +1801,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Заслуженная артистка России (1984)',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/popova-nina-georgievna/',
 		wikiUrl:
 			'https://ru.wikipedia.org/wiki/%D0%9F%D0%BE%D0%BF%D0%BE%D0%B2%D0%B0,_%D0%9D%D0%B8%D0%BD%D0%B0_%D0%93%D0%B5%D0%BE%D1%80%D0%B3%D0%B8%D0%B5%D0%B2%D0%BD%D0%B0'
@@ -1818,7 +1818,7 @@ export const hr = [
 		phone: '',
 		email: '',
 		titles: 'Почётный деятель искусств города Москвы (2020)',
-		ssylkaNaBiografiyuPoNazhatiyu: '',
+		biography: '',
 		linkToTheaterSite: 'https://teatrpushkin.ru/persona/detail/ursulyak-aleksandra-sergeevna/',
 		wikiUrl:
 			'https://ru.wikipedia.org/wiki/%D0%A3%D1%80%D1%81%D1%83%D0%BB%D1%8F%D0%BA,_%D0%90%D0%BB%D0%B5%D0%BA%D1%81%D0%B0%D0%BD%D0%B4%D1%80%D0%B0_%D0%A1%D0%B5%D1%80%D0%B3%D0%B5%D0%B5%D0%B2%D0%BD%D0%B0'
