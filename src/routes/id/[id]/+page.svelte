@@ -22,6 +22,13 @@
 		h.position.trim().toLowerCase().includes('художественный')
 	);
 
+	function trimTitles(titles: string): string {
+		if (titles.length > 60) {
+			return titles.slice(0, 60 - 3) + '...';
+		} else {
+			return titles;
+		}
+	}
 	/* раскрытие площадок */
 	let expanded = -1; // индекс раскрытой площадки
 
@@ -112,17 +119,17 @@
 				</div>
 			</div>
 			<h3 class="mt-10 mb-4 text-xl font-semibold">АРТИСТЫ</h3>
-			<div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+			<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
 				{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
-					<div class="relative">
-						<div class="flex items-center space-x-3">
+					<div class="relative h-30">
+						<div class="flex items-start space-x-3">
 							<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
 							<div>
 								<div class="font-semibold">{p.fullName}</div>
-								<div class="text-sm text-gray-400">{p.titles}</div>
+								<div class="text-sm text-gray-400">{trimTitles(p.titles)}</div>
 							</div>
 						</div>
-						<div class="absolute top-0">
+						<div class="absolute top-16 flex gap-4">
 							<a href={p.wikiUrl}><img class="size-6" src={socialsimg('wiki.jpg')} alt="" /> </a>
 							<a href={p.linkToTheaterSite}
 								><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
