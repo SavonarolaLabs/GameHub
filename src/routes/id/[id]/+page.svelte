@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
+	import { hr } from '$lib/hr';
 	import { theaters } from '$lib/theaters-data';
 	import { ArrowLeft } from 'lucide-svelte';
 
@@ -109,6 +110,16 @@
 				</div>
 			</div>
 		</header>
+		<div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+			{#each hr.filter((h) => h.organizationInn == theater.id) as p}
+				<div class="flex items-center space-x-3">
+					<div class="h-12 w-12 shrink-0 rounded-full bg-gray-600"></div>
+					<div>
+						<div class="font-semibold">{p.fullName}</div>
+					</div>
+				</div>
+			{/each}
+		</div>
 	</div>
 
 	<!-- контент -->
