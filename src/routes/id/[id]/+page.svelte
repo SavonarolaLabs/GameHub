@@ -7,6 +7,8 @@
 	import { ticketOperator } from '$lib/ticketOperator';
 	import { ranking } from '$lib/ranking';
 	import { ArrowLeft } from 'lucide-svelte';
+	import GanttChart from '$lib/GanttChart.svelte';
+	import { theatersPremiers } from '$lib/theatersPremiers';
 
 	/* --------- данные театра --------- */
 	let theater: Theater = theaters[0];
@@ -19,6 +21,7 @@
 	const hrimg = (file: string) => `${base}/hr/${file}`;
 	const socialsimg = (file: string) => `${base}/socials/${file}`;
 	$: totalSeats = theater.spaces.reduce((s, v) => s + (v.total_capacity ?? 0), 0);
+	$: premieres = theatersPremiers.find((t) => t.id === theater.id)?.premiers ?? [];
 
 	function trimTitles(titles: string): string {
 		if (titles.length > 60) {
@@ -295,7 +298,10 @@
 				</div>
 			{/each}
 		</section>
-
+		<section class="mx-auto w-full max-w-6xl p-6">
+			<h2 class="mb-8 text-3xl font-bold">Премьеры</h2>
+			<GanttChart items={premieres} />
+		</section>
 		<section class="mx-auto w-full max-w-6xl p-6">
 			<h2 class="mb-8 text-3xl font-bold">СПЕКТАКЛИ</h2>
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
