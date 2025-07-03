@@ -13,6 +13,7 @@
 	const theaterimg = (file: string) => `${base}/theaters/${file}_1.jpg`;
 	const spaceimg = (file: string) => `${base}/spaces/${file}.jpg`;
 	const productionimg = (file: string) => `${base}/productions/${file}.jpg`;
+	const hrimg = (file: string) => `${base}/hr/${file}`;
 	$: totalSeats = theater.spaces.reduce((s, v) => s + (v.total_capacity ?? 0), 0);
 
 	$: directors = theater.hr.filter((h) => h.position.trim().toLowerCase().startsWith('директор'));
@@ -111,11 +112,12 @@
 			</div>
 		</header>
 		<div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-			{#each hr.filter((h) => h.organizationInn == theater.id) as p}
+			{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
 				<div class="flex items-center space-x-3">
-					<div class="h-12 w-12 shrink-0 rounded-full bg-gray-600"></div>
+					<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
 					<div>
 						<div class="font-semibold">{p.fullName}</div>
+						<div class="text-sm text-gray-400">{p.titles}</div>
 					</div>
 				</div>
 			{/each}
