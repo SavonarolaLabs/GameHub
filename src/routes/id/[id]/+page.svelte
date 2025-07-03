@@ -4,6 +4,7 @@
 	import { hr } from '$lib/hr';
 	import { theaterSocials } from '$lib/theaterSocials';
 	import { theaters } from '$lib/theaters-data';
+	import { ticketOperator } from '$lib/ticketOperator';
 	import { ArrowLeft } from 'lucide-svelte';
 
 	/* --------- данные театра --------- */
@@ -68,6 +69,17 @@
 			<div class="flex flex-col justify-between lg:flex-row">
 				<!-- left -->
 				<div class="flex-1">
+					<!-- Социальные сети театра -->
+					{#each theaterSocials.filter((s) => s.id == theater.id) as s}
+						<div class="absolute top-16 flex gap-4">
+							{#each s.socials as social}
+								<a href={social.link}
+									><img class="size-6" src={socialsimg(social.photo)} alt="" />
+								</a>
+							{/each}
+						</div>
+					{/each}
+
 					<h1 class="mb-4 text-4xl font-bold">{theater.name}</h1>
 					<p class="mb-2 text-gray-400">{theater.address}</p>
 
@@ -80,17 +92,18 @@
 						>
 					{/if}
 
-					{#each theaterSocials.filter((s) => s.id == theater.id) as s}
+					<!-- hr -->
+					<div class="mb-8 opacity-[0.7]">{theater.description}</div>
+				</div>
+
+				<div>
+					{#each ticketOperator.filter((s) => s.id == theater.id) as s}
 						<div class="absolute top-16 flex gap-4">
-							{#each s.socials as social}
-								<a href={social.link}
-									><img class="size-6" src={socialsimg(social.photo)} alt="" />
-								</a>
+							{#each s.operators as operators}
+								<p>{operators.name}</p>
 							{/each}
 						</div>
 					{/each}
-					<!-- hr -->
-					<div class="mb-8 opacity-[0.7]">{theater.description}</div>
 				</div>
 
 				<!-- right -->
