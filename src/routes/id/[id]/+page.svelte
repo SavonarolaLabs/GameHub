@@ -9,6 +9,8 @@
 	import { ArrowLeft } from 'lucide-svelte';
 	import GanttChart from '$lib/GanttChart.svelte';
 	import { theatersPremiers } from '$lib/theatersPremiers';
+	import DynamicChart from '$lib/DynamicChart.svelte';
+	import { theatersDynamic } from '$lib/theatersDynamic';
 
 	/* --------- данные театра --------- */
 	let theater: Theater = theaters[0];
@@ -22,7 +24,7 @@
 	const socialsimg = (file: string) => `${base}/socials/${file}`;
 	$: totalSeats = theater.spaces.reduce((s, v) => s + (v.total_capacity ?? 0), 0);
 	$: premieres = theatersPremiers.find((t) => t.id === theater.id)?.premiers ?? [];
-
+	$: dynamics = theatersDynamic.find((t) => t.id === theater.id)?.dynamic ?? [];
 	function trimTitles(titles: string): string {
 		if (titles.length > 60) {
 			return titles.slice(0, 60 - 3) + '...';
@@ -65,20 +67,25 @@
 	<!-- header -->
 	<div class="w-full bg-slate-900 text-white">
 		<header class="mx-auto w-full max-w-6xl p-6 pt-25">
-			<div class="mb-2 flex flex-col">
-				{#each ticketOperator.filter((s) => s.id == theater.id) as s}
-					<div class="flex gap-4">
-						{#each s.operators as operators}
-							<div class="rounded-sm bg-slate-600 px-3">{operators.name}</div>
-						{/each}
-					</div>
-				{/each}
-			</div>
 			<div class="flex flex-col justify-between lg:flex-row">
 				<!-- left -->
 				<div class="flex-1">
 					<!-- Социальные сети театра -->
 					<h1 class="mb-4 text-4xl font-bold">{theater.name}</h1>
+					<div class="mb-2 flex flex-col">
+						{#each ticketOperator.filter((s) => s.id == theater.id) as s}
+							<div class="flex gap-4">
+								{#each s.operators as operators}
+									<div class="rounded-sm bg-slate-600 px-3">{operators.name}</div>
+								{/each}
+							</div>
+						{/each}
+					</div>
+
+					<!-- hr -->
+					<div class="mt-4 mb-8 line-clamp-4 opacity-[0.7]">{theater.description}</div>
+
+					<p class="mb-2 text-gray-400">{theater.address}</p>
 					{#each theaterSocials.filter((s) => s.id == theater.id) as s}
 						<div class="top-16 my-4 flex gap-4">
 							{#each s.socials as social}
@@ -88,10 +95,6 @@
 							{/each}
 						</div>
 					{/each}
-					<p class="mb-2 text-gray-400">{theater.address}</p>
-
-					<!-- hr -->
-					<div class="mb-8 opacity-[0.7]">{theater.description}</div>
 				</div>
 
 				<!-- right -->
@@ -135,7 +138,20 @@
 					>
 				</div>
 			</div>
-
+			<!-- СОТРУДНИКИ -->
+			<div class="flex gap-8">
+				<h3 class="mt-10 mb-4 text-xl font-semibold">
+					<span class="text-gray-400">СОТРУДНИКИ</span> <span>{theater.employees}</span>
+				</h3>
+				<h3 class="mt-10 mb-4 text-xl font-semibold">
+					<span class="text-gray-400">ХУДОЖЕСТВЕННЫЙ ПЕРСОНАЛ</span>
+					<span> {theater.artistic_staff}</span>
+				</h3>
+				<h3 class="mt-10 mb-4 text-xl font-semibold">
+					<span class="text-gray-400">АРТИСТЫ</span>
+					<span> {theater.cast}</span>
+				</h3>
+			</div>
 			<h3 class="mt-10 mb-4 text-xl font-semibold">РУКОВОДСТВО</h3>
 			<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
 				{#each hr.filter((h) => h.organizationInn == theater.id && (h.position == 'директор' || h.position.startsWith('художественный'))) as p}
@@ -149,10 +165,14 @@
 							</div>
 						</div>
 						<div class="absolute top-16 flex gap-4">
-							<a href={p.wikiUrl}><img class="size-6" src={socialsimg('wiki.jpg')} alt="" /> </a>
-							<a href={p.linkToTheaterSite}
-								><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
-							</a>
+							{#if p.wikiUrl}
+								<a href={p.wikiUrl}><img class="size-6" src={socialsimg('wiki.jpg')} alt="" /> </a>
+							{/if}
+							{#if p.linkToTheaterSite}
+								<a href={p.linkToTheaterSite}
+									><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
+								</a>
+							{/if}
 						</div>
 					</div>
 				{/each}
@@ -180,7 +200,7 @@
 					<div class="flex items-start space-x-3">
 						<img class="size-16 rounded-full" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
 						<div>
-							<div class="font-semibold">Фотобанк и ссылка</div>
+							<div class="font-semibold">Фотобанк</div>
 							<!-- <div class="text-sm text-gray-400">{titleCase(p.position)}</div>
 								<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
 								<div class="text-sm text-gray-400">{trimTitles(p.email)}</div> -->
@@ -189,12 +209,6 @@
 					<div class="absolute top-16 flex gap-4"></div>
 				</div>
 			</div>
-			<!-- СОТРУДНИКИ -->
-			<h3 class="mt-10 mb-4 text-xl font-semibold">СОТРУДНИКИ {theater.employees}</h3>
-			<h3 class="mt-10 mb-4 text-xl font-semibold">
-				ХУДОЖЕСТВЕННЫЙ ПЕРСОНАЛ {theater.artistic_staff}
-			</h3>
-			<h3 class="mt-10 mb-4 text-xl font-semibold">АРТИСТЫ {theater.cast}</h3>
 
 			<!-- АРТИСТЫ -->
 			<h3 class="mt-10 mb-4 text-xl font-semibold">АРТИСТЫ</h3>
@@ -205,14 +219,18 @@
 							<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
 							<div>
 								<div class="font-semibold">{p.fullName}</div>
-								<div class="text-sm text-gray-400">{trimTitles(p.titles)}</div>
+								<div class="line-clamp-3 text-sm text-gray-400">{p.titles}</div>
 							</div>
 						</div>
 						<div class="absolute top-16 flex gap-4">
-							<a href={p.wikiUrl}><img class="size-6" src={socialsimg('wiki.jpg')} alt="" /> </a>
-							<a href={p.linkToTheaterSite}
-								><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
-							</a>
+							{#if p.wikiUrl}
+								<a href={p.wikiUrl}><img class="size-6" src={socialsimg('wiki.jpg')} alt="" /> </a>
+							{/if}
+							{#if p.linkToTheaterSite}
+								<a href={p.linkToTheaterSite}
+									><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
+								</a>
+							{/if}
 						</div>
 					</div>
 				{/each}
@@ -307,6 +325,10 @@
 		<section class="mx-auto w-full max-w-6xl p-6">
 			<h2 class="mb-8 text-3xl font-bold">КАЛЕНДАРЬ ПРЕМЬЕР</h2>
 			<GanttChart items={premieres} />
+		</section>
+		<section class="mx-auto w-full max-w-6xl p-6">
+			<h2 class="mb-8 text-3xl font-bold">Динамика</h2>
+			<DynamicChart data={dynamics} />
 		</section>
 		<section class="mx-auto w-full max-w-6xl p-6">
 			<h2 class="mb-8 text-3xl font-bold">СПЕКТАКЛИ</h2>
