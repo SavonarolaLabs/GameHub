@@ -340,6 +340,24 @@
 			<h2 class="mb-8 text-3xl font-bold">КАЛЕНДАРЬ ПРЕМЬЕР</h2>
 			<GanttChart items={premieres} />
 		</section>
+
+		{#if ranking.find((r) => r.id === theater.id)}
+			{@const rank = ranking.find((r) => r.id === theater.id)}
+			<div class="flex gap-8">
+				<h3 class="mt-10 mb-4 text-xl font-semibold">
+					<span class="text-gray-400">ВЫРУЧКА</span> <span>{rank.revenue2024}</span>
+				</h3>
+				<h3 class="mt-10 mb-4 text-xl font-semibold">
+					<span class="text-gray-400">БИЛЕТОВ</span>
+					<span> {rank.tickets2024}</span>
+				</h3>
+				<h3 class="mt-10 mb-4 text-xl font-semibold">
+					<span class="text-gray-400">ЗАПОЛНЯЕМОСТЬ</span>
+					<span> {theater.occupancy_percent}%</span>
+				</h3>
+			</div>
+		{/if}
+
 		<section class="mx-auto w-full max-w-6xl p-6">
 			<h2 class="mb-8 text-3xl font-bold">Динамика</h2>
 			<DynamicChart data={dynamics} />
