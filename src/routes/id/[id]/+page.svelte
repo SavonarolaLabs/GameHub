@@ -55,6 +55,32 @@
 		// fallback: ничего не делаем
 		return raw.trim();
 	}
+	function formatRubAbbreviated(number: number) {
+		const abs = Math.abs(number);
+		let suffix = '';
+		let divisor = 1;
+
+		if (abs >= 1e9) {
+			suffix = ' млрд'; // миллиард
+			divisor = 1e9;
+		} else if (abs >= 1e6) {
+			suffix = ' млн'; // миллион
+			divisor = 1e6;
+		} else if (abs >= 1e3) {
+			suffix = ' тыс'; // тысяча
+			divisor = 1e3;
+		}
+
+		const shortNumber = number / divisor;
+
+		const formatted = new Intl.NumberFormat('ru-RU', {
+			style: 'currency',
+			currency: 'RUB',
+			maximumFractionDigits: 1
+		}).format(shortNumber);
+
+		return `${formatted}${suffix}`;
+	}
 	/* раскрытие площадок */
 	let expanded = -1; // индекс раскрытой площадки
 
@@ -153,19 +179,7 @@
 					<div class="text-9xl">{theater.cast}</div>
 				</h3>
 			</div>
-			<div class="flex hidden gap-8">
-				<h3 class="mt-10 mb-4 text-xl font-semibold">
-					<span class="text-gray-400">СОТРУДНИКИ</span> <span>{theater.employees}</span>
-				</h3>
-				<h3 class="mt-10 mb-4 text-xl font-semibold">
-					<span class="text-gray-400">ХУДОЖЕСТВЕННЫЙ ПЕРСОНАЛ</span>
-					<span> {theater.artistic_staff}</span>
-				</h3>
-				<h3 class="mt-10 mb-4 text-xl font-semibold">
-					<span class="text-gray-400">АРТИСТЫ</span>
-					<span> {theater.cast}</span>
-				</h3>
-			</div>
+
 			<h3 class="mt-10 mb-4 text-xl font-semibold">РУКОВОДСТВО</h3>
 			<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
 				{#each hr.filter((h) => h.organizationInn == theater.id && (h.position == 'директор' || h.position.startsWith('художественный'))) as p}
@@ -343,17 +357,19 @@
 
 		{#if ranking.find((r) => r.id === theater.id)}
 			{@const rank = ranking.find((r) => r.id === theater.id)}
-			<div class="flex gap-8">
-				<h3 class="mt-10 mb-4 text-xl font-semibold">
-					<span class="text-gray-400">ВЫРУЧКА</span> <span>{rank.revenue2024}</span>
+
+			<div class="mx-auto flex max-w-6xl justify-between p-6">
+				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+					<div class="text-gray-400">ВЫРУЧКА, млн</div>
+					<div class="text-6xl">{formatRubAbbreviated(rank.revenue2024)}</div>
 				</h3>
-				<h3 class="mt-10 mb-4 text-xl font-semibold">
-					<span class="text-gray-400">БИЛЕТОВ</span>
-					<span> {rank.tickets2024}</span>
+				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+					<div class="text-gray-400">БИЛЕТОВ, тыс</div>
+					<div class="text-6xl">{formatRubAbbreviated(rank.tickets2024)}</div>
 				</h3>
-				<h3 class="mt-10 mb-4 text-xl font-semibold">
-					<span class="text-gray-400">ЗАПОЛНЯЕМОСТЬ</span>
-					<span> {theater.occupancy_percent}%</span>
+				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+					<div class="text-gray-400">ЗАПОЛНЯЕМОСТЬ</div>
+					<div class="text-6xl">{theater.occupancy_percent}%</div>
 				</h3>
 			</div>
 		{/if}
