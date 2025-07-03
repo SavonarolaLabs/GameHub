@@ -80,27 +80,6 @@
 
 					<!-- hr -->
 					<div class="mb-8 opacity-[0.7]">{theater.description}</div>
-					<h3 class="mb-4 text-xl font-semibold">РУКОВОДСТВО</h3>
-					<div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-						{#each directors as p}
-							<div class="flex items-center space-x-3">
-								<div class="h-12 w-12 shrink-0 rounded-full bg-gray-600"></div>
-								<div>
-									<div class="font-semibold">{p.full_name}</div>
-									<div class="text-sm text-gray-400">Директор</div>
-								</div>
-							</div>
-						{/each}
-						{#each artisticDirectors as p}
-							<div class="flex items-center space-x-3">
-								<div class="h-12 w-12 shrink-0 rounded-full bg-gray-600"></div>
-								<div>
-									<div class="font-semibold">{p.full_name}</div>
-									<div class="text-sm text-gray-400">Художественный руководитель</div>
-								</div>
-							</div>
-						{/each}
-					</div>
 				</div>
 
 				<!-- right -->
@@ -169,7 +148,7 @@
 				{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'пресс-служба') as p}
 					<div class="relative h-30">
 						<div class="flex items-start space-x-3">
-							<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
+							<!-- <img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" /> -->
 							<div>
 								<div class="font-semibold">{titleCase(p.fullName)}</div>
 								<div class="text-sm text-gray-400">{titleCase(p.position)}</div>
@@ -180,8 +159,28 @@
 						<div class="absolute top-16 flex gap-4"></div>
 					</div>
 				{/each}
-			</div>
 
+				<div class="relative h-30">
+					<div class="flex items-start space-x-3">
+						<img class="size-16 rounded-full" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
+						<div>
+							<div class="font-semibold">Фотобанк и ссылка</div>
+							<!-- <div class="text-sm text-gray-400">{titleCase(p.position)}</div>
+								<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
+								<div class="text-sm text-gray-400">{trimTitles(p.email)}</div> -->
+						</div>
+					</div>
+					<div class="absolute top-16 flex gap-4"></div>
+				</div>
+			</div>
+			<!-- СОТРУДНИКИ -->
+			<h3 class="mt-10 mb-4 text-xl font-semibold">СОТРУДНИКИ {theater.employees}</h3>
+			<h3 class="mt-10 mb-4 text-xl font-semibold">
+				ХУДОЖЕСТВЕННЫЙ ПЕРСОНАЛ {theater.artistic_staff}
+			</h3>
+			<h3 class="mt-10 mb-4 text-xl font-semibold">АРТИСТЫ {theater.cast}</h3>
+
+			<!-- АРТИСТЫ -->
 			<h3 class="mt-10 mb-4 text-xl font-semibold">АРТИСТЫ</h3>
 			<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
 				{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
