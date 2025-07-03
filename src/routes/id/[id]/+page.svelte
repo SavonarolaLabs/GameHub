@@ -14,6 +14,7 @@
 	const spaceimg = (file: string) => `${base}/spaces/${file}.jpg`;
 	const productionimg = (file: string) => `${base}/productions/${file}.jpg`;
 	const hrimg = (file: string) => `${base}/hr/${file}`;
+	const socialsimg = (file: string) => `${base}/socials/${file}`;
 	$: totalSeats = theater.spaces.reduce((s, v) => s + (v.total_capacity ?? 0), 0);
 
 	$: directors = theater.hr.filter((h) => h.position.trim().toLowerCase().startsWith('директор'));
@@ -110,18 +111,27 @@
 					>
 				</div>
 			</div>
-		</header>
-		<div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-			{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
-				<div class="flex items-center space-x-3">
-					<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
+			<h3 class="mt-10 mb-4 text-xl font-semibold">АРТИСТЫ</h3>
+			<div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+				{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
 					<div>
-						<div class="font-semibold">{p.fullName}</div>
-						<div class="text-sm text-gray-400">{p.titles}</div>
+						<div class="flex items-center space-x-3">
+							<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
+							<div>
+								<div class="font-semibold">{p.fullName}</div>
+								<div class="text-sm text-gray-400">{p.titles}</div>
+							</div>
+						</div>
+						<div>
+							<a href={p.wikiUrl}><img class="size-6" src={socialsimg('wiki.jpg')} alt="" /> </a>
+							<a href={p.linkToTheaterSite}
+								><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
+							</a>
+						</div>
 					</div>
-				</div>
-			{/each}
-		</div>
+				{/each}
+			</div>
+		</header>
 	</div>
 
 	<!-- контент -->
