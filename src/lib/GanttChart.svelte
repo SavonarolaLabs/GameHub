@@ -91,10 +91,6 @@
 
 <!-- ⇢ markup -------------------------------------------------------------- -->
 <div class="calendar-container">
-	<div class="calendar-header">
-		<h1>КАЛЕНДАРЬ ПРЕМЬЕР</h1>
-	</div>
-
 	<div class="gantt-wrapper">
 		<!-- Timeline header with month labels -->
 		<div class="timeline-header">
@@ -144,17 +140,6 @@
 	.calendar-container {
 		color: white;
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-	}
-
-	.calendar-header {
-		margin-bottom: 2rem;
-	}
-
-	.calendar-header h1 {
-		font-size: 1.5rem;
-		font-weight: 600;
-		margin: 0;
-		letter-spacing: 0.05em;
 	}
 
 	.gantt-wrapper {
