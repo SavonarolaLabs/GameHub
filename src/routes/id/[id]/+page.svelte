@@ -82,15 +82,6 @@
 					<h1 class="mb-4 text-4xl font-bold">{theater.name}</h1>
 					<p class="mb-2 text-gray-400">{theater.address}</p>
 
-					{#if theater.maps_link}
-						<a
-							class="mb-6 inline-block text-blue-400 underline"
-							href={theater.maps_link}
-							target="_blank"
-							rel="noopener">Открыть в&nbsp;Яндекс.Картах</a
-						>
-					{/if}
-
 					<!-- hr -->
 					<div class="mb-8 opacity-[0.7]">{theater.description}</div>
 				</div>
@@ -284,6 +275,14 @@
 										Коммерческих мест: <strong>{s.commercial_capacity}</strong><br />
 										Неудобных мест: <strong>{s.inconvenient_seats}</strong>
 									</p> -->
+									{#if s.maps_link}
+										<a
+											class="mb-6 inline-block text-blue-400 underline"
+											href={s.maps_link}
+											target="_blank"
+											rel="noopener">Открыть в&nbsp;Яндекс.Картах</a
+										>
+									{/if}
 								</div>
 
 								<!-- фото площадки -->
@@ -307,7 +306,7 @@
 			{/each}
 		</section>
 		<section class="mx-auto w-full max-w-6xl p-6">
-			<h2 class="mb-8 text-3xl font-bold">Премьеры</h2>
+			<h2 class="mb-8 text-3xl font-bold">КАЛЕНДАРЬ ПРЕМЬЕР</h2>
 			<GanttChart items={premieres} />
 		</section>
 		<section class="mx-auto w-full max-w-6xl p-6">
