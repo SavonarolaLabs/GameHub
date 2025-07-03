@@ -183,7 +183,7 @@
 	}
 
 	.month-label.new-year {
-		color: #fbbf24;
+		color: #f03066;
 		font-weight: 600;
 	}
 

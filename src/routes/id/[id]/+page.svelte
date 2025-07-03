@@ -98,7 +98,7 @@
 					<h1 class="mb-4 text-4xl font-bold">{theater.name}</h1>
 					<div class="mb-2 flex flex-col">
 						{#each ticketOperator.filter((s) => s.id == theater.id) as s}
-							<div class="flex gap-4">
+							<div class="flex flex-wrap gap-4 whitespace-nowrap">
 								{#each s.operators as operators}
 									<div class="rounded-sm bg-slate-700 px-3">{operators.name}</div>
 								{/each}
@@ -110,45 +110,41 @@
 					<div class="mt-4 mb-8 line-clamp-4 opacity-[0.7]">{theater.description}</div>
 
 					<p class="mb-2 text-gray-400">{theater.address}</p>
-					{#each theaterSocials.filter((s) => s.id == theater.id) as s}
-						<div class="top-16 my-4 flex gap-4">
-							{#each s.socials as social}
-								<a href={social.link}
-									><img class="size-6" src={socialsimg(social.photo)} alt="" />
-								</a>
+					<div class="flex flex-wrap items-center justify-between">
+						<div>
+							{#each theaterSocials.filter((s) => s.id == theater.id) as s}
+								<div class="top-16 my-4 flex gap-4">
+									{#each s.socials as social}
+										<a href={social.link}
+											><img class="size-6" src={socialsimg(social.photo)} alt="" />
+										</a>
+									{/each}
+								</div>
 							{/each}
 						</div>
-					{/each}
+						<div>
+							<div class="rounded-full border-2 px-3 text-slate-700">
+								{theater.reconstruction}
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<!-- right -->
 				<div class="mt-8 w-full lg:mt-0 lg:ml-8 lg:w-80">
 					<div class="mb-4 rounded-lg bg-slate-800 p-4">
-						<span
-							class="mb-2 inline-block rounded bg-yellow-500 px-2 py-1 text-sm font-bold text-black"
-							>★ {theater.yandex_rating}</span
-						>
-
 						{#if ranking.find((r) => r.id === theater.id)}
 							{@const rank = ranking.find((r) => r.id === theater.id)}
-							<div class="font-bold text-pink-500">
+							<div class="font-bold text-[#f03066]">
 								#{rank.rankRevenue2024}
-								<span class="text-gray-300">по выручке / {rank.revenue2024} </span>
+								<span class="text-gray-300">по выручке </span>
 							</div>
-							<div class="font-bold text-pink-500">
+							<div class="font-bold text-[#f03066]">
 								#{rank.rankTickets2024}
-								<span class="text-gray-300">по посещаемости/ {rank.tickets2024}</span>
+								<span class="text-gray-300">по посещаемости</span>
 							</div>
 							<div class="mb-2"></div>
 						{/if}
-
-						<div class="space-y-2 text-sm text-gray-300">
-							<p class="hidden">
-								Средняя цена билета: <strong>{theater.ticket_price_rub.toLocaleString()} ₽</strong>
-							</p>
-							<p><strong>Отзывы:</strong> {theater.yandex_reviews_count}</p>
-							<p><strong>Оценки:</strong> {theater.yandex_ratings_count}</p>
-						</div>
 					</div>
 
 					<!-- фото -->
@@ -156,14 +152,19 @@
 						<img class="h-48 w-full object-cover" src={theaterimg(theater.id)} alt={theater.name} />
 					</div>
 
-					<button
-						class="w-full rounded bg-slate-700 px-4 py-3 text-left transition-colors hover:bg-slate-600"
-						>Посещаемость {theater.occupancy_percent}%</button
+					<div
+						class="transition-color flex w-full items-center justify-between rounded bg-slate-700 px-4 py-3 text-left"
 					>
+						<div class="inline-block rounded bg-[#f03066] px-2 py-1 text-sm font-bold text-white">
+							★ {theater.yandex_rating}
+						</div>
+						<p>Отзывы: {theater.yandex_reviews_count}</p>
+						<p>Оценки: {theater.yandex_ratings_count}</p>
+					</div>
 				</div>
 			</div>
 			<!-- СОТРУДНИКИ -->
-			<div class="flex justify-between">
+			<div class="flex flex-wrap justify-between whitespace-nowrap">
 				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
 					<div class="text-gray-400">СОТРУДНИКИ</div>
 					<div class="text-9xl">{theater.employees}</div>
@@ -356,7 +357,7 @@
 		{#if ranking.find((r) => r.id === theater.id)}
 			{@const rank = ranking.find((r) => r.id === theater.id)}
 
-			<div class="mx-auto flex max-w-6xl justify-between p-6">
+			<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
 				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
 					<div class="text-gray-400">ВЫРУЧКА</div>
 					<div class="text-6xl">{formatRubAbbreviated(rank.revenue2025)}</div>
@@ -373,7 +374,6 @@
 		{/if}
 
 		<section class="mx-auto w-full max-w-6xl p-6">
-			<h2 class="mb-8 text-3xl font-bold">Динамика</h2>
 			<DynamicChart data={dynamics} />
 		</section>
 		<section class="mx-auto w-full max-w-6xl p-6">
