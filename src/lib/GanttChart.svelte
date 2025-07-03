@@ -22,6 +22,12 @@
 			venue: 'Основная сцена',
 			startDate: '15.03.2024',
 			endDate: '30.11.2024'
+		},
+		{
+			name: 'Гамлет',
+			venue: 'Малая сцена',
+			startDate: '01.11.2024',
+			endDate: '15.04.2025'
 		}
 	];
 
@@ -66,10 +72,16 @@
 
 		let current = new Date(start);
 		while (current < end) {
+			const isNewYear = current.getMonth() === 0;
+			const label = isNewYear
+				? `${formatMonth(current)} ${current.getFullYear()}`
+				: formatMonth(current);
+
 			markers.push({
 				date: new Date(current),
-				label: formatMonth(current),
-				position: pct(current)
+				label: label,
+				position: pct(current),
+				isNewYear: isNewYear
 			});
 			current.setMonth(current.getMonth() + 1);
 		}
@@ -90,7 +102,11 @@
 			<div class="venue-spacer"></div>
 			<div class="timeline-months">
 				{#each monthMarkers as marker}
-					<div class="month-label" style="left: {marker.position}%">
+					<div
+						class="month-label"
+						class:new-year={marker.isNewYear}
+						style="left: {marker.position}%"
+					>
 						{marker.label}
 					</div>
 				{/each}
@@ -179,6 +195,11 @@
 		color: #d1d5db;
 		white-space: nowrap;
 		transform: translateX(-50%);
+	}
+
+	.month-label.new-year {
+		color: #fbbf24;
+		font-weight: 600;
 	}
 
 	.gantt-row {
