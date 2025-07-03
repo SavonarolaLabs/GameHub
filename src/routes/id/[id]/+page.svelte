@@ -11,6 +11,7 @@
 	import { theatersPremiers } from '$lib/theatersPremiers';
 	import DynamicChart from '$lib/DynamicChart.svelte';
 	import { theatersDynamic } from '$lib/theatersDynamic';
+	import PersonPopup from '$lib/PersonPopup.svelte';
 
 	/* --------- данные театра --------- */
 	let theater: Theater = theaters[0];
@@ -84,6 +85,14 @@
 
 	const goToMain = () => {
 		window.location.href = '/';
+	};
+
+	let showPopup = false;
+	let selectedPerson = {
+		name: 'Жуков Владимир Иванович',
+		position: 'Директор',
+		photo: 'path/to/photo.jpg',
+		biography: 'Биография персонажа...'
 	};
 </script>
 
@@ -184,7 +193,14 @@
 				{#each hr.filter((h) => h.organizationInn == theater.id && (h.position == 'директор' || h.position.startsWith('художественный'))) as p}
 					<div class="relative h-30">
 						<div class="flex items-start space-x-3">
-							<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
+							<button
+								onclick={() => {
+									showPopup = true;
+								}}
+							>
+								<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
+							</button>
+
 							<div>
 								<div class="font-semibold">{titleCase(p.fullName)}</div>
 								<div class="text-sm text-gray-400">{titleCase(p.position)}</div>
@@ -407,6 +423,8 @@
 		<ArrowLeft size={24} />
 	</button>
 </div>
+
+<PersonPopup bind:isOpen={showPopup} person={selectedPerson} on:close={() => (showPopup = false)} />
 
 <style>
 	.back-to-main-btn {
