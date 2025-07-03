@@ -20,11 +20,6 @@
 	const socialsimg = (file: string) => `${base}/socials/${file}`;
 	$: totalSeats = theater.spaces.reduce((s, v) => s + (v.total_capacity ?? 0), 0);
 
-	$: directors = theater.hr.filter((h) => h.position.trim().toLowerCase().startsWith('директор'));
-	$: artisticDirectors = theater.hr.filter((h) =>
-		h.position.trim().toLowerCase().includes('художественный')
-	);
-
 	function trimTitles(titles: string): string {
 		if (titles.length > 60) {
 			return titles.slice(0, 60 - 3) + '...';
