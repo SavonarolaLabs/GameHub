@@ -114,19 +114,19 @@
 			<h3 class="mt-10 mb-4 text-xl font-semibold">АРТИСТЫ</h3>
 			<div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
 				{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
-					<div>
-						<div class="flex items-center space-x-3">
+					<div class="flex space-x-3 bg-green-300">
+						<div class="flex-items-center w-16">
 							<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
-							<div>
-								<div class="font-semibold">{p.fullName}</div>
-								<div class="text-sm text-gray-400">{p.titles}</div>
+							<div class="flex w-full justify-start gap-4">
+								<a href={p.wikiUrl}><img class="size-6" src={socialsimg('wiki.jpg')} alt="" /> </a>
+								<a href={p.linkToTheaterSite}
+									><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
+								</a>
 							</div>
 						</div>
 						<div>
-							<a href={p.wikiUrl}><img class="size-6" src={socialsimg('wiki.jpg')} alt="" /> </a>
-							<a href={p.linkToTheaterSite}
-								><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
-							</a>
+							<div class="font-semibold">{p.fullName}</div>
+							<div class="text-sm text-gray-400">{p.titles}</div>
 						</div>
 					</div>
 				{/each}
