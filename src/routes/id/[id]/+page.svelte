@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
 	import { hr } from '$lib/hr';
+	import { theaterSocials } from '$lib/theaterSocials';
 	import { theaters } from '$lib/theaters-data';
 	import { ArrowLeft } from 'lucide-svelte';
 
@@ -69,6 +70,7 @@
 				<div class="flex-1">
 					<h1 class="mb-4 text-4xl font-bold">{theater.name}</h1>
 					<p class="mb-2 text-gray-400">{theater.address}</p>
+
 					{#if theater.maps_link}
 						<a
 							class="mb-6 inline-block text-blue-400 underline"
@@ -78,6 +80,15 @@
 						>
 					{/if}
 
+					{#each theaterSocials.filter((s) => s.id == theater.id) as s}
+						<div class="absolute top-16 flex gap-4">
+							{#each s.socials as social}
+								<a href={social.link}
+									><img class="size-6" src={socialsimg(social.photo)} alt="" />
+								</a>
+							{/each}
+						</div>
+					{/each}
 					<!-- hr -->
 					<div class="mb-8 opacity-[0.7]">{theater.description}</div>
 				</div>
