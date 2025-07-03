@@ -74,8 +74,6 @@
 		const shortNumber = number / divisor;
 
 		const formatted = new Intl.NumberFormat('ru-RU', {
-			style: 'currency',
-			currency: 'RUB',
 			maximumFractionDigits: 1
 		}).format(shortNumber);
 
@@ -360,12 +358,12 @@
 
 			<div class="mx-auto flex max-w-6xl justify-between p-6">
 				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-					<div class="text-gray-400">ВЫРУЧКА, млн</div>
-					<div class="text-6xl">{formatRubAbbreviated(rank.revenue2024)}</div>
+					<div class="text-gray-400">ВЫРУЧКА</div>
+					<div class="text-6xl">{formatRubAbbreviated(rank.revenue2025)}</div>
 				</h3>
 				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-					<div class="text-gray-400">БИЛЕТОВ, тыс</div>
-					<div class="text-6xl">{formatRubAbbreviated(rank.tickets2024)}</div>
+					<div class="text-gray-400">БИЛЕТОВ</div>
+					<div class="text-6xl">{formatRubAbbreviated(rank.tickets2025)}</div>
 				</h3>
 				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
 					<div class="text-gray-400">ЗАПОЛНЯЕМОСТЬ</div>
