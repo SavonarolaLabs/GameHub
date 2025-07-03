@@ -29,6 +29,29 @@
 			return titles;
 		}
 	}
+	function titleCase(str: string) {
+		// \p{L}+  — последовательность букв в любом алфавите (флаг u = Unicode)
+		return str.replace(/\p{L}+/gu, (word) => word[0].toUpperCase() + word.slice(1).toLowerCase());
+	}
+	function formatPhone(raw: string) {
+		// 1. оставляем только цифры
+		let d = raw.replace(/\D+/g, '');
+
+		// 2. если 11 цифр и начинается на 8, меняем 8 → 7
+		if (d.length === 11) {
+			if (d[0] === '8') d = '7' + d.slice(1);
+
+			// 3. раскладываем 1-3-3-2-2
+			const m = d.match(/^(\d)(\d{3})(\d{3})(\d{2})(\d{2})$/);
+			if (m) {
+				const [, c, a, b, c2, d2] = m;
+				return `+${c}-${a}-${b}-${c2}-${d2}`;
+			}
+		}
+
+		// fallback: ничего не делаем
+		return raw.trim();
+	}
 	/* раскрытие площадок */
 	let expanded = -1; // индекс раскрытой площадки
 
@@ -118,6 +141,47 @@
 					>
 				</div>
 			</div>
+			<h3 class="mt-10 mb-4 text-xl font-semibold">РУКОВОДСТВО</h3>
+			<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
+				{#each hr.filter((h) => h.organizationInn == theater.id && (h.position == 'директор' || h.position.startsWith('художественный'))) as p}
+					<div class="relative h-30">
+						<div class="flex items-start space-x-3">
+							<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
+							<div>
+								<div class="font-semibold">{titleCase(p.fullName)}</div>
+								<div class="text-sm text-gray-400">{titleCase(p.position)}</div>
+								<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
+							</div>
+						</div>
+						<div class="absolute top-16 flex gap-4">
+							<a href={p.wikiUrl}><img class="size-6" src={socialsimg('wiki.jpg')} alt="" /> </a>
+							<a href={p.linkToTheaterSite}
+								><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
+							</a>
+						</div>
+					</div>
+				{/each}
+			</div>
+
+			<!-- пресс-служба -->
+			<h3 class="mt-10 mb-4 text-xl font-semibold">ПРЕСС-СЛУЖБА</h3>
+			<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
+				{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'пресс-служба') as p}
+					<div class="relative h-30">
+						<div class="flex items-start space-x-3">
+							<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
+							<div>
+								<div class="font-semibold">{titleCase(p.fullName)}</div>
+								<div class="text-sm text-gray-400">{titleCase(p.position)}</div>
+								<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
+								<div class="text-sm text-gray-400">{trimTitles(p.email)}</div>
+							</div>
+						</div>
+						<div class="absolute top-16 flex gap-4"></div>
+					</div>
+				{/each}
+			</div>
+
 			<h3 class="mt-10 mb-4 text-xl font-semibold">АРТИСТЫ</h3>
 			<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
 				{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
