@@ -236,9 +236,9 @@
 			<h2 class="mb-6 text-2xl font-bold">{theater.spaces.length} площадки / {totalSeats} мест</h2>
 
 			{#each theater.spaces as s, i}
-				<div class="mb-6 rounded-lg bg-red-500">
+				<div class="mb-6 rounded-lg bg-slate-600">
 					<button
-						class="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-red-600"
+						class="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-slate-500"
 						onclick={() => (expanded = expanded === i ? -1 : i)}
 					>
 						<span class="text-xl font-semibold"
