@@ -115,7 +115,7 @@
 							{#each theaterSocials.filter((s) => s.id == theater.id) as s}
 								<div class="top-16 my-4 flex gap-4">
 									{#each s.socials as social}
-										<a href={social.link}
+										<a target="_blank" href={social.link}
 											><img class="size-6" src={socialsimg(social.photo)} alt="" />
 										</a>
 									{/each}
@@ -193,10 +193,12 @@
 						</div>
 						<div class="absolute top-16 flex gap-4">
 							{#if p.wikiUrl}
-								<a href={p.wikiUrl}><img class="size-6" src={socialsimg('wiki.jpg')} alt="" /> </a>
+								<a target="_blank" href={p.wikiUrl}
+									><img class="size-6" src={socialsimg('wiki.jpg')} alt="" />
+								</a>
 							{/if}
 							{#if p.linkToTheaterSite}
-								<a href={p.linkToTheaterSite}
+								<a target="_blank" href={p.linkToTheaterSite}
 									><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
 								</a>
 							{/if}
@@ -225,13 +227,15 @@
 
 				<div class="relative h-30">
 					<div class="flex items-start space-x-3">
-						<img class="size-16 rounded-full" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
-						<div>
-							<div class="font-semibold">Фотобанк</div>
-							<!-- <div class="text-sm text-gray-400">{titleCase(p.position)}</div>
+						<a target="_blank" class="flex flex-col gap-2" href={theater.fotobankLink}>
+							<img class="size-16 rounded-full" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
+							<div>
+								<div class="text-sm text-gray-400">Фотобанк</div>
+								<!-- <div class="text-sm text-gray-400">{titleCase(p.position)}</div>
 								<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
 								<div class="text-sm text-gray-400">{trimTitles(p.email)}</div> -->
-						</div>
+							</div>
+						</a>
 					</div>
 					<div class="absolute top-16 flex gap-4"></div>
 				</div>
@@ -251,10 +255,12 @@
 						</div>
 						<div class="absolute top-16 flex gap-4">
 							{#if p.wikiUrl}
-								<a href={p.wikiUrl}><img class="size-6" src={socialsimg('wiki.jpg')} alt="" /> </a>
+								<a target="_blank" href={p.wikiUrl}
+									><img class="size-6" src={socialsimg('wiki.jpg')} alt="" />
+								</a>
 							{/if}
 							{#if p.linkToTheaterSite}
-								<a href={p.linkToTheaterSite}
+								<a target="_blank" href={p.linkToTheaterSite}
 									><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
 								</a>
 							{/if}

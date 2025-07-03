@@ -19,6 +19,7 @@ export const theaters = [
 		artistic_staff: 78,
 		cast: 97,
 		ticketing_system: 'Базис',
+		fotobankLink: 'https://disk.yandex.ru/d/7quhG_PMJnzKlA?ncrnd=65021',
 
 		/* соцсети */
 		socials: [
