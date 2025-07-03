@@ -5,6 +5,7 @@
 	import { theaterSocials } from '$lib/theaterSocials';
 	import { theaters } from '$lib/theaters-data';
 	import { ticketOperator } from '$lib/ticketOperator';
+	import { ranking } from '$lib/ranking';
 	import { ArrowLeft } from 'lucide-svelte';
 
 	/* --------- данные театра --------- */
