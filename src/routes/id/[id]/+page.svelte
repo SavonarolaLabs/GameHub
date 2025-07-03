@@ -115,12 +115,15 @@
 							>★ {theater.yandex_rating}</span
 						>
 
-						{#if theater.revenueRank || theater.attendanceRank}
+						{#if ranking.find((r) => r.id === theater.id)}
+							{@const rank = ranking.find((r) => r.id === theater.id)}
 							<div class="font-bold text-pink-500">
-								#{theater.revenueRank} <span class="text-gray-300">по выручке</span>
+								#{rank.rankRevenue2024}
+								<span class="text-gray-300">по выручке / {rank.revenue2024} </span>
 							</div>
 							<div class="font-bold text-pink-500">
-								#{theater.attendanceRank} <span class="text-gray-300">по посещаемости</span>
+								#{rank.rankTickets2024}
+								<span class="text-gray-300">по посещаемости/ {rank.tickets2024}</span>
 							</div>
 							<div class="mb-2"></div>
 						{/if}
