@@ -200,9 +200,14 @@
 				{#each hr.filter((h) => h.organizationInn == theater.id && (h.position == 'директор' || h.position.startsWith('художественный'))) as p}
 					<div class="relative h-30">
 						<div class="flex items-start space-x-3">
-							<button onclick={() => showPersonBio(p)}>
-								<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
-							</button>
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+							<img
+								class="size-16 cursor-pointer rounded-full"
+								src={hrimg(p.photo)}
+								alt=""
+								onclick={() => showPersonBio(p)}
+							/>
 
 							<div>
 								<div class="font-semibold">{titleCase(p.fullName)}</div>
@@ -266,9 +271,14 @@
 				{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
 					<div class="relative h-30">
 						<div class="flex items-start space-x-3">
-							<button class="size-16" onclick={() => showPersonBio(p)}>
-								<img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" />
-							</button>
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+							<img
+								class="size-16 cursor-pointer rounded-full"
+								src={hrimg(p.photo)}
+								alt=""
+								onclick={() => showPersonBio(p)}
+							/>
 
 							<div>
 								<div class="font-semibold">{p.fullName}</div>
