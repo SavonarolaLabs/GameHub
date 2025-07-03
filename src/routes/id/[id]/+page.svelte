@@ -76,7 +76,7 @@
 						{#each ticketOperator.filter((s) => s.id == theater.id) as s}
 							<div class="flex gap-4">
 								{#each s.operators as operators}
-									<div class="rounded-sm bg-slate-600 px-3">{operators.name}</div>
+									<div class="rounded-sm bg-slate-700 px-3">{operators.name}</div>
 								{/each}
 							</div>
 						{/each}
@@ -99,7 +99,7 @@
 
 				<!-- right -->
 				<div class="mt-8 w-full lg:mt-0 lg:ml-8 lg:w-80">
-					<div class="mb-4 rounded-lg bg-slate-700 p-4">
+					<div class="mb-4 rounded-lg bg-slate-800 p-4">
 						<span
 							class="mb-2 inline-block rounded bg-yellow-500 px-2 py-1 text-sm font-bold text-black"
 							>★ {theater.yandex_rating}</span
@@ -128,18 +128,32 @@
 					</div>
 
 					<!-- фото -->
-					<div class="mb-4 overflow-hidden rounded-lg bg-slate-700">
+					<div class="mb-4 overflow-hidden rounded-lg bg-slate-800">
 						<img class="h-48 w-full object-cover" src={theaterimg(theater.id)} alt={theater.name} />
 					</div>
 
 					<button
-						class="w-full rounded bg-slate-600 px-4 py-3 text-left transition-colors hover:bg-slate-500"
+						class="w-full rounded bg-slate-700 px-4 py-3 text-left transition-colors hover:bg-slate-600"
 						>Посещаемость {theater.occupancy_percent}%</button
 					>
 				</div>
 			</div>
 			<!-- СОТРУДНИКИ -->
-			<div class="flex gap-8">
+			<div class="flex justify-between">
+				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+					<div class="text-gray-400">СОТРУДНИКИ</div>
+					<div class="text-9xl">{theater.employees}</div>
+				</h3>
+				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+					<div class="text-gray-400">ХУДОЖЕСТВЕННЫЙ ПЕРСОНАЛ</div>
+					<div class="text-9xl">{theater.artistic_staff}</div>
+				</h3>
+				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+					<div class="text-gray-400">АРТИСТЫ</div>
+					<div class="text-9xl">{theater.cast}</div>
+				</h3>
+			</div>
+			<div class="flex hidden gap-8">
 				<h3 class="mt-10 mb-4 text-xl font-semibold">
 					<span class="text-gray-400">СОТРУДНИКИ</span> <span>{theater.employees}</span>
 				</h3>
@@ -244,9 +258,9 @@
 			<h2 class="mb-6 text-2xl font-bold">{theater.spaces.length} площадки / {totalSeats} мест</h2>
 
 			{#each theater.spaces as s, i}
-				<div class="mb-6 rounded-lg bg-slate-600">
+				<div class="mb-6 rounded-lg bg-slate-700">
 					<button
-						class="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-slate-500"
+						class="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-slate-600"
 						onclick={() => (expanded = expanded === i ? -1 : i)}
 					>
 						<span class="text-xl font-semibold"
@@ -268,7 +282,7 @@
 					</button>
 
 					{#if expanded === i}
-						<div class="bg-slate-800 p-6">
+						<div class="bg-slate-750 p-6">
 							<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 								<!-- info -->
 								<div>
@@ -304,7 +318,7 @@
 
 								<!-- фото площадки -->
 								<div
-									class="flex h-40 items-center justify-center overflow-hidden rounded bg-gray-600"
+									class="flex h-40 items-center justify-center overflow-hidden rounded bg-slate-600"
 								>
 									{#if s.photo}
 										<img
@@ -369,7 +383,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 		cursor: pointer;
 		transition: all 0.15s ease;
 		border: none;
