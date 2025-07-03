@@ -12,6 +12,42 @@ export const theaters = [
 		occupancy_percent: 72.0,
 		ticket_price_rub: 4500.0,
 		photo: '7703035553_1',
+
+		/* новые поля */
+		employees: 312,
+		artistic_staff: 78,
+		cast: 97,
+		ticketing_system: 'Базис',
+
+		/* соцсети */
+		socials: [
+			{
+				name: 'Сайт',
+				link: 'https://teatrpushkin.ru/',
+				icon: '7703035553_logo.png'
+			},
+			{
+				name: 'Телеграмм',
+				link: 'https://t.me/teatrpushkin',
+				icon: 'telegram.png'
+			},
+			{
+				name: 'Ютуб',
+				link: 'https://www.youtube.com/channel/UCL6n8CTa-HHlHkrPkZmJ00A',
+				icon: 'youtube.png'
+			},
+			{
+				name: 'Дзен',
+				link: 'https://dzen.ru/teatrpushkin',
+				icon: 'dzen.png'
+			},
+			{
+				name: 'ВК',
+				link: 'https://vk.com/club1288419',
+				icon: 'vk.png'
+			}
+		],
+
 		productions: [
 			{
 				id: 1,
@@ -29,6 +65,7 @@ export const theaters = [
 				foto: '7703035553_3'
 			}
 		],
+
 		spaces: [
 			{
 				id: 94,
@@ -55,6 +92,7 @@ export const theaters = [
 				photo: '7703035553_96'
 			}
 		],
+
 		hr: [
 			{
 				full_name: 'ПИСАРЕВ Евгений Александрович',
@@ -67,6 +105,7 @@ export const theaters = [
 				photo: null
 			}
 		],
+
 		maps_link: 'https://yandex.ru/maps/-/CHCQZZ65',
 		yandex_ratings_count: 13805,
 		yandex_reviews_count: 4308,
