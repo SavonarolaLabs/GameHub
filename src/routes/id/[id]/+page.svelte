@@ -12,7 +12,7 @@
 	import DynamicChart from '$lib/DynamicChart.svelte';
 	import { theatersDynamic } from '$lib/theatersDynamic';
 	import PersonPopup from '$lib/PersonPopup.svelte';
-
+	import HorizontalBarChart from '$lib/HorizontalBarChart.svelte';
 	/* --------- данные театра --------- */
 	let theater: Theater = theaters[0];
 	$: theater = theaters.find((t) => t.id === Number($page.params.id)) || theater;
@@ -101,6 +101,37 @@
 		photo: 'path/to/photo.jpg',
 		biography: 'Биография ...'
 	};
+
+	const eventSales = [
+		{ title: 'Плохие хорошие', sales: 49_802_200, share: 0.16 },
+		{ title: 'Зойкина квартира', sales: 27_195_200, share: 0.09 },
+		{ title: 'Барабаны в ночи', sales: 26_423_200, share: 0.09 },
+		{ title: 'Женитьба Фигаро', sales: 22_556_950, share: 0.07 },
+		{ title: 'Космос', sales: 16_986_750, share: 0.06 },
+		{ title: 'Мышеловка', sales: 14_083_130, share: 0.05 },
+		{ title: 'Эта прекрасная жизнь', sales: 13_515_800, share: 0.04 },
+		{ title: 'Семейка Краузе', sales: 12_317_100, share: 0.04 },
+		{ title: 'Ложные признания', sales: 11_612_550, share: 0.04 },
+		{ title: 'Мадам Рубинштейн', sales: 10_862_760, share: 0.04 },
+		{ title: 'Сделка', sales: 9_901_130, share: 0.03 },
+		{ title: 'Слуга двух господ', sales: 9_115_300, share: 0.03 },
+		{ title: 'Остров сокровищ', sales: 8_603_590, share: 0.03 },
+		{ title: 'Влюбленный Шекспир', sales: 8_528_670, share: 0.03 },
+		{ title: 'Заповедник', sales: 8_455_410, share: 0.03 },
+		{ title: 'Завтра была война', sales: 7_694_760, share: 0.03 },
+		{ title: 'Лицей', sales: 5_903_300, share: 0.02 },
+		{ title: 'Рождество О. Генри', sales: 5_828_900, share: 0.02 },
+		{ title: 'Три Ивана', sales: 5_190_630, share: 0.02 },
+		{ title: 'Инспектор пришел', sales: 4_135_980, share: 0.01 },
+		{ title: 'Полковнику никто…', sales: 4_075_150, share: 0.01 },
+		{ title: 'Красавец мужчина', sales: 3_770_850, share: 0.01 },
+		{ title: 'Обещание на рассвете', sales: 3_482_710, share: 0.01 },
+		{ title: 'Тартюф', sales: 2_625_540, share: 0.01 },
+		{ title: 'Буря', sales: 2_158_700, share: 0.01 }
+	];
+
+	/** форматируем числовое значение ₽ с пробелами-тысячниками */
+	const fmtRub = (n: number) => new Intl.NumberFormat('ru-RU').format(n);
 </script>
 
 <div class="flex min-h-screen w-full flex-col items-center">
@@ -152,11 +183,11 @@
 						{#if ranking.find((r) => r.id === theater.id)}
 							{@const rank = ranking.find((r) => r.id === theater.id)}
 							<div class="font-bold text-[#f03066]">
-								#{rank.rankRevenue2024}
+								#{rank.rankRevenue2025}
 								<span class="text-gray-300">по выручке </span>
 							</div>
 							<div class="font-bold text-[#f03066]">
-								#{rank.rankTickets2024}
+								#{rank.rankTickets2025}
 								<span class="text-gray-300">по посещаемости</span>
 							</div>
 							<div class="mb-2"></div>
@@ -390,47 +421,203 @@
 		<section class="mx-auto w-full max-w-6xl p-6">
 			<h2 class="mb-8 text-3xl font-bold">КАЛЕНДАРЬ ПРЕМЬЕР</h2>
 			<GanttChart items={premieres} />
-		</section>
+			<section class="mx-auto w-full max-w-6xl p-6">
+				<h2 class="mb-8 text-3xl font-bold">Общая информация</h2>
+			</section>
+			<section class="mx-auto w-full max-w-6xl">
+				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">Внебюджет МЛН, 2024</div>
+						<div class="text-6xl">542</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">Бюджет МЛН, 2024</div>
+						<div class="text-6xl">228</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">Бюджетная зависимость, 2024</div>
+						<div class="text-6xl">30%</div>
+					</h3>
+				</div>
+				<h2 class="mb-8 text-3xl font-bold">Внебюджет</h2>
+				<HorizontalBarChart
+					items={[
+						{ label: 'Всего', percent: 1, value: '542 млн ₽', color: '#f03066' },
+						{
+							label: 'Билеты',
+							percent: 0.92,
+							value: '496,9 млн ₽',
+							avg: 0.79,
+							avgPct: 0.79,
+							color: '#60a5fa'
+						},
+						{
+							label: 'Гастроли',
+							percent: 0.022,
+							value: '11,8 млн ₽',
+							avg: 0.034,
+							avgPct: 0.034,
+							color: '#10b981'
+						},
+						{
+							label: 'Собственность',
+							percent: 0.024,
+							value: '13,2 млн ₽',
+							avg: 0.047,
+							avgPct: 0.047,
+							color: '#f59e0b'
+						},
+						{
+							label: 'Реклама',
+							percent: 0.008,
+							value: '4,5 млн ₽',
+							avg: 0.007,
+							avgPct: 0.007,
+							color: '#a78bfa'
+						}
+					]}
+				/>
 
-		{#if ranking.find((r) => r.id === theater.id)}
-			{@const rank = ranking.find((r) => r.id === theater.id)}
+				<!-- <div class=" mx-auto flex max-w-6xl flex-wrap justify-between whitespace-nowrap">
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">БИЛЕТЫ МЛН, 2024</div>
+						<div class="text-gray-400">в среднем 79,0%</div>
+						<div class="text-6xl">496,9 (92%)</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">ГАСТРОЛИ МЛН, 2024</div>
+						<div class="text-gray-400">в среднем 3,4%</div>
+						<div class="text-6xl">11,8 (2,2%)</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">СОБСТВЕННОСТЬ МЛН, 2024</div>
+						<div class="text-gray-400">в среднем 4,7%</div>
+						<div class="text-6xl">13,2 (2,4%)</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">РЕКЛАМА МЛН, 2024</div>
+						<div class="text-gray-400">в среднем 0,7%</div>
+						<div class="text-6xl">4,5 (0,8%)</div>
+					</h3>
+				</div> -->
+				<h2 class=" mb-8 text-3xl font-bold"></h2>
+				<h2 class=" mb-8 text-3xl font-bold">Расходы</h2>
+				<HorizontalBarChart
+					items={[
+						{
+							label: 'Всего',
+							percent: 1,
+							value: '517 млн ₽'
+							// avg / avgPct не нужны
+						},
+						{
+							label: 'ФОТ',
+							percent: 0.52,
+							value: '269 млн ₽',
+							avg: 0.45, // позиция маркера
+							avgPct: 0.45 // подпись «45 %» справа
+						},
+						{
+							label: 'Авторские',
+							percent: 0, // ➟ цветной бар НЕ рисуется
+							value: '0 млн ₽',
+							avg: 0.095,
+							avgPct: 0.095
+						}
+					]}
+				/>
+				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
+					<!-- раздел «Расходы» -->
+					<!-- <h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">ВСЕГО МЛН, 2024</div>
+						<div class="text-6xl">517</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">ФОТ МЛН, 2024</div>
+						<div class="text-gray-400">в среднем 45,0%</div>
+						<div class="text-6xl">269 (52%)</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">АВТОРСКИЕ МЛН, 2024</div>
+						<div class="text-gray-400">в среднем 9,5%</div>
+						<div class="text-6xl">0 (0%)</div>
+					</h3> -->
+				</div>
+			</section>
+			<section class="mx-auto w-full max-w-6xl p-6">
+				<h2 class="mb-8 text-3xl font-bold">Аналитика по билетам</h2>
+			</section>
+			{#if ranking.find((r) => r.id === theater.id)}
+				{@const rank = ranking.find((r) => r.id === theater.id)}
 
+				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">ВЫРУЧКА, 2024</div>
+						<div class="text-6xl">{formatRubAbbreviated(rank?.revenue2024)}</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">БИЛЕТОВ, 2024</div>
+						<div class="text-6xl">{formatRubAbbreviated(rank.tickets2024)}</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">ЗАПОЛНЯЕМОСТЬ</div>
+						<div class="text-6xl">{theater.occupancy_percent}%</div>
+					</h3>
+				</div>
+			{/if}
 			<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
 				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-					<div class="text-gray-400">ВЫРУЧКА</div>
-					<div class="text-6xl">{formatRubAbbreviated(rank.revenue2025)}</div>
+					<div class="text-gray-400">Постановок,2024</div>
+					<div class="text-6xl">50</div>
 				</h3>
 				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-					<div class="text-gray-400">БИЛЕТОВ</div>
-					<div class="text-6xl">{formatRubAbbreviated(rank.tickets2025)}</div>
-				</h3>
-				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-					<div class="text-gray-400">ЗАПОЛНЯЕМОСТЬ</div>
-					<div class="text-6xl">{theater.occupancy_percent}%</div>
+					<div class="text-gray-400">Ср. Стоимость</div>
+					<div class="text-6xl">2442</div>
 				</h3>
 			</div>
-		{/if}
+			<section class="mx-auto w-full max-w-6xl p-6">
+				<DynamicChart data={dynamics} />
+			</section>
 
-		<section class="mx-auto w-full max-w-6xl p-6">
-			<DynamicChart data={dynamics} />
-		</section>
-		<section class="mx-auto w-full max-w-6xl p-6">
-			<h2 class="mb-8 text-3xl font-bold">СПЕКТАКЛИ</h2>
-			<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{#each theater.productions as p}
-					<div
-						class="relative h-80 overflow-hidden rounded-lg bg-cover bg-center transition-transform duration-300 hover:scale-105"
-						style="background-image:url('{productionimg(p.foto)}')"
-					>
+			<h2 class="mb-8 text-3xl font-bold">Аналитика по мероприятиям - ТОП 25</h2>
+
+			<table class="w-full text-left">
+				<thead class="border-b border-slate-700 text-gray-400">
+					<tr>
+						<th class="py-2 pr-4">Название мероприятия</th>
+						<th class="py-2 pr-4">Продажи, ₽</th>
+						<th class="py-2">Доля</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each eventSales as e}
+						<tr class="border-b border-slate-800 last:border-none">
+							<td class="py-2 pr-4">{e.title}</td>
+							<td class="py-2 pr-4">{fmtRub(e.sales)}</td>
+							<td class="py-2">{Math.round(e.share * 100)}%</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+
+			<section class="mx-auto w-full max-w-6xl p-6">
+				<h2 class="mb-8 text-3xl font-bold">СПЕКТАКЛИ</h2>
+				<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+					{#each theater.productions as p}
 						<div
-							class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
-						></div>
-						<div class="absolute right-0 bottom-0 left-0 p-6">
-							<h3 class="mb-2 text-xl font-bold">{p.name}</h3>
+							class="relative h-80 overflow-hidden rounded-lg bg-cover bg-center transition-transform duration-300 hover:scale-105"
+							style="background-image:url('{productionimg(p.foto)}')"
+						>
+							<div
+								class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
+							></div>
+							<div class="absolute right-0 bottom-0 left-0 p-6">
+								<h3 class="mb-2 text-xl font-bold">{p.name}</h3>
+							</div>
 						</div>
-					</div>
-				{/each}
-			</div>
+					{/each}
+				</div>
+			</section>
 		</section>
 	</div>
 
