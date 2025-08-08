@@ -15,6 +15,7 @@
 	import HorizontalBarChart from '$lib/HorizontalBarChart.svelte';
 	/* --------- данные театра --------- */
 	let theater: Theater = theaters[0];
+	let artistsOpen = false; // Скрываем / Открываем артистов
 	$: theater = theaters.find((t) => t.id === Number($page.params.id)) || theater;
 
 	/* --------- helpers --------- */
@@ -297,40 +298,60 @@
 			</div>
 
 			<!-- АРТИСТЫ -->
-			<h3 class="mt-10 mb-4 text-xl font-semibold">АРТИСТЫ</h3>
-			<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
-				{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
-					<div class="relative h-30">
-						<div class="flex items-start space-x-3">
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-							<img
-								class="size-16 cursor-pointer rounded-full"
-								src={hrimg(p.photo)}
-								alt=""
-								onclick={() => showPersonBio(p)}
-							/>
+			<button
+				class="mt-10 mb-4 flex items-center gap-2 text-xl font-semibold"
+				onclick={() => (artistsOpen = !artistsOpen)}
+			>
+				АРТИСТЫ
+				<svg
+					class="h-5 w-5 transition-transform duration-200 {artistsOpen ? 'rotate-180' : ''}"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M19 9l-7 7-7-7"
+					/>
+				</svg>
+			</button>
+			{#if artistsOpen}
+				<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
+					{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
+						<div class="relative h-30">
+							<div class="flex items-start space-x-3">
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<img
+									class="size-16 cursor-pointer rounded-full"
+									src={hrimg(p.photo)}
+									alt=""
+									onclick={() => showPersonBio(p)}
+								/>
 
-							<div>
-								<div class="font-semibold">{p.fullName}</div>
-								<div class="line-clamp-3 text-sm text-gray-400">{p.titles}</div>
+								<div>
+									<div class="font-semibold">{p.fullName}</div>
+									<div class="line-clamp-3 text-sm text-gray-400">{p.titles}</div>
+								</div>
+							</div>
+							<div class="absolute top-16 flex gap-4">
+								{#if p.wikiUrl}
+									<a target="_blank" href={p.wikiUrl}
+										><img class="size-6" src={socialsimg('wiki.jpg')} alt="" />
+									</a>
+								{/if}
+								{#if p.linkToTheaterSite}
+									<a target="_blank" href={p.linkToTheaterSite}
+										><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
+									</a>
+								{/if}
 							</div>
 						</div>
-						<div class="absolute top-16 flex gap-4">
-							{#if p.wikiUrl}
-								<a target="_blank" href={p.wikiUrl}
-									><img class="size-6" src={socialsimg('wiki.jpg')} alt="" />
-								</a>
-							{/if}
-							{#if p.linkToTheaterSite}
-								<a target="_blank" href={p.linkToTheaterSite}
-									><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
-								</a>
-							{/if}
-						</div>
-					</div>
-				{/each}
-			</div>
+					{/each}
+				</div>
+			{/if}
 		</header>
 	</div>
 
@@ -521,8 +542,8 @@
 							label: 'Авторские',
 							percent: 0, // ➟ цветной бар НЕ рисуется
 							value: '0 млн ₽',
-							avg: 0.095,
-							avgPct: 0.095
+							avg: 0.095, // позиция маркера
+							avgPct: 0.095 // подпись «45 %» справа
 						}
 					]}
 				/>

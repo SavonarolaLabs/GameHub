@@ -149,7 +149,7 @@ function parseCsv(text, delimiter = ';') {
 
 // --- 4. Main ------------------------------------------------------
 async function main() {
-	let csv = await fs.readFile('HR_Temp_csv.csv', 'utf8');
+	let csv = await fs.readFile('hr_08.08.2025_test.csv', 'utf8');
 	if (csv.charCodeAt(0) === 0xfeff) csv = csv.slice(1); // BOM
 
 	const [rawHeaders, ...dataRows] = parseCsv(csv);
@@ -163,7 +163,7 @@ async function main() {
 		`// Auto-generated on ${new Date().toISOString()}\n` +
 		`export const hr = ${JSON.stringify(records, null, 2)};\n`;
 
-	await fs.writeFile('HR_TEMP.js', out, 'utf8');
+	await fs.writeFile('HR_new.js', out, 'utf8');
 	console.log(`✅ HR_TEMP.js создан. Объектов: ${records.length}`);
 }
 
