@@ -636,66 +636,70 @@
 					</h3> -->
 				</div>
 			</section>
-			<section class="mx-auto w-full max-w-6xl p-6">
-				<h2 class="mb-8 text-3xl font-bold">Аналитика по билетам</h2>
-			</section>
-			{#if ranking.find((r) => r.id === theater.id)}
-				{@const rank = ranking.find((r) => r.id === theater.id)}
 
-				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">ВЫРУЧКА, 2024</div>
-						<div class="text-6xl">{formatRubAbbreviated(rank?.revenue2024)}</div>
-					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">БИЛЕТОВ, 2024</div>
-						<div class="text-6xl">{formatRubAbbreviated(rank.tickets2024)}</div>
-					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">ЗАПОЛНЯЕМОСТЬ</div>
-						<div class="text-6xl">{theater.occupancy_percent}%</div>
-					</h3>
-				</div>
-			{/if}
-			<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
-				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-					<div class="text-gray-400">Постановок,2024</div>
-					<div class="text-6xl">50</div>
-				</h3>
+			<!-- <div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
 				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
 					<div class="text-gray-400">Ср. Стоимость</div>
 					<div class="text-6xl">2442</div>
 				</h3>
-			</div>
+			</div> -->
 			<section class="mx-auto w-full max-w-6xl p-6">
 				<DynamicChart data={dynamics} />
 			</section>
+			<h2 class="mb-8 text-3xl font-bold">Данные по спектаклям</h2>
 
-			<h2 class="mb-8 text-3xl font-bold">Мероприятия основного зала</h2>
-			<!-- 2024 -->
-			<button
-				class="rounded-md px-4 py-2 text-sm font-semibold transition-colors
+			{#if ranking.find((r) => r.id === theater.id)}
+				{@const rank = ranking.find((r) => r.id === theater.id)}
+
+				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
+					<!-- <h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">ВЫРУЧКА, 2024</div>
+						<div class="text-6xl">{formatRubAbbreviated(rank?.revenue2024)}</div>
+					</h3> -->
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">Спектаклей,2024</div>
+						<div class="text-6xl">49</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">Постановок, 2024</div>
+						<div class="text-6xl">473</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">Билетов, 2024</div>
+						<div class="text-6xl">186 тыс.</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">Заполняемость (физ)</div>
+						<div class="text-6xl">54,7%</div>
+					</h3>
+				</div>
+			{/if}
+			<h2 class="mb-8 text-3xl font-bold">
+				Спектакли основного зала <button
+					class="rounded-md px-4 py-2 text-sm font-semibold transition-colors
            hover:bg-slate-700
            {financeYear === 2024 ? 'bg-slate-800 text-white' : 'bg-slate-600 text-gray-300'}"
-				onclick={() => setYear(2024)}
-			>
-				2024
-			</button>
+					onclick={() => setYear(2024)}
+				>
+					2024
+				</button>
 
-			<!-- 2025 -->
-			<button
-				class="rounded-md px-4 py-2 text-sm font-semibold transition-colors
+				<!-- 2025 -->
+				<button
+					class="rounded-md px-4 py-2 text-sm font-semibold transition-colors
            hover:bg-slate-700
            {financeYear === 2025 ? 'bg-slate-800 text-white' : 'bg-slate-600 text-gray-300'}"
-				onclick={() => setYear(2025)}
-			>
-				2025
-			</button>
+					onclick={() => setYear(2025)}
+				>
+					2025
+				</button>
+			</h2>
+			<!-- 2024 -->
 
 			<table class="w-full text-left">
 				<thead class="border-b border-slate-700 text-gray-400">
 					<tr>
-						<th class="py-2 pr-4">Название мероприятия</th>
+						<th class="py-2 pr-4">Название</th>
 						<th class="py-2 pr-4">Продажи, ₽</th>
 						<th class="py-2 pr-4">Билетов</th>
 						<th class="py-2 pr-4">Сеансов</th>
