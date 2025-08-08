@@ -9,6 +9,7 @@
 	import { ArrowLeft } from 'lucide-svelte';
 	import GanttChart from '$lib/GanttChart.svelte';
 	import { theatersPremiers } from '$lib/theatersPremiers';
+	import { theatersFinance } from '$lib/theatersFinance';
 	import DynamicChart from '$lib/DynamicChart.svelte';
 	import { theatersDynamic } from '$lib/theatersDynamic';
 	import PersonPopup from '$lib/PersonPopup.svelte';
@@ -17,6 +18,8 @@
 	let theater: Theater = theaters[0];
 	let personalOpen = true; // Скрываем / Открываем артистов
 	let artistsOpen = true; // Скрываем / Открываем артистов
+	let financeYear = 2024; // Выбранный год, стандартно оставляем 2024 год
+
 	$: theater = theaters.find((t) => t.id === Number($page.params.id)) || theater;
 
 	/* --------- helpers --------- */
@@ -27,6 +30,8 @@
 	const socialsimg = (file: string) => `${base}/socials/${file}`;
 	$: totalSeats = theater.spaces.reduce((s, v) => s + (v.total_capacity ?? 0), 0);
 	$: premieres = theatersPremiers.find((t) => t.id === theater.id)?.premiers ?? [];
+	$: finances = theatersFinance.find((t) => t.id === theater.id)?.year ?? [];
+
 	$: dynamics = theatersDynamic.find((t) => t.id === theater.id)?.dynamic ?? [];
 	function trimTitles(titles: string): string {
 		if (titles.length > 60) {
@@ -446,19 +451,21 @@
 			<section class="mx-auto w-full max-w-6xl p-6">
 				<h2 class="mb-8 text-3xl font-bold">Общая информация</h2>
 			</section>
+
+			<!-- NEED TO ADD FUNCTION CONVERT BUDGET TO MLN -->
 			<section class="mx-auto w-full max-w-6xl">
 				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
 					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
 						<div class="text-gray-400">Внебюджет МЛН, 2024</div>
-						<div class="text-6xl">542</div>
+						<div class="text-6xl">{finances.find((f) => f.year == financeYear)?.offBudget}</div>
 					</h3>
 					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
 						<div class="text-gray-400">Бюджет МЛН, 2024</div>
-						<div class="text-6xl">228</div>
+						<div class="text-6xl">{finances.find((f) => f.year == financeYear)?.budget}</div>
 					</h3>
 					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
 						<div class="text-gray-400">Бюджетная зависимость, 2024</div>
-						<div class="text-6xl">30%</div>
+						<div class="text-6xl">{finances.find((f) => f.year == financeYear)?.dependence}</div>
 					</h3>
 				</div>
 				<h2 class="mb-8 text-3xl font-bold">Внебюджет</h2>
