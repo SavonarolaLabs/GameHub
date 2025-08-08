@@ -6,15 +6,22 @@ export const theatersPremiers = [
 			{
 				name: 'Буря',
 				venue: 'Основная сцена',
-				startDate: '09.09.2025',
-				endDate: '20.03.2026',
+				startDate: '07.07.2025',
+				endDate: '09.09.2025',
 				link: 'https://teatrpushkin.ru/spektakli/detail/burya/'
 			},
 			{
-				name: 'Сделка',
+				name: 'Лицей',
 				venue: 'Основная сцена',
-				startDate: '01.07.2025',
-				endDate: '28.11.2025',
+				startDate: '08.08.2025',
+				endDate: '07.10.2025',
+				link: 'https://teatrpushkin.ru/spektakli/detail/burya/'
+			},
+			{
+				name: 'Аленький цветочек',
+				venue: 'Основная сцена',
+				startDate: '01.10.2025',
+				endDate: '14.12.2025',
 				link: 'https://teatrpushkin.ru/spektakli/detail/burya/'
 			}
 		]

@@ -15,7 +15,8 @@
 	import HorizontalBarChart from '$lib/HorizontalBarChart.svelte';
 	/* --------- данные театра --------- */
 	let theater: Theater = theaters[0];
-	let artistsOpen = false; // Скрываем / Открываем артистов
+	let personalOpen = true; // Скрываем / Открываем артистов
+	let artistsOpen = true; // Скрываем / Открываем артистов
 	$: theater = theaters.find((t) => t.id === Number($page.params.id)) || theater;
 
 	/* --------- helpers --------- */
