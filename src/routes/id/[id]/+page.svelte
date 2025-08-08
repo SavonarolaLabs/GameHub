@@ -20,6 +20,39 @@
 	let personalOpen = true; // Скрываем / Открываем артистов
 	let artistsOpen = true; // Скрываем / Открываем артистов
 	let financeYear = 2024; // Выбранный год, стандартно оставляем 2024 год
+	$: expenseData = (() => {
+		const t = theatersExpenses.find((x) => x.id === theater.id);
+		if (!t) return [];
+
+		const yr = t.years.find((y) => y.year === financeYear);
+		if (!yr) return [];
+
+		const { total, breakdown } = yr;
+		/* helper, чтобы превращать «доля» в percent (0 … 1) */
+		const pct = (v: number) => (v ? v : 0);
+
+		return [
+			{
+				label: 'Всего',
+				percent: 1,
+				value: `${formatRubAbbreviated(total)}`
+			},
+			{
+				label: 'ФОТ',
+				percent: pct(breakdown.fot.share),
+				value: formatRubAbbreviated(breakdown.fot.value),
+				avg: pct(breakdown.fot.avgShare),
+				avgPct: pct(breakdown.fot.avgShare)
+			},
+			{
+				label: 'Авторские',
+				percent: pct(breakdown.royalties.share),
+				value: formatRubAbbreviated(breakdown.royalties.value),
+				avg: pct(breakdown.royalties.avgShare),
+				avgPct: pct(breakdown.royalties.avgShare)
+			}
+		];
+	})();
 
 	$: theater = theaters.find((t) => t.id === Number($page.params.id)) || theater;
 
@@ -531,31 +564,9 @@
 					</h3>
 				</div> -->
 				<h2 class=" mb-8 text-3xl font-bold"></h2>
-				<h2 class=" mb-8 text-3xl font-bold">Расходы</h2>
-				<HorizontalBarChart
-					items={[
-						{
-							label: 'Всего',
-							percent: 1,
-							value: '517 млн ₽'
-							// avg / avgPct не нужны
-						},
-						{
-							label: 'ФОТ',
-							percent: 0.52,
-							value: '269 млн ₽',
-							avg: 0.45, // позиция маркера
-							avgPct: 0.45 // подпись «45 %» справа
-						},
-						{
-							label: 'Авторские',
-							percent: 0, // ➟ цветной бар НЕ рисуется
-							value: '0 млн ₽',
-							avg: 0.095, // позиция маркера
-							avgPct: 0.095 // подпись «45 %» справа
-						}
-					]}
-				/>
+				<h2 class="mb-8 text-3xl font-bold">Расходы</h2>
+				<HorizontalBarChart items={expenseData} />
+
 				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
 					<!-- раздел «Расходы» -->
 					<!-- <h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
