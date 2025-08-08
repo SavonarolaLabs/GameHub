@@ -10,6 +10,7 @@
 	import GanttChart from '$lib/GanttChart.svelte';
 	import { theatersPremiers } from '$lib/theatersPremiers';
 	import { theatersFinance } from '$lib/theatersFinance';
+	import { theatersEvents } from '$lib/theatersEvents';
 	import { theatersExpenses } from '$lib/theatersExpenses';
 	import DynamicChart from '$lib/DynamicChart.svelte';
 	import { theatersDynamic } from '$lib/theatersDynamic';
@@ -20,6 +21,7 @@
 	let personalOpen = true; // Скрываем / Открываем артистов
 	let artistsOpen = true; // Скрываем / Открываем артистов
 	let financeYear = 2024; // Выбранный год, стандартно оставляем 2024 год
+	const setYear = (y: 2024 | 2025) => (financeYear = y);
 	$: expenseData = (() => {
 		const t = theatersExpenses.find((x) => x.id === theater.id);
 		if (!t) return [];
@@ -142,38 +144,60 @@
 		photo: 'path/to/photo.jpg',
 		biography: 'Биография ...'
 	};
+	// 🔁 ТОП мероприятий для выбранного года
+	$: eventSales = (() => {
+		const t = theatersEvents.find((x) => x.id === theater.id);
+		if (!t) return [];
 
-	const eventSales = [
-		{ title: 'Плохие хорошие', sales: 49_802_200, share: 0.16 },
-		{ title: 'Зойкина квартира', sales: 27_195_200, share: 0.09 },
-		{ title: 'Барабаны в ночи', sales: 26_423_200, share: 0.09 },
-		{ title: 'Женитьба Фигаро', sales: 22_556_950, share: 0.07 },
-		{ title: 'Космос', sales: 16_986_750, share: 0.06 },
-		{ title: 'Мышеловка', sales: 14_083_130, share: 0.05 },
-		{ title: 'Эта прекрасная жизнь', sales: 13_515_800, share: 0.04 },
-		{ title: 'Семейка Краузе', sales: 12_317_100, share: 0.04 },
-		{ title: 'Ложные признания', sales: 11_612_550, share: 0.04 },
-		{ title: 'Мадам Рубинштейн', sales: 10_862_760, share: 0.04 },
-		{ title: 'Сделка', sales: 9_901_130, share: 0.03 },
-		{ title: 'Слуга двух господ', sales: 9_115_300, share: 0.03 },
-		{ title: 'Остров сокровищ', sales: 8_603_590, share: 0.03 },
-		{ title: 'Влюбленный Шекспир', sales: 8_528_670, share: 0.03 },
-		{ title: 'Заповедник', sales: 8_455_410, share: 0.03 },
-		{ title: 'Завтра была война', sales: 7_694_760, share: 0.03 },
-		{ title: 'Лицей', sales: 5_903_300, share: 0.02 },
-		{ title: 'Рождество О. Генри', sales: 5_828_900, share: 0.02 },
-		{ title: 'Три Ивана', sales: 5_190_630, share: 0.02 },
-		{ title: 'Инспектор пришел', sales: 4_135_980, share: 0.01 },
-		{ title: 'Полковнику никто…', sales: 4_075_150, share: 0.01 },
-		{ title: 'Красавец мужчина', sales: 3_770_850, share: 0.01 },
-		{ title: 'Обещание на рассвете', sales: 3_482_710, share: 0.01 },
-		{ title: 'Тартюф', sales: 2_625_540, share: 0.01 },
-		{ title: 'Буря', sales: 2_158_700, share: 0.01 }
-	];
+		const yr = t.years.find((y) => y.year === financeYear);
+		if (!yr) return [];
+
+		return yr.events
+			.slice()
+			.sort((a, b) => b.sales - a.sales)
+			.map(({ title, sales, share, seances, tickets, occupancy }) => ({
+				title,
+				sales,
+				share,
+				seances,
+				tickets,
+				occupancy // ← доля заполняемости (0 … 1)
+			}));
+	})();
+
+	// const eventSales = [
+	// 	{ title: 'Плохие хорошие', sales: 49_802_200, share: 0.16 },
+	// 	{ title: 'Зойкина квартира', sales: 27_195_200, share: 0.09 },
+	// 	{ title: 'Барабаны в ночи', sales: 26_423_200, share: 0.09 },
+	// 	{ title: 'Женитьба Фигаро', sales: 22_556_950, share: 0.07 },
+	// 	{ title: 'Космос', sales: 16_986_750, share: 0.06 },
+	// 	{ title: 'Мышеловка', sales: 14_083_130, share: 0.05 },
+	// 	{ title: 'Эта прекрасная жизнь', sales: 13_515_800, share: 0.04 },
+	// 	{ title: 'Семейка Краузе', sales: 12_317_100, share: 0.04 },
+	// 	{ title: 'Ложные признания', sales: 11_612_550, share: 0.04 },
+	// 	{ title: 'Мадам Рубинштейн', sales: 10_862_760, share: 0.04 },
+	// 	{ title: 'Сделка', sales: 9_901_130, share: 0.03 },
+	// 	{ title: 'Слуга двух господ', sales: 9_115_300, share: 0.03 },
+	// 	{ title: 'Остров сокровищ', sales: 8_603_590, share: 0.03 },
+	// 	{ title: 'Влюбленный Шекспир', sales: 8_528_670, share: 0.03 },
+	// 	{ title: 'Заповедник', sales: 8_455_410, share: 0.03 },
+	// 	{ title: 'Завтра была война', sales: 7_694_760, share: 0.03 },
+	// 	{ title: 'Лицей', sales: 5_903_300, share: 0.02 },
+	// 	{ title: 'Рождество О. Генри', sales: 5_828_900, share: 0.02 },
+	// 	{ title: 'Три Ивана', sales: 5_190_630, share: 0.02 },
+	// 	{ title: 'Инспектор пришел', sales: 4_135_980, share: 0.01 },
+	// 	{ title: 'Полковнику никто…', sales: 4_075_150, share: 0.01 },
+	// 	{ title: 'Красавец мужчина', sales: 3_770_850, share: 0.01 },
+	// 	{ title: 'Обещание на рассвете', sales: 3_482_710, share: 0.01 },
+	// 	{ title: 'Тартюф', sales: 2_625_540, share: 0.01 },
+	// 	{ title: 'Буря', sales: 2_158_700, share: 0.01 }
+	// ];
 
 	/** форматируем числовое значение ₽ с пробелами-тысячниками */
 	const fmtRub = (n: number) => new Intl.NumberFormat('ru-RU').format(n);
 </script>
+
+<!-- переключатель года -->
 
 <div class="flex min-h-screen w-full flex-col items-center">
 	<!-- header -->
@@ -485,7 +509,7 @@
 			<section class="mx-auto w-full max-w-6xl p-6">
 				<h2 class="mb-8 text-3xl font-bold">Общая информация</h2>
 			</section>
-
+			<div class="mb-6 flex gap-3"></div>
 			<!-- NEED TO ADD FUNCTION CONVERT BUDGET TO MLN -->
 			<section class="mx-auto w-full max-w-6xl">
 				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
@@ -620,21 +644,47 @@
 				<DynamicChart data={dynamics} />
 			</section>
 
-			<h2 class="mb-8 text-3xl font-bold">Аналитика по мероприятиям - ТОП 25</h2>
+			<h2 class="mb-8 text-3xl font-bold">Мероприятия основного зала</h2>
+			<!-- 2024 -->
+			<button
+				class="rounded-md px-4 py-2 text-sm font-semibold transition-colors
+           hover:bg-slate-700
+           {financeYear === 2024 ? 'bg-slate-800 text-white' : 'bg-slate-600 text-gray-300'}"
+				onclick={() => setYear(2024)}
+			>
+				2024
+			</button>
+
+			<!-- 2025 -->
+			<button
+				class="rounded-md px-4 py-2 text-sm font-semibold transition-colors
+           hover:bg-slate-700
+           {financeYear === 2025 ? 'bg-slate-800 text-white' : 'bg-slate-600 text-gray-300'}"
+				onclick={() => setYear(2025)}
+			>
+				2025
+			</button>
 
 			<table class="w-full text-left">
 				<thead class="border-b border-slate-700 text-gray-400">
 					<tr>
 						<th class="py-2 pr-4">Название мероприятия</th>
 						<th class="py-2 pr-4">Продажи, ₽</th>
-						<th class="py-2">Доля</th>
+						<th class="py-2 pr-4">Билетов</th>
+						<th class="py-2 pr-4">Сеансов</th>
+						<th class="py-2 pr-4">Заполняемость</th>
+						<th class="py-2">Доля&nbsp;выручки</th>
 					</tr>
 				</thead>
+
 				<tbody>
 					{#each eventSales as e}
 						<tr class="border-b border-slate-800 last:border-none">
 							<td class="py-2 pr-4">{e.title}</td>
 							<td class="py-2 pr-4">{fmtRub(e.sales)}</td>
+							<td class="py-2 pr-4">{e.tickets}</td>
+							<td class="py-2 pr-4">{e.seances}</td>
+							<td class="py-2 pr-4">{Math.round(e.occupancy * 100)}%</td>
 							<td class="py-2">{Math.round(e.share * 100)}%</td>
 						</tr>
 					{/each}
