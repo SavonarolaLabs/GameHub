@@ -10,6 +10,7 @@
 	import GanttChart from '$lib/GanttChart.svelte';
 	import { theatersPremiers } from '$lib/theatersPremiers';
 	import { theatersFinance } from '$lib/theatersFinance';
+	import { theatersExpenses } from '$lib/theatersExpenses';
 	import DynamicChart from '$lib/DynamicChart.svelte';
 	import { theatersDynamic } from '$lib/theatersDynamic';
 	import PersonPopup from '$lib/PersonPopup.svelte';
