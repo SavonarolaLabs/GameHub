@@ -124,11 +124,19 @@
 					{#if item.startDate && item.endDate}
 						<div
 							class="gantt-bar"
-							style="left: {pct(parseDate(item.startDate))}%; width: {Math.max(
-								pct(parseDate(item.endDate)) - pct(parseDate(item.startDate)),
-								2
-							)}%"
+							style="
+        left:{pct(parseDate(item.startDate))}%;
+        width:{Math.max(pct(parseDate(item.endDate)) - pct(parseDate(item.startDate)), 2)}%"
 						></div>
+
+						<!-- ⭐️ маркер конца -->
+						<div
+							class="gantt-end"
+							style="left:{pct(parseDate(item.endDate))}%"
+							title="Премьера завершится"
+						>
+							★
+						</div>
 					{/if}
 				</div>
 			</div>
@@ -234,6 +242,21 @@
 	.gantt-bar:hover {
 		transform: translateY(-1px);
 		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	}
+	.gantt-end {
+		position: absolute;
+		top: 50%; /* по центру трека */
+		transform: translate(
+			-50%,
+			-50%
+		); /* X: чтобы центрировать символ,
+                                       Y: чтобы опустить на середину */
+		font-size: 2rem; /* размер звезды */
+		color: #60a5fa; /* жёлтый (можете заменить) */
+		pointer-events: none; /* чтобы не мешала hover-эффектам */
+
+		/* при желании лёгкая тень: */
+		text-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
 	}
 
 	/* Responsive adjustments */
