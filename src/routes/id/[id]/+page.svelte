@@ -20,6 +20,7 @@
 	let theater: Theater = theaters[0];
 	let personalOpen = true; // Скрываем / Открываем артистов
 	let artistsOpen = true; // Скрываем / Открываем артистов
+	let BaseInfoOpen = false; // Скрываем / Открываем артистов
 	let financeYear = 2024; // Выбранный год, стандартно оставляем 2024 год
 	const setYear = (y: 2024 | 2025) => (financeYear = y);
 	$: expenseData = (() => {
@@ -275,100 +276,14 @@
 					</div>
 				</div>
 			</div>
-			<!-- СОТРУДНИКИ -->
-			<div class="flex flex-wrap justify-between whitespace-nowrap">
-				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-					<div class="text-gray-400">СОТРУДНИКИ</div>
-					<div class="text-9xl">{theater.employees}</div>
-				</h3>
-				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-					<div class="text-gray-400">ХУДОЖЕСТВЕННЫЙ ПЕРСОНАЛ</div>
-					<div class="text-9xl">{theater.artistic_staff}</div>
-				</h3>
-				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-					<div class="text-gray-400">АРТИСТЫ</div>
-					<div class="text-9xl">{theater.cast}</div>
-				</h3>
-			</div>
-
-			<h3 class="mt-10 mb-4 text-xl font-semibold">РУКОВОДСТВО</h3>
-			<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
-				{#each hr.filter((h) => h.organizationInn == theater.id && (h.position == 'директор' || h.position.startsWith('художественный'))) as p}
-					<div class="relative h-30">
-						<div class="flex items-start space-x-3">
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-							<img
-								class="size-16 cursor-pointer rounded-full"
-								src={hrimg(p.photo)}
-								alt=""
-								onclick={() => showPersonBio(p)}
-							/>
-
-							<div>
-								<div class="font-semibold">{titleCase(p.fullName)}</div>
-								<div class="text-sm text-gray-400">{titleCase(p.position)}</div>
-								<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
-							</div>
-						</div>
-						<div class="absolute top-16 flex gap-4">
-							{#if p.wikiUrl}
-								<a target="_blank" href={p.wikiUrl}
-									><img class="size-6" src={socialsimg('wiki.jpg')} alt="" />
-								</a>
-							{/if}
-							{#if p.linkToTheaterSite}
-								<a target="_blank" href={p.linkToTheaterSite}
-									><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
-								</a>
-							{/if}
-						</div>
-					</div>
-				{/each}
-			</div>
-
-			<!-- пресс-служба -->
-			<h3 class="mt-10 mb-4 text-xl font-semibold">ПРЕСС-СЛУЖБА</h3>
-			<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
-				{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'пресс-служба') as p}
-					<div class="relative h-30">
-						<div class="flex items-start space-x-3">
-							<!-- <img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" /> -->
-							<div>
-								<div class="font-semibold">{titleCase(p.fullName)}</div>
-								<div class="text-sm text-gray-400">{titleCase(p.position)}</div>
-								<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
-								<div class="text-sm text-gray-400">{trimTitles(p.email)}</div>
-							</div>
-						</div>
-						<div class="absolute top-16 flex gap-4"></div>
-					</div>
-				{/each}
-
-				<div class="relative h-30">
-					<div class="flex items-start space-x-3">
-						<a target="_blank" class="flex flex-col gap-2" href={theater.fotobankLink}>
-							<img class="size-16 rounded-full" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
-							<div>
-								<div class="text-sm text-gray-400">Фотобанк</div>
-								<!-- <div class="text-sm text-gray-400">{titleCase(p.position)}</div>
-								<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
-								<div class="text-sm text-gray-400">{trimTitles(p.email)}</div> -->
-							</div>
-						</a>
-					</div>
-					<div class="absolute top-16 flex gap-4"></div>
-				</div>
-			</div>
-
-			<!-- АРТИСТЫ -->
+			<!-- ▼ кнопка сворачивания / разворачивания базовой инфы -->
 			<button
 				class="mt-10 mb-4 flex items-center gap-2 text-xl font-semibold"
-				onclick={() => (artistsOpen = !artistsOpen)}
+				onclick={() => (BaseInfoOpen = !BaseInfoOpen)}
 			>
-				АРТИСТЫ
+				Сотрудники
 				<svg
-					class="h-5 w-5 transition-transform duration-200 {artistsOpen ? 'rotate-180' : ''}"
+					class="h-5 w-5 transition-transform duration-200 {BaseInfoOpen ? 'rotate-180' : ''}"
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -381,9 +296,26 @@
 					/>
 				</svg>
 			</button>
-			{#if artistsOpen}
+			{#if BaseInfoOpen}
+				<!-- СОТРУДНИКИ -->
+				<div class="flex flex-wrap justify-between whitespace-nowrap">
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">СОТРУДНИКИ</div>
+						<div class="text-9xl">{theater.employees}</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">ХУДОЖЕСТВЕННЫЙ ПЕРСОНАЛ</div>
+						<div class="text-9xl">{theater.artistic_staff}</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">АРТИСТЫ</div>
+						<div class="text-9xl">{theater.cast}</div>
+					</h3>
+				</div>
+
+				<h3 class="mt-10 mb-4 text-xl font-semibold">РУКОВОДСТВО</h3>
 				<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
-					{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
+					{#each hr.filter((h) => h.organizationInn == theater.id && (h.position == 'директор' || h.position.startsWith('художественный'))) as p}
 						<div class="relative h-30">
 							<div class="flex items-start space-x-3">
 								<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -396,8 +328,9 @@
 								/>
 
 								<div>
-									<div class="font-semibold">{p.fullName}</div>
-									<div class="line-clamp-3 text-sm text-gray-400">{p.titles}</div>
+									<div class="font-semibold">{titleCase(p.fullName)}</div>
+									<div class="text-sm text-gray-400">{titleCase(p.position)}</div>
+									<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
 								</div>
 							</div>
 							<div class="absolute top-16 flex gap-4">
@@ -415,6 +348,100 @@
 						</div>
 					{/each}
 				</div>
+
+				<!-- пресс-служба -->
+				<h3 class="mt-10 mb-4 text-xl font-semibold">ПРЕСС-СЛУЖБА</h3>
+				<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
+					{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'пресс-служба') as p}
+						<div class="relative h-30">
+							<div class="flex items-start space-x-3">
+								<!-- <img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" /> -->
+								<div>
+									<div class="font-semibold">{titleCase(p.fullName)}</div>
+									<div class="text-sm text-gray-400">{titleCase(p.position)}</div>
+									<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
+									<div class="text-sm text-gray-400">{trimTitles(p.email)}</div>
+								</div>
+							</div>
+							<div class="absolute top-16 flex gap-4"></div>
+						</div>
+					{/each}
+
+					<div class="relative h-30">
+						<div class="flex items-start space-x-3">
+							<a target="_blank" class="flex flex-col gap-2" href={theater.fotobankLink}>
+								<img
+									class="size-16 rounded-full"
+									src={socialsimg(theater.id + '_logo.jpg')}
+									alt=""
+								/>
+								<div>
+									<div class="text-sm text-gray-400">Фотобанк</div>
+									<!-- <div class="text-sm text-gray-400">{titleCase(p.position)}</div>
+								<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
+								<div class="text-sm text-gray-400">{trimTitles(p.email)}</div> -->
+								</div>
+							</a>
+						</div>
+						<div class="absolute top-16 flex gap-4"></div>
+					</div>
+				</div>
+
+				<!-- АРТИСТЫ -->
+				<button
+					class="mt-10 mb-4 flex items-center gap-2 text-xl font-semibold"
+					onclick={() => (artistsOpen = !artistsOpen)}
+				>
+					АРТИСТЫ
+					<svg
+						class="h-5 w-5 transition-transform duration-200 {artistsOpen ? 'rotate-180' : ''}"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M19 9l-7 7-7-7"
+						/>
+					</svg>
+				</button>
+				{#if artistsOpen}
+					<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
+						{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
+							<div class="relative h-30">
+								<div class="flex items-start space-x-3">
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<img
+										class="size-16 cursor-pointer rounded-full"
+										src={hrimg(p.photo)}
+										alt=""
+										onclick={() => showPersonBio(p)}
+									/>
+
+									<div>
+										<div class="font-semibold">{p.fullName}</div>
+										<div class="line-clamp-3 text-sm text-gray-400">{p.titles}</div>
+									</div>
+								</div>
+								<div class="absolute top-16 flex gap-4">
+									{#if p.wikiUrl}
+										<a target="_blank" href={p.wikiUrl}
+											><img class="size-6" src={socialsimg('wiki.jpg')} alt="" />
+										</a>
+									{/if}
+									{#if p.linkToTheaterSite}
+										<a target="_blank" href={p.linkToTheaterSite}
+											><img class="size-6" src={socialsimg(theater.id + '_logo.jpg')} alt="" />
+										</a>
+									{/if}
+								</div>
+							</div>
+						{/each}
+					</div>
+				{/if}
 			{/if}
 		</header>
 	</div>
