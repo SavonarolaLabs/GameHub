@@ -14,12 +14,14 @@
 	import { theatersExpenses } from '$lib/theatersExpenses';
 	import DynamicChart from '$lib/DynamicChart.svelte';
 	import { theatersDynamic } from '$lib/theatersDynamic';
+	import { theatersOffbudget } from '$lib/theatersOffbudget';
 	import PersonPopup from '$lib/PersonPopup.svelte';
 	import HorizontalBarChart from '$lib/HorizontalBarChart.svelte';
 	/* --------- данные театра --------- */
 	let theater: Theater = theaters[0];
 	let personalOpen = true; // Скрываем / Открываем артистов
 	let artistsOpen = true; // Скрываем / Открываем артистов
+	let eventsWithPicturesOpen = false; // Скрываем / Открываем
 	let BaseInfoOpen = false; // Скрываем / Открываем артистов
 	let financeYear = 2024; // Выбранный год, стандартно оставляем 2024 год
 	const setYear = (y: 2024 | 2025) => (financeYear = y);
@@ -48,11 +50,101 @@
 				avgPct: pct(breakdown.fot.avgShare)
 			},
 			{
+				label: 'ГПХ',
+				percent: pct(breakdown.gph.share),
+				value: formatRubAbbreviated(breakdown.gph.value),
+				avg: pct(breakdown.gph.avgShare),
+				avgPct: pct(breakdown.gph.avgShare)
+			},
+			{
 				label: 'Авторские',
 				percent: pct(breakdown.royalties.share),
 				value: formatRubAbbreviated(breakdown.royalties.value),
 				avg: pct(breakdown.royalties.avgShare),
 				avgPct: pct(breakdown.royalties.avgShare)
+			},
+			{
+				label: 'Транспорт',
+				percent: pct(breakdown.transport.share),
+				value: formatRubAbbreviated(breakdown.transport.value),
+				avg: pct(breakdown.transport.avgShare),
+				avgPct: pct(breakdown.transport.avgShare)
+			},
+			{
+				label: 'Мероприятия',
+				percent: pct(breakdown.events.share),
+				value: formatRubAbbreviated(breakdown.events.value),
+				avg: pct(breakdown.events.avgShare),
+				avgPct: pct(breakdown.events.avgShare)
+			},
+			{
+				label: 'Аренда',
+				percent: pct(breakdown.rent.share),
+				value: formatRubAbbreviated(breakdown.rent.value),
+				avg: pct(breakdown.rent.avgShare),
+				avgPct: pct(breakdown.rent.avgShare)
+			}
+			//мероприятия
+		];
+	})();
+
+	// Палитра как в прежней верстке (опционально)
+	const obPalette = {
+		total: '#f03066',
+		tickets: '#60a5fa',
+		touring: '#10b981',
+		property: '#f59e0b',
+		advertising: '#a78bfa'
+	};
+
+	$: offbudgetData = (() => {
+		const t = theatersOffbudget.find((x) => x.id === theater.id);
+		if (!t) return [];
+
+		const yr = t.years.find((y) => y.year === financeYear);
+		if (!yr) return [];
+
+		const { total, breakdown } = yr;
+		const pct = (v: number | undefined) => v ?? 0;
+
+		return [
+			{
+				label: 'Всего',
+				percent: 1,
+				value: `${formatRubAbbreviated(total)}`,
+				color: obPalette.total
+			},
+			{
+				label: 'Билеты',
+				percent: pct(breakdown.tickets.share),
+				value: formatRubAbbreviated(breakdown.tickets.value),
+				avg: pct(breakdown.tickets.avgShare),
+				avgPct: pct(breakdown.tickets.avgShare),
+				color: obPalette.tickets
+			},
+			{
+				label: 'Гастроли',
+				percent: pct(breakdown.touring.share),
+				value: formatRubAbbreviated(breakdown.touring.value),
+				avg: pct(breakdown.touring.avgShare),
+				avgPct: pct(breakdown.touring.avgShare),
+				color: obPalette.touring
+			},
+			{
+				label: 'Собственность',
+				percent: pct(breakdown.property.share),
+				value: formatRubAbbreviated(breakdown.property.value),
+				avg: pct(breakdown.property.avgShare),
+				avgPct: pct(breakdown.property.avgShare),
+				color: obPalette.property
+			},
+			{
+				label: 'Реклама',
+				percent: pct(breakdown.advertising.share),
+				value: formatRubAbbreviated(breakdown.advertising.value),
+				avg: pct(breakdown.advertising.avgShare),
+				avgPct: pct(breakdown.advertising.avgShare),
+				color: obPalette.advertising
 			}
 		];
 	})();
@@ -541,7 +633,7 @@
 			<section class="mx-auto w-full max-w-6xl">
 				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
 					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">Внебюджет МЛН, 2024</div>
+						<div class="text-gray-400">expenseData МЛН, 2024</div>
 						<div class="text-6xl">{finances.find((f) => f.year == financeYear)?.offBudget}</div>
 					</h3>
 					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
@@ -553,45 +645,8 @@
 						<div class="text-6xl">{finances.find((f) => f.year == financeYear)?.dependence}</div>
 					</h3>
 				</div>
-				<h2 class="mb-8 text-3xl font-bold">Внебюджет</h2>
-				<HorizontalBarChart
-					items={[
-						{ label: 'Всего', percent: 1, value: '542 млн ₽', color: '#f03066' },
-						{
-							label: 'Билеты',
-							percent: 0.92,
-							value: '496,9 млн ₽',
-							avg: 0.79,
-							avgPct: 0.79,
-							color: '#60a5fa'
-						},
-						{
-							label: 'Гастроли',
-							percent: 0.022,
-							value: '11,8 млн ₽',
-							avg: 0.034,
-							avgPct: 0.034,
-							color: '#10b981'
-						},
-						{
-							label: 'Собственность',
-							percent: 0.024,
-							value: '13,2 млн ₽',
-							avg: 0.047,
-							avgPct: 0.047,
-							color: '#f59e0b'
-						},
-						{
-							label: 'Реклама',
-							percent: 0.008,
-							value: '4,5 млн ₽',
-							avg: 0.007,
-							avgPct: 0.007,
-							color: '#a78bfa'
-						}
-					]}
-				/>
-
+				<h2 class="mb-8 text-3xl font-bold">Внебюджет — {financeYear}</h2>
+				<HorizontalBarChart items={offbudgetData} />
 				<!-- <div class=" mx-auto flex max-w-6xl flex-wrap justify-between whitespace-nowrap">
 					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
 						<div class="text-gray-400">БИЛЕТЫ МЛН, 2024</div>
@@ -723,22 +778,45 @@
 			</table>
 
 			<section class="mx-auto w-full max-w-6xl p-6">
-				<h2 class="mb-8 text-3xl font-bold">СПЕКТАКЛИ</h2>
-				<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-					{#each theater.productions as p}
-						<div
-							class="relative h-80 overflow-hidden rounded-lg bg-cover bg-center transition-transform duration-300 hover:scale-105"
-							style="background-image:url('{productionimg(p.foto)}')"
-						>
+				<!-- ▼ раскрываем / скрываем грид с афишами -->
+				<button
+					class="mb-8 flex items-center gap-2 text-3xl font-bold"
+					onclick={() => (eventsWithPicturesOpen = !eventsWithPicturesOpen)}
+				>
+					СПЕКТАКЛИ
+					<svg
+						class="h-6 w-6 transition-transform duration-200 {eventsWithPicturesOpen
+							? 'rotate-180'
+							: ''}"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M19 9l-7 7-7-7"
+						/>
+					</svg>
+				</button>
+				{#if eventsWithPicturesOpen}
+					<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+						{#each theater.productions as p}
 							<div
-								class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
-							></div>
-							<div class="absolute right-0 bottom-0 left-0 p-6">
-								<h3 class="mb-2 text-xl font-bold">{p.name}</h3>
+								class="relative h-80 overflow-hidden rounded-lg bg-cover bg-center transition-transform duration-300 hover:scale-105"
+								style="background-image:url('{productionimg(p.foto)}')"
+							>
+								<div
+									class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
+								></div>
+								<div class="absolute right-0 bottom-0 left-0 p-6">
+									<h3 class="mb-2 text-xl font-bold">{p.name}</h3>
+								</div>
 							</div>
-						</div>
-					{/each}
-				</div>
+						{/each}
+					</div>
+				{/if}
 			</section>
 		</section>
 	</div>

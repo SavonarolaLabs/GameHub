@@ -18,5 +18,24 @@ export const theatersFinance = [
 				dependence: '30%'
 			}
 		]
+	},
+	{
+		id: 7707062124,
+
+		/** годовые показатели */
+		year: [
+			{
+				year: 2024,
+				offBudget: 1, // внебюджет, ₽
+				budget: 2, // бюджет, ₽
+				dependence: '30%' // доля бюджета (30 %)
+			},
+			{
+				year: 2025,
+				offBudget: 3,
+				budget: 2,
+				dependence: '30%'
+			}
+		]
 	}
 ];
