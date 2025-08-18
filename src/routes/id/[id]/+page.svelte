@@ -10,13 +10,21 @@
 	import GanttChart from '$lib/GanttChart.svelte';
 	import { theatersPremiers } from '$lib/theatersPremiers';
 	import { theatersFinance } from '$lib/theatersFinance';
-	import { theatersEvents } from '$lib/theatersEvents';
 	import { theatersExpenses } from '$lib/theatersExpenses';
 	import DynamicChart from '$lib/DynamicChart.svelte';
 	import { theatersDynamic } from '$lib/theatersDynamic';
 	import { theatersOffbudget } from '$lib/theatersOffbudget';
 	import PersonPopup from '$lib/PersonPopup.svelte';
 	import HorizontalBarChart from '$lib/HorizontalBarChart.svelte';
+
+	import { theatersEventsRaw } from '$lib/theatersEventsRaw';
+	import {
+		filterRows,
+		aggregateByTitleHall,
+		aggregateByMonth,
+		type OtherTypeMode
+	} from '$lib/aggEvents';
+
 	/* --------- данные театра --------- */
 	let theater: Theater = theaters[0];
 	let personalOpen = true; // Скрываем / Открываем артистов
@@ -24,6 +32,26 @@
 	let eventsWithPicturesOpen = false; // Скрываем / Открываем
 	let BaseInfoOpen = false; // Скрываем / Открываем артистов
 	let financeYear = 2024; // Выбранный год, стандартно оставляем 2024 год
+
+	let onlyMainStage = true; // тумблер «только основная сцена»
+	let otherMode: OtherTypeMode = 'exclude'; // режим для OtherEventType: 'exclude' | 'include' | 'only'
+	// Режим группировки: по ГОДУ или по СЕЗОНУ
+	let groupMode: 'year' | 'season' = 'year';
+	let selectedSeason: number | null = null;
+
+	// Список доступных сезонов для текущего театра
+	$: availableSeasons = Array.from(
+		new Set(
+			theatersEventsRaw
+				.filter((r) => r.theaterId === theater.id && r.season != null)
+				.map((r) => r.season as number)
+		)
+	).sort();
+
+	// Автовыбор сезона при переключении режима
+	$: if (groupMode === 'season' && selectedSeason == null && availableSeasons.length) {
+		selectedSeason = availableSeasons[availableSeasons.length - 1]; // последний (самый новый)
+	}
 	const setYear = (y: 2024 | 2025) => (financeYear = y);
 	$: expenseData = (() => {
 		const t = theatersExpenses.find((x) => x.id === theater.id);
@@ -237,54 +265,22 @@
 		photo: 'path/to/photo.jpg',
 		biography: 'Биография ...'
 	};
-	// 🔁 ТОП мероприятий для выбранного года
-	$: eventSales = (() => {
-		const t = theatersEvents.find((x) => x.id === theater.id);
-		if (!t) return [];
+	// 🔁 ТОП мероприятий (сначала пытаемся из сырых, иначе — из старого агрегата theatersEvents)
+	// 🔎 единый отфильтрованный массив «сырых» показов под текущие фильтры
+	// Единая выборка с учётом всех фильтров
+	$: filteredRaw = filterRows(theatersEventsRaw, {
+		theaterId: theater.id,
+		year: groupMode === 'year' ? financeYear : undefined,
+		season: groupMode === 'season' ? (selectedSeason ?? undefined) : undefined,
+		mainStage: onlyMainStage ? true : undefined,
+		otherTypeMode: otherMode
+	});
 
-		const yr = t.years.find((y) => y.year === financeYear);
-		if (!yr) return [];
+	// Таблица «Спектакли ...»: агрегация по (Название + Сцена)
+	$: eventSales = aggregateByTitleHall(filteredRaw);
 
-		return yr.events
-			.slice()
-			.sort((a, b) => b.sales - a.sales)
-			.map(({ title, sales, share, seances, tickets, occupancy }) => ({
-				title,
-				sales,
-				share,
-				seances,
-				tickets,
-				occupancy // ← доля заполняемости (0 … 1)
-			}));
-	})();
-
-	// const eventSales = [
-	// 	{ title: 'Плохие хорошие', sales: 49_802_200, share: 0.16 },
-	// 	{ title: 'Зойкина квартира', sales: 27_195_200, share: 0.09 },
-	// 	{ title: 'Барабаны в ночи', sales: 26_423_200, share: 0.09 },
-	// 	{ title: 'Женитьба Фигаро', sales: 22_556_950, share: 0.07 },
-	// 	{ title: 'Космос', sales: 16_986_750, share: 0.06 },
-	// 	{ title: 'Мышеловка', sales: 14_083_130, share: 0.05 },
-	// 	{ title: 'Эта прекрасная жизнь', sales: 13_515_800, share: 0.04 },
-	// 	{ title: 'Семейка Краузе', sales: 12_317_100, share: 0.04 },
-	// 	{ title: 'Ложные признания', sales: 11_612_550, share: 0.04 },
-	// 	{ title: 'Мадам Рубинштейн', sales: 10_862_760, share: 0.04 },
-	// 	{ title: 'Сделка', sales: 9_901_130, share: 0.03 },
-	// 	{ title: 'Слуга двух господ', sales: 9_115_300, share: 0.03 },
-	// 	{ title: 'Остров сокровищ', sales: 8_603_590, share: 0.03 },
-	// 	{ title: 'Влюбленный Шекспир', sales: 8_528_670, share: 0.03 },
-	// 	{ title: 'Заповедник', sales: 8_455_410, share: 0.03 },
-	// 	{ title: 'Завтра была война', sales: 7_694_760, share: 0.03 },
-	// 	{ title: 'Лицей', sales: 5_903_300, share: 0.02 },
-	// 	{ title: 'Рождество О. Генри', sales: 5_828_900, share: 0.02 },
-	// 	{ title: 'Три Ивана', sales: 5_190_630, share: 0.02 },
-	// 	{ title: 'Инспектор пришел', sales: 4_135_980, share: 0.01 },
-	// 	{ title: 'Полковнику никто…', sales: 4_075_150, share: 0.01 },
-	// 	{ title: 'Красавец мужчина', sales: 3_770_850, share: 0.01 },
-	// 	{ title: 'Обещание на рассвете', sales: 3_482_710, share: 0.01 },
-	// 	{ title: 'Тартюф', sales: 2_625_540, share: 0.01 },
-	// 	{ title: 'Буря', sales: 2_158_700, share: 0.01 }
-	// ];
+	// Пригодится для графиков динамики
+	$: eventsByMonth = aggregateByMonth(filteredRaw);
 
 	/** форматируем числовое значение ₽ с пробелами-тысячниками */
 	const fmtRub = (n: number) => new Intl.NumberFormat('ru-RU').format(n);
@@ -647,57 +643,13 @@
 				</div>
 				<h2 class="mb-8 text-3xl font-bold">Внебюджет — {financeYear}</h2>
 				<HorizontalBarChart items={offbudgetData} />
-				<!-- <div class=" mx-auto flex max-w-6xl flex-wrap justify-between whitespace-nowrap">
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">БИЛЕТЫ МЛН, 2024</div>
-						<div class="text-gray-400">в среднем 79,0%</div>
-						<div class="text-6xl">496,9 (92%)</div>
-					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">ГАСТРОЛИ МЛН, 2024</div>
-						<div class="text-gray-400">в среднем 3,4%</div>
-						<div class="text-6xl">11,8 (2,2%)</div>
-					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">СОБСТВЕННОСТЬ МЛН, 2024</div>
-						<div class="text-gray-400">в среднем 4,7%</div>
-						<div class="text-6xl">13,2 (2,4%)</div>
-					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">РЕКЛАМА МЛН, 2024</div>
-						<div class="text-gray-400">в среднем 0,7%</div>
-						<div class="text-6xl">4,5 (0,8%)</div>
-					</h3>
-				</div> -->
-				<h2 class=" mb-8 text-3xl font-bold"></h2>
+
 				<h2 class="mb-8 text-3xl font-bold">Расходы</h2>
 				<HorizontalBarChart items={expenseData} />
 
-				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
-					<!-- раздел «Расходы» -->
-					<!-- <h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">ВСЕГО МЛН, 2024</div>
-						<div class="text-6xl">517</div>
-					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">ФОТ МЛН, 2024</div>
-						<div class="text-gray-400">в среднем 45,0%</div>
-						<div class="text-6xl">269 (52%)</div>
-					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">АВТОРСКИЕ МЛН, 2024</div>
-						<div class="text-gray-400">в среднем 9,5%</div>
-						<div class="text-6xl">0 (0%)</div>
-					</h3> -->
-				</div>
+				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap"></div>
 			</section>
 
-			<!-- <div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
-				<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-					<div class="text-gray-400">Ср. Стоимость</div>
-					<div class="text-6xl">2442</div>
-				</h3>
-			</div> -->
 			<section class="mx-auto w-full max-w-6xl p-6">
 				<DynamicChart data={dynamics} />
 			</section>
@@ -707,16 +659,12 @@
 				{@const rank = ranking.find((r) => r.id === theater.id)}
 
 				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
-					<!-- <h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">ВЫРУЧКА, 2024</div>
-						<div class="text-6xl">{formatRubAbbreviated(rank?.revenue2024)}</div>
-					</h3> -->
 					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
 						<div class="text-gray-400">Спектаклей,2024</div>
 						<div class="text-6xl">49</div>
 					</h3>
 					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">Постановок, 2024</div>
+						<div class="text-gray-400">Показов, 2024</div>
 						<div class="text-6xl">473</div>
 					</h3>
 					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
@@ -729,6 +677,60 @@
 					</h3>
 				</div>
 			{/if}
+			<!-- Переключатели фильтров по «сырым» данным -->
+			<div class="mt-4 mb-6 flex flex-wrap items-center gap-4">
+				<!-- Режим группировки -->
+				<label class="flex items-center gap-2">
+					<span class="text-gray-400">Группировка:</span>
+					<select bind:value={groupMode} class="rounded bg-slate-700 px-2 py-1">
+						<option value="year">по году</option>
+						<option value="season">по сезону</option>
+					</select>
+				</label>
+
+				{#if groupMode === 'year'}
+					<!-- Как и раньше: кнопки 2024/2025 -->
+					<button
+						class="rounded-md px-3 py-1 text-sm font-semibold hover:bg-slate-700
+        {financeYear === 2024 ? 'bg-slate-800 text-white' : 'bg-slate-600 text-gray-300'}"
+						onclick={() => setYear(2024)}>2024</button
+					>
+					<button
+						class="rounded-md px-3 py-1 text-sm font-semibold hover:bg-slate-700
+        {financeYear === 2025 ? 'bg-slate-800 text-white' : 'bg-slate-600 text-gray-300'}"
+						onclick={() => setYear(2025)}>2025</button
+					>
+				{:else}
+					<!-- Выбор сезона -->
+					<label class="flex items-center gap-2">
+						<span class="text-gray-400">Сезон:</span>
+						<select
+							class="rounded bg-slate-700 px-2 py-1"
+							onchange={(e) =>
+								(selectedSeason = Number((e.currentTarget as HTMLSelectElement).value))}
+						>
+							{#each availableSeasons as s}
+								<option value={s}>{s}</option>
+							{/each}
+						</select>
+					</label>
+				{/if}
+
+				<!-- Фильтры сцены и «прочих» -->
+				<label class="ml-4 flex items-center gap-2">
+					<input type="checkbox" bind:checked={onlyMainStage} />
+					Только основная сцена
+				</label>
+
+				<label class="flex items-center gap-2">
+					<span class="text-gray-400">Прочие события:</span>
+					<select bind:value={otherMode} class="rounded bg-slate-700 px-2 py-1">
+						<option value="exclude">исключить</option>
+						<option value="include">включить</option>
+						<option value="only">только «прочие»</option>
+					</select>
+				</label>
+			</div>
 			<h2 class="mb-8 text-3xl font-bold">
 				Спектакли основного зала <button
 					class="rounded-md px-4 py-2 text-sm font-semibold transition-colors
@@ -755,23 +757,28 @@
 				<thead class="border-b border-slate-700 text-gray-400">
 					<tr>
 						<th class="py-2 pr-4">Название</th>
+						<th class="py-2 pr-4">Сцена</th>
+						<!-- NEW -->
 						<th class="py-2 pr-4">Продажи, ₽</th>
+						<th class="py-2 pr-4">Продажи/показ, ₽</th>
+						<!-- NEW -->
 						<th class="py-2 pr-4">Билетов</th>
 						<th class="py-2 pr-4">Сеансов</th>
 						<th class="py-2 pr-4">Заполняемость</th>
-						<th class="py-2">Доля&nbsp;выручки</th>
+						<th class="py-2">Доля выручки</th>
 					</tr>
 				</thead>
-
 				<tbody>
 					{#each eventSales as e}
 						<tr class="border-b border-slate-800 last:border-none">
 							<td class="py-2 pr-4">{e.title}</td>
-							<td class="py-2 pr-4">{fmtRub(e.sales)}</td>
-							<td class="py-2 pr-4">{e.tickets}</td>
+							<td class="py-2 pr-4">{e.hall}</td>
+							<td class="py-2 pr-4">{fmtRub(Math.round(e.sales))}</td>
+							<td class="py-2 pr-4">{fmtRub(Math.round(e.salesPerShow))}</td>
+							<td class="py-2 pr-4">{fmtRub(Math.round(e.tickets))}</td>
 							<td class="py-2 pr-4">{e.seances}</td>
-							<td class="py-2 pr-4">{Math.round(e.occupancy * 100)}%</td>
-							<td class="py-2">{Math.round(e.share * 100)}%</td>
+							<td class="py-2 pr-4">{Math.round((e.occupancy ?? 0) * 100)}%</td>
+							<td class="py-2">{Math.round((e.share ?? 0) * 100)}%</td>
 						</tr>
 					{/each}
 				</tbody>
