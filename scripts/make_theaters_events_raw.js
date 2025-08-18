@@ -319,16 +319,19 @@ function findIndex(headers, variants) {
 			theaterName,
 			year,
 			month,
-			date: ymd, // ← добавь
-			dateIso: isoDateTime, // ← добавь
-			eventName: title, // ← вместо title
-			venueName: hall, // ← вместо hall
-			venueSpace: seats, // ← вместо seats
+			ymd, // YYYY-MM-DD
+			dateTime: isoDateTime, // ISO без [Europe/...]
+			title,
+			hall,
+			mainStage,
+			sales,
+			tickets,
+			seats,
 			eventCount,
-			season: season ? Number(season) : undefined, // ← держи числом
-			seasonEnded: ended, // ← вместо ended
-			averagePrice: avgPrice,
-			otherEventType: typeof otherEventType === 'boolean' ? otherEventType : !!otherEventType
+			season,
+			ended,
+			avgPrice,
+			otherEventType
 		});
 	}
 
