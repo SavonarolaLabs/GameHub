@@ -47,11 +47,11 @@
 				.map((r: any) => Number(r.season))
 				.filter((n) => Number.isFinite(n))
 		)
-	).sort((a, b) => a - b);
+	).sort((a, b) => b - a);
 
 	// Автовыбор сезона при переключении режима
 	$: if (groupMode === 'season' && selectedSeason == null && availableSeasons.length) {
-		selectedSeason = availableSeasons[availableSeasons.length - 1]; // последний (самый новый)
+		selectedSeason = availableSeasons[0]; // последний (самый новый)
 	}
 	const setYear = (y: 2024 | 2025) => (financeYear = y);
 	$: expenseData = (() => {
