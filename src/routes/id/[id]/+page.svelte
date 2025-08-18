@@ -44,9 +44,10 @@
 		new Set(
 			theatersEventsRaw
 				.filter((r) => r.theaterId === theater.id && r.season != null)
-				.map((r) => r.season as number)
+				.map((r: any) => Number(r.season))
+				.filter((n) => Number.isFinite(n))
 		)
-	).sort();
+	).sort((a, b) => a - b);
 
 	// Автовыбор сезона при переключении режима
 	$: if (groupMode === 'season' && selectedSeason == null && availableSeasons.length) {
@@ -268,14 +269,18 @@
 	// 🔁 ТОП мероприятий (сначала пытаемся из сырых, иначе — из старого агрегата theatersEvents)
 	// 🔎 единый отфильтрованный массив «сырых» показов под текущие фильтры
 	// Единая выборка с учётом всех фильтров
-	$: filteredRaw = filterRows(theatersEventsRaw, {
+	$: filteredRaw = filterRows(theatersEventsRaw as any, {
 		theaterId: theater.id,
 		year: groupMode === 'year' ? financeYear : undefined,
-		season: groupMode === 'season' ? (selectedSeason ?? undefined) : undefined,
+		season:
+			groupMode === 'season'
+				? selectedSeason == null
+					? undefined
+					: Number(selectedSeason)
+				: undefined,
 		mainStage: onlyMainStage ? true : undefined,
 		otherTypeMode: otherMode
 	});
-
 	// Таблица «Спектакли ...»: агрегация по (Название + Сцена)
 	$: eventSales = aggregateByTitleHall(filteredRaw);
 

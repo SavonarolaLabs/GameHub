@@ -1,5 +1,39 @@
 // $lib/aggEvents.ts
 export type OtherTypeMode = 'exclude' | 'include' | 'only';
+// === helpers to read fields regardless of naming ===
+function getTitle(r: any): string {
+	return (r.eventName ?? r.eventTitle ?? r.title ?? r.name ?? '').toString().trim();
+}
+function getHall(r: any): string {
+	return (r.venueName ?? r.venue ?? r.hall ?? r.venue_space_short_name ?? '').toString().trim();
+}
+function getSeats(r: any): number | undefined {
+	const v = r.venueSpace ?? r.seats ?? r.capacity;
+	return typeof v === 'number' && isFinite(v) ? v : undefined;
+}
+function getDateIso(r: any): string | undefined {
+	return r.dateIso ?? r.dateTime ?? r.datetime;
+}
+function getDateYmd(r: any): string | undefined {
+	// dd.mm.yyyy в генераторе уже превращён в ymd (YYYY-MM-DD)
+	return r.date ?? r.ymd;
+}
+function getSeasonRaw(r: any): number | string | undefined {
+	return r.season; // может быть числом или строкой
+}
+function getYearRaw(r: any): number | undefined {
+	return typeof r.year === 'number' ? r.year : undefined;
+}
+function getMonthRaw(r: any): unknown {
+	// может быть числом или строкой
+	return r.month;
+}
+function getOtherFlag(r: any): boolean {
+	// может быть boolean или текстовая метка («концерт»)
+	const val = r.otherEventType;
+	if (typeof val === 'boolean') return val;
+	return !!(val && String(val).trim()); // строка → считаем «прочее»
+}
 
 export interface RawEventRow {
 	theaterId: number;
@@ -32,17 +66,22 @@ export interface FilterOpts {
 /** ——— ФИЛЬТР ——————————————————————————————————————————— */
 export function filterRows(rows: RawEventRow[], opts: FilterOpts): RawEventRow[] {
 	const mode: OtherTypeMode = opts.otherTypeMode ?? 'exclude';
-	return rows.filter((r) => {
+	return rows.filter((r: any) => {
 		if (r.theaterId !== opts.theaterId) return false;
 
-		if (opts.year != null && Number(r.year) !== Number(opts.year)) return false;
-		if (opts.season != null && Number(r.season) !== Number(opts.season)) return false;
+		if (opts.year != null) {
+			if (Number(getYearRaw(r)) !== Number(opts.year)) return false;
+		}
+		if (opts.season != null) {
+			const s = getSeasonRaw(r);
+			if (s == null || Number(s) !== Number(opts.season)) return false;
+		}
 
 		if (typeof opts.mainStage === 'boolean') {
 			if ((r.mainStage ?? false) !== opts.mainStage) return false;
 		}
 
-		const oth = !!r.otherEventType;
+		const oth = getOtherFlag(r);
 		if (mode === 'exclude' && oth) return false;
 		if (mode === 'only' && !oth) return false;
 
@@ -61,41 +100,21 @@ export function aggregateByTitleHall(rows: RawEventRow[]) {
 		seances: number;
 		seatsSum: number;
 	};
-
 	const map = new Map<string, Acc>();
 	let totalSales = 0;
 
-	for (const r of rows) {
-		// ←↓↓ КЛЮЧЕВАЯ ПРАВКА: берём title/hall из разных возможных полей
-		const titleRaw =
-			(r as any).eventName ?? (r as any).eventTitle ?? (r as any).title ?? (r as any).name;
-
-		const hallRaw =
-			(r as any).venueName ??
-			(r as any).venue ??
-			(r as any).hall ??
-			(r as any).venue_space_short_name;
-
-		const title = safeTitle(titleRaw);
-		const hall = (hallRaw ?? '').toString().trim() || '—';
-
+	for (const r of rows as any[]) {
+		const title = getTitle(r) || '—';
+		const hall = getHall(r) || '—';
 		const key = `${title}__${hall}`;
 
 		const sales = num(r.sales);
 		const tickets = num(r.tickets);
-		const seats = num(r.venueSpace);
+		const seats = num(getSeats(r));
 
 		totalSales += sales;
 
-		const cur = map.get(key) ?? {
-			key,
-			title,
-			hall,
-			sales: 0,
-			tickets: 0,
-			seances: 0,
-			seatsSum: 0
-		};
+		const cur = map.get(key) ?? { key, title, hall, sales: 0, tickets: 0, seances: 0, seatsSum: 0 };
 		cur.sales += sales;
 		cur.tickets += tickets;
 		cur.seances += 1;
@@ -122,25 +141,6 @@ export function aggregateByTitleHall(rows: RawEventRow[]) {
 }
 
 /** ——— АГРЕГАТ ПО МЕСЯЦАМ (YYYY-MM) — для графиков ——————————— */
-export function aggregateByMonth(rows: RawEventRow[]) {
-	type M = { month: string; sales: number; tickets: number; seances: number };
-
-	const map = new Map<string, M>();
-
-	for (const r of rows) {
-		const key = ymKey(r);
-		if (!key) continue; // пропускаем записи без даты
-
-		const cur = map.get(key) ?? { month: key, sales: 0, tickets: 0, seances: 0 };
-		cur.sales += num(r.sales);
-		cur.tickets += num(r.tickets);
-		cur.seances += 1;
-		map.set(key, cur);
-	}
-
-	// Ключ в формате YYYY-MM → можно лексикографически
-	return Array.from(map.values()).sort((a, b) => a.month.localeCompare(b.month));
-}
 
 /* ===================== helpers ===================== */
 
@@ -157,49 +157,56 @@ function safeTitle(t: string | undefined) {
 	return s || '—';
 }
 
-function ymKey(r: RawEventRow): string | null {
-	// 1) ISO: "2024-01-02T19:00..."
-	if (r.dateIso && typeof r.dateIso === 'string') {
-		const m = r.dateIso.match(/^(\d{4})-(\d{2})/);
+export function aggregateByMonth(rows: RawEventRow[]) {
+	type M = { month: string; sales: number; tickets: number; seances: number };
+	const map = new Map<string, M>();
+
+	for (const r of rows as any[]) {
+		const key = ymKey(r);
+		if (!key) continue;
+
+		const cur = map.get(key) ?? { month: key, sales: 0, tickets: 0, seances: 0 };
+		cur.sales += num(r.sales);
+		cur.tickets += num(r.tickets);
+		cur.seances += 1;
+		map.set(key, cur);
+	}
+
+	return Array.from(map.values()).sort((a, b) => a.month.localeCompare(b.month));
+}
+
+function ymKey(r: any): string | null {
+	// 1) ISO «yyyy-mm-ddThh:mm»
+	const iso = getDateIso(r);
+	if (iso && typeof iso === 'string') {
+		const m = iso.match(/^(\d{4})-(\d{2})/);
 		if (m) return `${m[1]}-${m[2]}`;
 	}
-	// 2) "dd.mm.yyyy"
-	if (r.date && typeof r.date === 'string') {
-		const m = r.date.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
-		if (m) return `${m[3]}-${m[2]}`;
+	// 2) YYYY-MM-DD
+	const ymd = getDateYmd(r);
+	if (ymd && typeof ymd === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(ymd)) {
+		return ymd.slice(0, 7);
 	}
-	// 3) (year, month) — month может быть числом/строкой
-	if (typeof r.year === 'number' && r.month != null) {
-		const mm = monthToMM(r.month);
-		if (mm) return `${r.year}-${mm}`;
-	}
+	// 3) year + month (number|string)
+	const year = getYearRaw(r);
+	const mm = monthToMM(getMonthRaw(r));
+	if (typeof year === 'number' && mm) return `${year}-${mm}`;
+
 	return null;
 }
 
 function monthToMM(m: unknown): string | null {
 	if (m == null) return null;
-
-	// Число 1..12
 	if (typeof m === 'number' && Number.isFinite(m)) {
 		const n = Math.trunc(m);
 		if (n >= 1 && n <= 12) return String(n).padStart(2, '0');
 	}
-
-	// Строка любой формы
 	if (typeof m !== 'string') return null;
 	let s = m.trim().toLowerCase();
 	if (!s) return null;
-
-	// Уберём точки/пробелы: "Sept.", "сен." → "sept", "сен"
 	s = s.replace(/[.\s]/g, '');
-
-	// Если цифрами
 	const nMaybe = Number(s);
-	if (!Number.isNaN(nMaybe) && nMaybe >= 1 && nMaybe <= 12) {
-		return String(nMaybe).padStart(2, '0');
-	}
-
-	// Словарь ENG/RU (и падежи)
+	if (!Number.isNaN(nMaybe) && nMaybe >= 1 && nMaybe <= 12) return String(nMaybe).padStart(2, '0');
 	const dict: Record<string, number> = {
 		jan: 1,
 		january: 1,
@@ -225,7 +232,6 @@ function monthToMM(m: unknown): string | null {
 		november: 11,
 		dec: 12,
 		december: 12,
-
 		янв: 1,
 		январь: 1,
 		января: 1,
@@ -263,10 +269,6 @@ function monthToMM(m: unknown): string | null {
 		декабрь: 12,
 		декабря: 12
 	};
-
-	// Пытаемся полным ключом, затем по трёхбукв. префиксу
 	const n = dict[s] ?? dict[s.slice(0, 3)];
-	if (n) return String(n).padStart(2, '0');
-
-	return null;
+	return n ? String(n).padStart(2, '0') : null;
 }
