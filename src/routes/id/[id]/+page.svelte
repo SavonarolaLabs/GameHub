@@ -194,36 +194,43 @@
 	$: finances = theatersFinance.find((t) => t.id === theater.id)?.year ?? [];
 
 	$: dynamics = theatersDynamic.find((t) => t.id === theater.id)?.dynamic ?? [];
-	function trimTitles(titles: string): string {
-		if (titles.length > 60) {
-			return titles.slice(0, 60 - 3) + '...';
-		} else {
-			return titles;
-		}
-	}
-	function titleCase(str: string) {
-		// \p{L}+  — последовательность букв в любом алфавите (флаг u = Unicode)
-		return str.replace(/\p{L}+/gu, (word) => word[0].toUpperCase() + word.slice(1).toLowerCase());
-	}
-	function formatPhone(raw: string) {
-		// 1. оставляем только цифры
-		let d = raw.replace(/\D+/g, '');
 
-		// 2. если 11 цифр и начинается на 8, меняем 8 → 7
+	function titleCase(str: unknown, fallback = '—') {
+		const s = (str ?? '').toString().trim();
+		if (!s) return fallback;
+		// \p{L}+ — последовательность букв (Unicode)
+		return s.replace(/\p{L}+/gu, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
+	}
+
+	function joinTitleCase(parts: unknown[], sep = ' / ', fallback = '—') {
+		const items = parts
+			.map((v) => titleCase(v, '')) // твой безопасный titleCase из прошлого сообщения
+			.filter(Boolean);
+		return items.length ? items.join(sep) : fallback;
+	}
+
+	function trimTitles(titles?: unknown, max = 60) {
+		const s = (titles ?? '').toString();
+		return s.length > max ? s.slice(0, max - 3) + '…' : s;
+	}
+
+	function formatPhone(raw?: string | null) {
+		if (!raw) return ''; // ничего не показываем, если телефона нет
+		let d = raw.replace(/\D+/g, '');
 		if (d.length === 11) {
 			if (d[0] === '8') d = '7' + d.slice(1);
-
-			// 3. раскладываем 1-3-3-2-2
 			const m = d.match(/^(\d)(\d{3})(\d{3})(\d{2})(\d{2})$/);
 			if (m) {
 				const [, c, a, b, c2, d2] = m;
 				return `+${c}-${a}-${b}-${c2}-${d2}`;
 			}
 		}
-
-		// fallback: ничего не делаем
 		return raw.trim();
 	}
+
+	// чтобы не рисовать битую ссылку если пусто/пробелы
+	const safeHref = (url?: string | null) => (url && url.trim() ? url : null);
+
 	function formatRubAbbreviated(number: number) {
 		const abs = Math.abs(number);
 		let suffix = '';
@@ -502,7 +509,9 @@
 				<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
 					{#each hr.filter((h) => h.organizationInn == theater.id && (h.position.toLowerCase() == 'директор' || h.position
 									.toLowerCase()
-									.startsWith('художественный'))) as p}
+									.startsWith('художественный') || h.position
+									.toLowerCase()
+									.startsWith('генеральный директор'))) as p}
 						<div class="relative h-30">
 							<div class="flex items-start space-x-3">
 								<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -515,8 +524,8 @@
 								/>
 
 								<div>
-									<div class="font-semibold">{titleCase(p.fullName)}</div>
-									<div class="text-sm text-gray-400">{titleCase(p.position)}</div>
+									<div class="font-semibold">{titleCase(p.fullName, '—')}</div>
+									<div class="text-sm text-gray-400">{titleCase(p.position, '—')}</div>
 									<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
 								</div>
 							</div>
@@ -671,23 +680,23 @@
 										<span class="text-sm text-gray-400">Тип:</span>
 										<span class="">{s.type}</span>
 									</p>
+
 									<p class="mb-4">
 										<span class="text-sm text-gray-400">Жанр:</span>
-										<span class="">{titleCase(s.genre)}</span>
+										<span>{titleCase(s.genre, '—')}</span>
 									</p>
+
 									<p class="mb-4">
 										<span class="text-sm text-gray-400">Округ / район:</span>
-										{s.okrug} / {s.district}
+										{joinTitleCase([s.okrug, s.district])}
 									</p>
+
 									<p class="mb-4">
 										<span class="text-sm text-gray-400">Адресс:</span>
-										<span class="">{titleCase(s.address)}</span>
+										<span>{titleCase(s.address, '—')}</span>
 									</p>
-									<!-- <p class="mb-4 text-sm text-gray-300">
-										Коммерческих мест: <strong>{s.commercial_capacity}</strong><br />
-										Неудобных мест: <strong>{s.inconvenient_seats}</strong>
-									</p> -->
-									{#if s.maps_link}
+
+									{#if safeHref(s.maps_link)}
 										<a
 											class="mb-6 inline-block text-blue-400 underline"
 											href={s.maps_link}
