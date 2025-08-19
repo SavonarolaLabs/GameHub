@@ -149,7 +149,7 @@ function parseCsv(text, delimiter = ';') {
 
 // --- 4. Main ------------------------------------------------------
 async function main() {
-	let csv = await fs.readFile('hr_08.08.2025_test.csv', 'utf8');
+	let csv = await fs.readFile('HR_19.08.csv', 'utf8');
 	if (csv.charCodeAt(0) === 0xfeff) csv = csv.slice(1); // BOM
 
 	const [rawHeaders, ...dataRows] = parseCsv(csv);
