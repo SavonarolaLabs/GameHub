@@ -18,6 +18,8 @@
 	import HorizontalBarChart from '$lib/HorizontalBarChart.svelte';
 
 	import { theatersEventsRaw } from '$lib/theatersEventsRaw';
+	import { type EndedMode } from '$lib/aggEvents';
+
 	import {
 		filterRows,
 		aggregateByTitleHall,
@@ -38,6 +40,7 @@
 	// Режим группировки: по ГОДУ или по СЕЗОНУ
 	let groupMode: 'year' | 'season' = 'year';
 	let selectedSeason: number | null = null;
+	let endedMode: EndedMode = 'all';
 
 	// Список доступных сезонов для текущего театра
 	$: availableSeasons = Array.from(
@@ -279,13 +282,96 @@
 					: Number(selectedSeason)
 				: undefined,
 		mainStage: onlyMainStage ? true : undefined,
-		otherTypeMode: otherMode
+		otherTypeMode: otherMode,
+		endedMode
 	});
 	// Таблица «Спектакли ...»: агрегация по (Название + Сцена)
 	$: eventSales = aggregateByTitleHall(filteredRaw);
 
 	// Пригодится для графиков динамики
 	$: eventsByMonth = aggregateByMonth(filteredRaw);
+
+	/* ===== Соседний (предыдущий) период ===== */
+
+	// предыдущий сезон из списка (availableSeasons отсортирован по убыванию)
+	$: prevSeason = (() => {
+		if (groupMode !== 'season' || selectedSeason == null) return null;
+		const idx = availableSeasons.indexOf(Number(selectedSeason));
+		// следующий элемент в убывающем списке = предыдущий по времени
+		return idx !== -1 && idx < availableSeasons.length - 1
+			? availableSeasons[idx + 1]
+			: availableSeasons.includes(Number(selectedSeason) - 1)
+				? Number(selectedSeason) - 1
+				: null;
+	})();
+
+	// предыдущий год
+	$: prevYear = groupMode === 'year' ? financeYear - 1 : null;
+
+	// Выборка предыдущего периода с теми же фильтрами
+	$: prevFilteredRaw = filterRows(theatersEventsRaw as any, {
+		theaterId: theater.id,
+		year: groupMode === 'year' ? (prevYear ?? undefined) : undefined,
+		season: groupMode === 'season' ? (prevSeason ?? undefined) : undefined,
+		mainStage: onlyMainStage ? true : undefined,
+		otherTypeMode: otherMode,
+		endedMode
+	});
+
+	// Агрегат прошлого периода
+	$: prevEventSales = aggregateByTitleHall(prevFilteredRaw);
+
+	// Быстрый поиск «прошлой» строки по ключу (название+сцена)
+	function keyOf(e: { title: string; hall: string }) {
+		return `${e.title}__${e.hall}`;
+	}
+	$: prevMap = new Map(prevEventSales.map((e) => [keyOf(e), e]));
+
+	/* ===== Дельты для показа рядом со значениями ===== */
+	function pctDelta(cur?: number, prev?: number | null) {
+		return typeof cur === 'number' && typeof prev === 'number' && isFinite(prev) && prev !== 0
+			? (cur - prev) / prev
+			: null; // нет данных/деление на 0 — не показываем
+	}
+	function ppDelta(cur?: number, prev?: number | null) {
+		return typeof cur === 'number' && typeof prev === 'number' ? (cur - prev) * 100 : null;
+	}
+	function fmtDeltaPct(x: number | null, digits = 0) {
+		if (x === null) return '';
+		const v = x * 100;
+		const s = v > 0 ? '+' : '';
+		return `${s}${v.toFixed(digits)}%`;
+	}
+	function fmtDeltaPP(x: number | null, digits = 1) {
+		if (x === null) return '';
+		const s = x > 0 ? '+' : '';
+		return `${s}${x.toFixed(digits)} п.п.`;
+	}
+	function deltaClass(x: number | null) {
+		return x === null
+			? 'text-slate-400/60'
+			: x > 0
+				? 'text-emerald-400'
+				: x < 0
+					? 'text-rose-400'
+					: 'text-slate-400';
+	}
+
+	// Таблица с дельтами
+	$: rowsWithDelta = eventSales.map((e) => {
+		const p = prevMap.get(keyOf(e));
+		return {
+			...e,
+			_delta: {
+				sales: pctDelta(e.sales, p?.sales),
+				perShow: pctDelta(e.salesPerShow, p?.salesPerShow),
+				tickets: pctDelta(e.tickets, p?.tickets),
+				seances: pctDelta(e.seances, p?.seances),
+				occupancyPP: ppDelta(e.occupancy, p?.occupancy), // изменение в п.п.
+				sharePP: ppDelta(e.share, p?.share) // изменение в п.п.
+			}
+		};
+	});
 
 	/** форматируем числовое значение ₽ с пробелами-тысячниками */
 	const fmtRub = (n: number) => new Intl.NumberFormat('ru-RU').format(n);
@@ -660,28 +746,6 @@
 			</section>
 			<h2 class="mb-8 text-3xl font-bold">Данные по спектаклям</h2>
 
-			{#if ranking.find((r) => r.id === theater.id)}
-				{@const rank = ranking.find((r) => r.id === theater.id)}
-
-				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">Спектаклей,2024</div>
-						<div class="text-6xl">49</div>
-					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">Показов, 2024</div>
-						<div class="text-6xl">473</div>
-					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">Билетов, 2024</div>
-						<div class="text-6xl">186 тыс.</div>
-					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">Заполняемость (физ)</div>
-						<div class="text-6xl">54,7%</div>
-					</h3>
-				</div>
-			{/if}
 			<!-- Переключатели фильтров по «сырым» данным -->
 			<div class="mt-4 mb-6 flex flex-wrap items-center gap-4">
 				<!-- Режим группировки -->
@@ -710,6 +774,7 @@
 					<label class="flex items-center gap-2">
 						<span class="text-gray-400">Сезон:</span>
 						<select
+							bind:value={selectedSeason}
 							class="rounded bg-slate-700 px-2 py-1"
 							onchange={(e) =>
 								(selectedSeason = Number((e.currentTarget as HTMLSelectElement).value))}
@@ -726,7 +791,14 @@
 					<input type="checkbox" bind:checked={onlyMainStage} />
 					Только основная сцена
 				</label>
-
+				<label class="flex items-center gap-2">
+					<span class="text-gray-400">Статус:</span>
+					<select bind:value={endedMode} class="rounded bg-slate-700 px-2 py-1">
+						<option value="all">все</option>
+						<option value="active">текущие</option>
+						<option value="ended">завершённые</option>
+					</select>
+				</label>
 				<label class="flex items-center gap-2">
 					<span class="text-gray-400">Прочие события:</span>
 					<select bind:value={otherMode} class="rounded bg-slate-700 px-2 py-1">
@@ -736,58 +808,152 @@
 					</select>
 				</label>
 			</div>
-			<h2 class="mb-8 text-3xl font-bold">
-				Спектакли основного зала <button
-					class="rounded-md px-4 py-2 text-sm font-semibold transition-colors
-           hover:bg-slate-700
-           {financeYear === 2024 ? 'bg-slate-800 text-white' : 'bg-slate-600 text-gray-300'}"
-					onclick={() => setYear(2024)}
-				>
-					2024
-				</button>
+			{#if ranking.find((r) => r.id === theater.id)}
+				{@const rank = ranking.find((r) => r.id === theater.id)}
 
-				<!-- 2025 -->
-				<button
-					class="rounded-md px-4 py-2 text-sm font-semibold transition-colors
-           hover:bg-slate-700
-           {financeYear === 2025 ? 'bg-slate-800 text-white' : 'bg-slate-600 text-gray-300'}"
-					onclick={() => setYear(2025)}
-				>
-					2025
-				</button>
-			</h2>
+				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">Спектаклей,2024</div>
+						<div class="text-6xl">49</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">Показов, 2024</div>
+						<div class="text-6xl">473</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">Билетов, 2024</div>
+						<div class="text-6xl">186 тыс.</div>
+					</h3>
+					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
+						<div class="text-gray-400">Заполняемость (физ)</div>
+						<div class="text-6xl">54,7%</div>
+					</h3>
+				</div>
+			{/if}
+			<h2 class="mb-8 text-3xl font-bold">Спектакли</h2>
 			<!-- 2024 -->
 
-			<table class="w-full text-left">
-				<thead class="border-b border-slate-700 text-gray-400">
-					<tr>
-						<th class="py-2 pr-4">Название</th>
-						<th class="py-2 pr-4">Сцена</th>
-						<!-- NEW -->
-						<th class="py-2 pr-4">Продажи, ₽</th>
-						<th class="py-2 pr-4">Продажи/показ, ₽</th>
-						<!-- NEW -->
-						<th class="py-2 pr-4">Билетов</th>
-						<th class="py-2 pr-4">Сеансов</th>
-						<th class="py-2 pr-4">Заполняемость</th>
-						<th class="py-2">Доля выручки</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each eventSales as e}
-						<tr class="border-b border-slate-800 last:border-none">
-							<td class="py-2 pr-4">{e.title}</td>
-							<td class="py-2 pr-4">{e.hall}</td>
-							<td class="py-2 pr-4">{fmtRub(Math.round(e.sales))}</td>
-							<td class="py-2 pr-4">{fmtRub(Math.round(e.salesPerShow))}</td>
-							<td class="py-2 pr-4">{fmtRub(Math.round(e.tickets))}</td>
-							<td class="py-2 pr-4">{e.seances}</td>
-							<td class="py-2 pr-4">{Math.round((e.occupancy ?? 0) * 100)}%</td>
-							<td class="py-2">{Math.round((e.share ?? 0) * 100)}%</td>
+			<!-- обёртка со скроллом на узких экранах -->
+			<div class="w-full overflow-x-auto">
+				<table class="w-full table-fixed text-left">
+					<thead class="border-b border-slate-700 text-gray-400">
+						<tr>
+							<!-- Название: фикс-ширина, адаптивно по брейкпоинтам -->
+							<th class="w-[22ch] py-2 pr-4 sm:w-[28ch] md:w-[32ch]">Название</th>
+							<!-- Сцена: уже, тоже фикс/адаптив -->
+							<th class="w-[14ch] py-2 pr-4 sm:w-[16ch] md:w-[18ch]">Сцена</th>
+
+							<th class="py-2 pr-4">Продажи, ₽</th>
+							<th class="py-2 pr-4">Продажи/показ, ₽</th>
+							<th class="py-2 pr-4">Билетов</th>
+							<th class="py-2 pr-4">Сеансов</th>
+							<th class="py-2 pr-4">Заполняемость</th>
+							<th class="py-2">Доля выручки</th>
 						</tr>
-					{/each}
-				</tbody>
-			</table>
+					</thead>
+
+					<tbody>
+						{#each rowsWithDelta as e (e.title + '__' + e.hall)}
+							<tr class="border-b border-slate-800 last:border-none">
+								<!-- Название -->
+								<td class="w-[22ch] min-w-0 py-2 pr-4 align-top sm:w-[28ch] md:w-[32ch]">
+									<div
+										class="clamp-2 max-w-full leading-snug break-words whitespace-normal"
+										title={e.title}
+									>
+										{e.title}
+									</div>
+								</td>
+
+								<!-- Сцена -->
+								<td
+									class="w-[14ch] py-2 pr-4 align-top break-words whitespace-normal sm:w-[16ch] md:w-[18ch]"
+								>
+									{e.hall}
+								</td>
+
+								<!-- Продажи -->
+								<td class="py-2 pr-4 align-top">
+									<div class="flex flex-col leading-tight tabular-nums">
+										<span class="whitespace-nowrap">{fmtRub(Math.round(e.sales))}</span>
+										<span
+											class={'mt-0.5 text-xs font-medium whitespace-nowrap ' +
+												deltaClass(e._delta.sales)}
+										>
+											{fmtDeltaPct(e._delta.sales)}
+										</span>
+									</div>
+								</td>
+
+								<!-- Продажи/показ -->
+								<td class="py-2 pr-4 align-top">
+									<div class="flex flex-col leading-tight tabular-nums">
+										<span class="whitespace-nowrap">{fmtRub(Math.round(e.salesPerShow))}</span>
+										<span
+											class={'mt-0.5 text-xs font-medium whitespace-nowrap ' +
+												deltaClass(e._delta.perShow)}
+										>
+											{fmtDeltaPct(e._delta.perShow)}
+										</span>
+									</div>
+								</td>
+
+								<!-- Билетов -->
+								<td class="py-2 pr-4 align-top">
+									<div class="flex flex-col leading-tight tabular-nums">
+										<span class="whitespace-nowrap">{fmtRub(Math.round(e.tickets))}</span>
+										<span
+											class={'mt-0.5 text-xs font-medium whitespace-nowrap ' +
+												deltaClass(e._delta.tickets)}
+										>
+											{fmtDeltaPct(e._delta.tickets)}
+										</span>
+									</div>
+								</td>
+
+								<!-- Сеансов -->
+								<td class="py-2 pr-4 align-top">
+									<div class="flex flex-col leading-tight tabular-nums">
+										<span class="whitespace-nowrap">{e.seances}</span>
+										<span
+											class={'mt-0.5 text-xs font-medium whitespace-nowrap ' +
+												deltaClass(e._delta.seances)}
+										>
+											{fmtDeltaPct(e._delta.seances)}
+										</span>
+									</div>
+								</td>
+
+								<!-- Заполняемость -->
+								<td class="py-2 pr-4 align-top">
+									<div class="flex flex-col leading-tight tabular-nums">
+										<span class="whitespace-nowrap">{Math.round((e.occupancy ?? 0) * 100)}%</span>
+										<span
+											class={'mt-0.5 text-xs font-medium whitespace-nowrap ' +
+												deltaClass(e._delta.occupancyPP)}
+										>
+											{fmtDeltaPP(e._delta.occupancyPP)}
+										</span>
+									</div>
+								</td>
+
+								<!-- Доля выручки -->
+								<td class="py-2 align-top">
+									<div class="flex flex-col leading-tight tabular-nums">
+										<span class="whitespace-nowrap">{Math.round((e.share ?? 0) * 100)}%</span>
+										<span
+											class={'mt-0.5 text-xs font-medium whitespace-nowrap ' +
+												deltaClass(e._delta.sharePP)}
+										>
+											{fmtDeltaPP(e._delta.sharePP)}
+										</span>
+									</div>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
 
 			<section class="mx-auto w-full max-w-6xl p-6">
 				<!-- ▼ раскрываем / скрываем грид с афишами -->
@@ -863,5 +1029,12 @@
 	.back-to-main-btn:hover {
 		transform: scale(1.08);
 		background: #4b5563;
+	}
+
+	.clamp-2 {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 </style>
