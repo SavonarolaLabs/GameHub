@@ -500,7 +500,9 @@
 
 				<h3 class="mt-10 mb-4 text-xl font-semibold">РУКОВОДСТВО</h3>
 				<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
-					{#each hr.filter((h) => h.organizationInn == theater.id && (h.position == 'директор' || h.position.startsWith('художественный'))) as p}
+					{#each hr.filter((h) => h.organizationInn == theater.id && (h.position.toLowerCase() == 'директор' || h.position
+									.toLowerCase()
+									.startsWith('художественный'))) as p}
 						<div class="relative h-30">
 							<div class="flex items-start space-x-3">
 								<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -537,7 +539,7 @@
 				<!-- пресс-служба -->
 				<h3 class="mt-10 mb-4 text-xl font-semibold">ПРЕСС-СЛУЖБА</h3>
 				<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
-					{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'пресс-служба') as p}
+					{#each hr.filter((h) => h.organizationInn == theater.id && h.position.toLowerCase() == 'пресс-служба') as p}
 						<div class="relative h-30">
 							<div class="flex items-start space-x-3">
 								<!-- <img class="size-16 rounded-full" src={hrimg(p.photo)} alt="" /> -->
@@ -594,7 +596,7 @@
 				</button>
 				{#if artistsOpen}
 					<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
-						{#each hr.filter((h) => h.organizationInn == theater.id && h.position == 'топовые артисты') as p}
+						{#each hr.filter((h) => h.organizationInn == theater.id && h.position.toLowerCase() == 'топовые артисты') as p}
 							<div class="relative h-30">
 								<div class="flex items-start space-x-3">
 									<!-- svelte-ignore a11y_click_events_have_key_events -->
