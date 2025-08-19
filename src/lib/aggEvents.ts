@@ -207,7 +207,6 @@ export function filterRows(rows: AnyRow[], opts: FilterOpts): AnyRow[] {
 	});
 }
 
-/** ——— АГРЕГАТ ПО (НАЗВАНИЕ + СЦЕНА) — для таблицы ————————————— */
 export function aggregateByTitleHall(rows: AnyRow[]) {
 	type Acc = {
 		key: string;
