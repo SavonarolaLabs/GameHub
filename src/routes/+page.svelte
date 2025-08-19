@@ -96,6 +96,7 @@
 
 <svelte:head>
 	<title>Театры Москвы — Справочник</title>
+
 	<meta
 		name="description"
 		content="Справочник театров Москвы с рейтингами, спектаклями и адресами"
@@ -132,6 +133,7 @@
 					/>
 				</svg>
 			</div>
+			<a class="text-blue-300 hover:underline" href={`${base}/rating`}>Рейтинг театров</a>
 		</header>
 	</div>
 
