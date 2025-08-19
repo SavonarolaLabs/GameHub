@@ -856,7 +856,7 @@
 								<th class="py-2 pr-4">Цена</th>
 								<!-- NEW -->
 								<th class="py-2 pr-4">Сеансов</th>
-								<th class="py-2 pr-4">Заполняемость</th>
+								<th class="py-2 pr-4">Загрузка</th>
 								<th class="py-2">Доля выручки</th>
 							</tr>
 						</thead>
