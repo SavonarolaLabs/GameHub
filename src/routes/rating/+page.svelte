@@ -50,7 +50,19 @@
 		};
 
 	let _inited = false;
-
+	$: {
+		groupMode;
+		financeYear;
+		selectedSeason;
+		onlyMainStage;
+		otherMode;
+		endedMode;
+		if (_inited) {
+			expanded = new Set();
+			expandedDetail = new Set(); // ⬅️ сбрасываем второй уровень
+		}
+		_inited = true;
+	}
 	$: {
 		// зависимости — любое их изменение триггерит блок
 		groupMode;
@@ -104,6 +116,63 @@
 				: x < 0
 					? 'text-rose-400'
 					: 'text-slate-400';
+	}
+
+	function sessionsFor(theaterId: number, e: any) {
+		// общий фильтр по театру и периоду
+		const raw = filterRows(theatersEventsRaw as any, {
+			theaterId,
+			year: groupMode === 'year' ? financeYear : undefined,
+			season: groupMode === 'season' ? (selectedSeason ?? undefined) : undefined,
+			mainStage: onlyMainStage ? true : undefined,
+			otherTypeMode: otherMode,
+			endedMode
+		});
+
+		// оставляем только нужное мероприятие (совпадение названия и сцены)
+		const same = raw.filter((r: any) => r.title === e.title && r.hall === e.hall);
+
+		// сумма продаж театра для расчёта share
+		const theaterTotal =
+			currentRows.find((x) => x.id === theaterId)?.sales ??
+			same.reduce((s: number, r: any) => s + (r.sales ?? 0), 0);
+
+		// нормализуем поля под отображение в таблице
+		return (
+			same
+				.map((r: any) => {
+					const sales = r.sales ?? 0;
+					const tickets = r.tickets ?? 0;
+					const avgPrice = tickets > 0 ? sales / tickets : 0;
+
+					// дата/время
+					const dt = _dateFromRow(r);
+					const dateStr = dt ? fmtDate(dt) : (r.date ?? '—');
+					const timeStr = dt ? fmtTime(dt) : (r.time ?? r.startTime ?? '—');
+
+					// заполняемость
+					const capacity = r.capacity ?? r.totalCapacity ?? r.seats ?? null;
+					const occupancy =
+						typeof r.occupancy === 'number' ? r.occupancy : capacity ? tickets / capacity : null;
+
+					const share = theaterTotal > 0 ? sales / theaterTotal : 0;
+
+					return {
+						...r,
+						sales,
+						tickets,
+						avgPrice,
+						occupancy,
+						share,
+						_dt: dt,
+						_dateStr: dateStr,
+						_timeStr: timeStr
+					};
+				})
+				// Можно сортировать по дате, если удобнее:
+				.sort((a: any, b: any) => (+b._dt || 0) - (+a._dt || 0))
+			//.sort((a: any, b: any) => (b.sales ?? 0) - (a.sales ?? 0))
+		);
 	}
 
 	/* ---------- агрегация по театрам ---------- */
@@ -167,6 +236,87 @@
 
 		return rows;
 	}
+
+	function _pick(obj: any, keys: string[]) {
+		return keys.find((k) => obj[k] != null) ? obj[keys.find((k) => obj[k] != null)!] : undefined;
+	}
+
+	function _parseMaybeDate(input: any): Date | null {
+		if (input == null) return null;
+		if (input instanceof Date) return input;
+		if (typeof input === 'number') return new Date(input); // timestamp (ms)
+		if (typeof input === 'string') {
+			// Сначала пытаемся стандартный парсинг (ISO и т.п.)
+			const d1 = new Date(input);
+			if (!Number.isNaN(+d1)) return d1;
+
+			// Формат DD.MM.YYYY[ HH:MM]
+			const m = input.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})(?:[ T](\d{1,2}):(\d{2}))?$/);
+			if (m) {
+				const [, dd, mm, yyyy, hh, mi] = m;
+				const year = (yyyy.length === 2 ? 2000 + Number(yyyy) : Number(yyyy)) || 0;
+				const date = new Date(
+					year,
+					Number(mm) - 1,
+					Number(dd),
+					hh ? Number(hh) : 0,
+					mi ? Number(mi) : 0
+				);
+				if (!Number.isNaN(+date)) return date;
+			}
+		}
+		return null;
+	}
+
+	function _dateFromRow(r: any): Date | null {
+		// Пробуем популярные поля
+		let dtLike =
+			_pick(r, [
+				'datetime',
+				'dateTime',
+				'date_time',
+				'dt',
+				'start',
+				'startAt',
+				'start_at',
+				'startDateTime',
+				'start_datetime',
+				'when'
+			]) ?? r.date;
+
+		let timeLike = _pick(r, [
+			'time',
+			'startTime',
+			'start_time',
+			'showTime',
+			'performanceTime',
+			'sessionTime'
+		]);
+
+		// 1) если одно поле со всем – парсим его
+		let d = _parseMaybeDate(dtLike);
+		if (d) return d;
+
+		// 2) если есть дата + отдельно время — объединяем
+		if (r.date && timeLike) {
+			const base = _parseMaybeDate(r.date);
+			if (base) {
+				const [h, m] = String(timeLike).split(':').map(Number);
+				if (!Number.isNaN(h)) base.setHours(h, Number.isNaN(m) ? 0 : m);
+				return base;
+			}
+		}
+
+		// 3) timestamp-поля
+		const ts = _pick(r, ['ts', 'timestamp']);
+		const d2 = _parseMaybeDate(ts);
+		return d2;
+	}
+
+	const fmtDate = (d: Date | null, fallback?: string) =>
+		d ? d.toLocaleDateString('ru-RU') : (fallback ?? '—');
+	const fmtTime = (d: Date | null, fallback?: string) =>
+		d ? d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : (fallback ?? '—');
 
 	// текущий период
 	$: currentRows = makeRows({
@@ -235,13 +385,30 @@
 			sortDir = 'desc';
 		}
 	}
+	let expanded = new Set<number>(); // 1-й уровень (театры)
+	let expandedDetail = new Set<string>(); // 2-й уровень (мероприятия)
 
-	let expanded = new Set<number>();
+	function detailKey(theaterId: number, e: any) {
+		// стабильный ключ мероприятия (театр + название + сцена)
+		return `${theaterId}__${e.title}__${e.hall}`;
+	}
+
+	function toggleDetail(key: string) {
+		const next = new Set(expandedDetail);
+		if (next.has(key)) next.delete(key);
+		else next.add(key);
+		expandedDetail = next;
+	}
+
+	// при закрытии театра — чистим все «внутренние» раскрытия этого театра
 	function toggleExpand(id: number) {
-		// пересоздаём Set, чтобы сработала реактивность
 		const next = new Set(expanded);
-		if (next.has(id)) next.delete(id);
-		else next.add(id);
+		if (next.has(id)) {
+			next.delete(id);
+			expandedDetail = new Set([...expandedDetail].filter((k) => !k.startsWith(id + '__')));
+		} else {
+			next.add(id);
+		}
 		expanded = next;
 	}
 
@@ -647,7 +814,33 @@
 													<tbody>
 														{#each detailsFor(r.id) as e, j (e.title + '__' + e.hall)}
 															<tr class="border-b border-slate-800 last:border-none">
-																<td class="py-1 pr-3 text-right text-slate-400">{j + 1}</td>
+																<td class="py-1 pr-3 text-right text-slate-400">
+																	<button
+																		class="inline-flex items-center gap-1 text-slate-300 hover:text-white"
+																		on:click={() => toggleDetail(detailKey(r.id, e))}
+																		aria-expanded={expandedDetail.has(detailKey(r.id, e))}
+																		aria-label="Показать сеансы мероприятия"
+																	>
+																		<span>{j + 1}</span>
+																		<svg
+																			class={'h-3 w-3 transition-transform ' +
+																				(expandedDetail.has(detailKey(r.id, e))
+																					? 'rotate-180'
+																					: '')}
+																			viewBox="0 0 24 24"
+																			fill="none"
+																			stroke="currentColor"
+																		>
+																			<path
+																				stroke-linecap="round"
+																				stroke-linejoin="round"
+																				stroke-width="2"
+																				d="M19 9l-7 7-7-7"
+																			/>
+																		</svg>
+																	</button>
+																</td>
+
 																<td class="py-1 pr-4">{e.title}</td>
 																<td class="py-1 pr-4">{e.hall}</td>
 																<td class="py-1 pr-4">{fmtRub(e.sales ?? 0)}</td>
@@ -662,6 +855,65 @@
 																<td class="py-1 pr-4">{fmtPercent01(e.occupancy ?? null, 0)}</td>
 																<td class="py-1">{fmtPercent01(e.share ?? 0, 1)}</td>
 															</tr>
+															{#if expandedDetail.has(detailKey(r.id, e))}
+																<tr class="bg-slate-800/60">
+																	<!-- во внутренней таблице у тебя 10 колонок; тут colspan должен их перекрыть -->
+																	<td colspan="10" class="p-0">
+																		<div class="px-4 pt-1 pb-3">
+																			<div class="overflow-x-auto">
+																				<table
+																					class="w-full min-w-[66rem] text-left text-xs sm:text-sm"
+																				>
+																					<thead class="border-b border-slate-700 text-gray-400">
+																						<tr>
+																							<th class="py-1 pr-3 text-right">№</th>
+																							<th class="py-1 pr-4">Название</th>
+																							<th class="py-1 pr-4">Сцена</th>
+																							<th class="py-1 pr-4">Дата</th>
+																							<th class="py-1 pr-4">Время</th>
+																							<th class="py-1 pr-4">Продажи</th>
+																							<th class="py-1 pr-4">Билетов</th>
+																							<th class="py-1 pr-4">Ср. цена</th>
+																							<!-- ⛔ столбец «Сеансов» здесь НЕ выводим -->
+																							<th class="py-1 pr-4">Заполняемость</th>
+																							<th class="py-1">Доля выручки</th>
+																						</tr>
+																					</thead>
+																					<tbody>
+																						{#each sessionsFor(r.id, e) as s, k}
+																							<tr
+																								class="border-b border-slate-800 last:border-none"
+																							>
+																								<td class="py-1 pr-3 text-right text-slate-400"
+																									>{k + 1}</td
+																								>
+																								<td class="py-1 pr-4">{s.title}</td>
+																								<td class="py-1 pr-4">{s.hall}</td>
+
+																								<td class="py-1 pr-4 whitespace-nowrap"
+																									>{s._dateStr}</td
+																								>
+																								<td class="py-1 pr-4 whitespace-nowrap"
+																									>{s._timeStr}</td
+																								>
+																								<td class="py-1 pr-4">{fmtRub(s.sales)}</td>
+
+																								<td class="py-1 pr-4">{fmtRub(s.tickets)}</td>
+																								<td class="py-1 pr-4">{fmtRub(s.avgPrice)}</td>
+																								<td class="py-1 pr-4"
+																									>{fmtPercent01(s.occupancy ?? null, 0)}</td
+																								>
+																								<td class="py-1">{fmtPercent01(s.share ?? 0, 1)}</td
+																								>
+																							</tr>
+																						{/each}
+																					</tbody>
+																				</table>
+																			</div>
+																		</div>
+																	</td>
+																</tr>
+															{/if}
 														{/each}
 													</tbody>
 												</table>
