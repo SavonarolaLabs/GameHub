@@ -196,6 +196,9 @@
 	type SortKey = 'sales' | 'tickets' | 'perSeance' | 'avgPrice' | 'occupancy' | 'share';
 	let sortBy: SortKey = 'sales';
 	let sortDir: 'desc' | 'asc' = 'desc';
+	// после let sortBy / sortDir и функции setSort(...)
+	const thBtnClass = (k: SortKey) =>
+		`flex items-center gap-1 hover:underline ${sortBy === k ? 'text-blue-400' : ''}`;
 
 	function setSort(k: SortKey) {
 		if (sortBy === k) sortDir = sortDir === 'desc' ? 'asc' : 'desc';
@@ -299,33 +302,150 @@
 							<th class="py-2 pr-4">Театр</th>
 
 							<th class="py-2 pr-4">
-								<button class="hover:underline" on:click={() => setSort('sales')}>Продажи</button>
+								<button class={thBtnClass('sales')} on:click={() => setSort('sales')}>
+									Продажи
+									{#if sortBy === 'sales'}
+										<svg
+											class="h-3 w-3 transition-transform {sortDir === 'desc' ? '' : 'rotate-180'}"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M19 9l-7 7-7-7"
+											/>
+										</svg>
+									{/if}
+								</button>
 							</th>
+
 							<th class="py-2 pr-4">
-								<button class="hover:underline" on:click={() => setSort('perSeance')}
-									>на 1 сеанс</button
-								>
+								<button class={thBtnClass('perSeance')} on:click={() => setSort('perSeance')}>
+									на 1 сеанс
+									{#if sortBy === 'perSeance'}
+										<svg
+											class="h-3 w-3 transition-transform {sortDir === 'desc' ? '' : 'rotate-180'}"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M19 9l-7 7-7-7"
+											/>
+										</svg>
+									{/if}
+								</button>
 							</th>
+
 							<th class="py-2 pr-4">
-								<button class="hover:underline" on:click={() => setSort('tickets')}>Билетов</button>
+								<button class={thBtnClass('tickets')} on:click={() => setSort('tickets')}>
+									Билетов
+									{#if sortBy === 'tickets'}
+										<svg
+											class="h-3 w-3 transition-transform {sortDir === 'desc' ? '' : 'rotate-180'}"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M19 9l-7 7-7-7"
+											/>
+										</svg>
+									{/if}
+								</button>
 							</th>
+
 							<th class="py-2 pr-4">
-								<button class="hover:underline" on:click={() => setSort('avgPrice')}
-									>Средняя цена</button
-								>
+								<button class={thBtnClass('avgPrice')} on:click={() => setSort('avgPrice')}>
+									Средняя цена
+									{#if sortBy === 'avgPrice'}
+										<svg
+											class="h-3 w-3 transition-transform {sortDir === 'desc' ? '' : 'rotate-180'}"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M19 9l-7 7-7-7"
+											/>
+										</svg>
+									{/if}
+								</button>
 							</th>
+
 							<th class="py-2 pr-4">
-								<button class="hover:underline" on:click={() => setSort('seances')}>Сеансов</button>
+								<button class={thBtnClass('seances')} on:click={() => setSort('seances')}>
+									Сеансов
+									{#if sortBy === 'seances'}
+										<svg
+											class="h-3 w-3 transition-transform {sortDir === 'desc' ? '' : 'rotate-180'}"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M19 9l-7 7-7-7"
+											/>
+										</svg>
+									{/if}
+								</button>
 							</th>
+
 							<th class="py-2 pr-4">
-								<button class="hover:underline" on:click={() => setSort('occupancy')}
-									>Заполняемость</button
-								>
+								<button class={thBtnClass('occupancy')} on:click={() => setSort('occupancy')}>
+									Заполняемость
+									{#if sortBy === 'occupancy'}
+										<svg
+											class="h-3 w-3 transition-transform {sortDir === 'desc' ? '' : 'rotate-180'}"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M19 9l-7 7-7-7"
+											/>
+										</svg>
+									{/if}
+								</button>
 							</th>
+
 							<th class="py-2">
-								<button class="hover:underline" on:click={() => setSort('share')}
-									>Доля выручки</button
-								>
+								<button class={thBtnClass('share')} on:click={() => setSort('share')}>
+									Доля выручки
+									{#if sortBy === 'share'}
+										<svg
+											class="h-3 w-3 transition-transform {sortDir === 'desc' ? '' : 'rotate-180'}"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M19 9l-7 7-7-7"
+											/>
+										</svg>
+									{/if}
+								</button>
 							</th>
 						</tr>
 					</thead>
