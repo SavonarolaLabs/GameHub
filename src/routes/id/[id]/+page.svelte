@@ -760,9 +760,9 @@
 				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap"></div>
 			</section>
 
-			<section class="mx-auto w-full max-w-6xl p-6">
+			<!-- <section class="mx-auto w-full max-w-6xl p-6">
 				<DynamicChart data={dynamics} />
-			</section>
+			</section> -->
 			<h2 class="mb-8 text-3xl font-bold">Данные по спектаклям</h2>
 
 			<!-- Переключатели фильтров по «сырым» данным -->
@@ -830,7 +830,7 @@
 			{#if ranking.find((r) => r.id === theater.id)}
 				{@const rank = ranking.find((r) => r.id === theater.id)}
 
-				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
+				<!-- <div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
 					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
 						<div class="text-gray-400">Спектаклей,2024</div>
 						<div class="text-6xl">49</div>
@@ -847,7 +847,7 @@
 						<div class="text-gray-400">Заполняемость (физ)</div>
 						<div class="text-6xl">54,7%</div>
 					</h3>
-				</div>
+				</div> -->
 			{/if}
 			<h2 class="mb-8 text-3xl font-bold">Спектакли</h2>
 			<!-- 2024 -->
@@ -995,8 +995,7 @@
 				</div>
 			</div>
 
-			<section class="mx-auto w-full max-w-6xl p-6">
-				<!-- ▼ раскрываем / скрываем грид с афишами -->
+			<!-- <section class="mx-auto w-full max-w-6xl p-6">
 				<button
 					class="mb-8 flex items-center gap-2 text-3xl font-bold"
 					onclick={() => (eventsWithPicturesOpen = !eventsWithPicturesOpen)}
@@ -1035,7 +1034,7 @@
 						{/each}
 					</div>
 				{/if}
-			</section>
+			</section> -->
 		</section>
 	</div>
 
