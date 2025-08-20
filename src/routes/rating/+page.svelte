@@ -8,6 +8,14 @@
 	// Берём тип театра из массива данных
 	type Theater = (typeof theaters)[number];
 
+	type MakeRowsArgs = {
+		year?: number;
+		season?: number | null;
+		onlyMainStage: boolean;
+		otherMode: OtherTypeMode;
+		endedMode: EndedMode;
+	};
+
 	/* ---------- состояние фильтров ---------- */
 	let groupMode: 'year' | 'season' = 'year';
 	let financeYear: 2024 | 2025 = 2024;
@@ -78,18 +86,17 @@
 		share: number; // 0..1
 	};
 
-	function makeRows(opts: { year?: number; season?: number | null }) {
+	function makeRows(opts: MakeRowsArgs) {
 		const rows: Row[] = [];
 
-		for (const t of theaters as Theater[]) {
-			// фильтруем сырые показы под текущие фильтры
+		for (const t of theaters) {
 			const raw = filterRows(theatersEventsRaw as any, {
 				theaterId: t.id,
-				year: groupMode === 'year' ? (opts.year as number | undefined) : undefined,
-				season: groupMode === 'season' ? (opts.season as number | undefined) : undefined,
-				mainStage: onlyMainStage ? true : undefined,
-				otherTypeMode: otherMode,
-				endedMode
+				year: groupMode === 'year' ? opts.year : undefined,
+				season: groupMode === 'season' ? (opts.season ?? undefined) : undefined,
+				mainStage: opts.onlyMainStage ? true : undefined,
+				otherTypeMode: opts.otherMode,
+				endedMode: opts.endedMode
 			});
 
 			if (!raw.length) continue;
@@ -131,7 +138,10 @@
 	// текущий период
 	$: currentRows = makeRows({
 		year: groupMode === 'year' ? financeYear : undefined,
-		season: groupMode === 'season' ? selectedSeason : undefined
+		season: groupMode === 'season' ? selectedSeason : undefined,
+		onlyMainStage,
+		otherMode,
+		endedMode
 	});
 
 	// предыдущий период (год назад или предыдущий сезон)
@@ -152,7 +162,13 @@
 					})()
 				};
 
-	$: prevRows = makeRows(prevPeriod);
+	$: prevRows = makeRows({
+		year: prevPeriod.year,
+		season: prevPeriod.season,
+		onlyMainStage,
+		otherMode,
+		endedMode
+	});
 	$: prevMap = new Map(prevRows.map((r) => [r.id, r]));
 
 	// добавляем дельты
