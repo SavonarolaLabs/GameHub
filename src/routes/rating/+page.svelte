@@ -461,16 +461,27 @@
 			</label>
 
 			{#if groupMode === 'year'}
+				<!-- 2024 -->
 				<button
-					class="rounded-md px-3 py-1 text-sm font-semibold hover:bg-slate-700
-          {financeYear === 2024 ? 'bg-slate-800 text-white' : 'bg-slate-600 text-gray-300'}"
-					on:click={() => (financeYear = 2024 as 2024)}>2024</button
+					class={'rounded-md px-3 py-1 text-sm font-semibold ' +
+						(financeYear === 2024
+							? 'bg-sky-600/60 text-sky-300 ring-1 ring-sky-500/40 hover:bg-sky-500'
+							: 'bg-slate-600 text-gray-300 hover:bg-slate-700')}
+					on:click={() => (financeYear = 2024 as 2024)}
 				>
+					2024
+				</button>
+
+				<!-- 2025 -->
 				<button
-					class="rounded-md px-3 py-1 text-sm font-semibold hover:bg-slate-700
-          {financeYear === 2025 ? 'bg-slate-800 text-white' : 'bg-slate-600 text-gray-300'}"
-					on:click={() => (financeYear = 2025 as 2025)}>2025</button
+					class={'rounded-md px-3 py-1 text-sm font-semibold ' +
+						(financeYear === 2025
+							? 'bg-sky-600/60 text-sky-300 ring-1 ring-sky-500/40 hover:bg-sky-500'
+							: 'bg-slate-600 text-gray-300 hover:bg-slate-700')}
+					on:click={() => (financeYear = 2025 as 2025)}
 				>
+					2025
+				</button>
 			{:else}
 				<label class="flex items-center gap-2">
 					<span class="text-gray-400">Сезон:</span>
