@@ -39,6 +39,34 @@
 		)
 	).sort((a, b) => b - a);
 
+	$: groupMode,
+		financeYear,
+		selectedSeason,
+		onlyMainStage,
+		otherMode,
+		endedMode,
+		() => {
+			expanded = new Set();
+		};
+
+	let _inited = false;
+
+	$: {
+		// зависимости — любое их изменение триггерит блок
+		groupMode;
+		financeYear;
+		selectedSeason;
+		onlyMainStage;
+		otherMode;
+		endedMode;
+
+		if (_inited) {
+			// очищаем раскрытые строки
+			expanded = new Set();
+		}
+		_inited = true;
+	}
+
 	$: if (groupMode === 'season' && selectedSeason == null && availableSeasons.length) {
 		selectedSeason = availableSeasons[0];
 	}
@@ -206,6 +234,32 @@
 			sortBy = k;
 			sortDir = 'desc';
 		}
+	}
+
+	let expanded = new Set<number>();
+	function toggleExpand(id: number) {
+		// пересоздаём Set, чтобы сработала реактивность
+		const next = new Set(expanded);
+		if (next.has(id)) next.delete(id);
+		else next.add(id);
+		expanded = next;
+	}
+
+	// агрегированная детализация по театру (с учётом текущих фильтров)
+	function detailsFor(theaterId: number) {
+		const raw = filterRows(theatersEventsRaw as any, {
+			theaterId,
+			year: groupMode === 'year' ? financeYear : undefined,
+			season: groupMode === 'season' ? (selectedSeason ?? undefined) : undefined,
+			mainStage: onlyMainStage ? true : undefined,
+			otherTypeMode: otherMode,
+			endedMode
+		});
+
+		// сгруппируем как на странице театра
+		const byEvent = aggregateByTitleHall(raw);
+		// отсортируем по выручке по убыванию (можно поменять)
+		return byEvent.sort((a: any, b: any) => (b.sales ?? 0) - (a.sales ?? 0));
 	}
 
 	$: visible = [...rowsWithDelta].sort((a, b) => {
@@ -453,7 +507,30 @@
 					<tbody>
 						{#each visible as r, i (r.id)}
 							<tr class="border-b border-slate-800 align-top last:border-none">
-								<td class="py-2 pr-3 text-right text-slate-400 tabular-nums">{i + 1}</td>
+								<td class="py-2 pr-3 text-right align-top text-slate-400 tabular-nums">
+									<button
+										class="inline-flex items-center gap-1 text-slate-300 hover:text-white"
+										on:click={() => toggleExpand(r.id)}
+										aria-expanded={expanded.has(r.id)}
+										aria-label="Показать мероприятия театра"
+									>
+										<span>{i + 1}</span>
+										<svg
+											class={'h-3 w-3 transition-transform ' +
+												(expanded.has(r.id) ? 'rotate-180' : '')}
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M19 9l-7 7-7-7"
+											/>
+										</svg>
+									</button>
+								</td>
 
 								<td class="py-2 pr-4">
 									<a class="text-blue-300 hover:underline" href={`${base}/id/${r.id}`}>{r.name}</a>
@@ -547,6 +624,52 @@
 									</div>
 								</td>
 							</tr>
+							{#if expanded.has(r.id)}
+								<tr class="bg-slate-800/40">
+									<td colspan="9" class="p-0">
+										<div class="px-4 pt-1 pb-4">
+											<div class="overflow-x-auto">
+												<table class="w-full min-w-[70rem] text-left text-sm">
+													<thead class="border-b border-slate-700 text-gray-400">
+														<tr>
+															<th class="py-1 pr-3 text-right">№</th>
+															<th class="py-1 pr-4">Название</th>
+															<th class="py-1 pr-4">Сцена</th>
+															<th class="py-1 pr-4">Продажи</th>
+															<th class="py-1 pr-4">на 1 показ</th>
+															<th class="py-1 pr-4">Билетов</th>
+															<th class="py-1 pr-4">Ср. цена</th>
+															<th class="py-1 pr-4">Сеансов</th>
+															<th class="py-1 pr-4">Заполняемость</th>
+															<th class="py-1">Доля выручки</th>
+														</tr>
+													</thead>
+													<tbody>
+														{#each detailsFor(r.id) as e, j (e.title + '__' + e.hall)}
+															<tr class="border-b border-slate-800 last:border-none">
+																<td class="py-1 pr-3 text-right text-slate-400">{j + 1}</td>
+																<td class="py-1 pr-4">{e.title}</td>
+																<td class="py-1 pr-4">{e.hall}</td>
+																<td class="py-1 pr-4">{fmtRub(e.sales ?? 0)}</td>
+																<td class="py-1 pr-4">{fmtRub(e.salesPerShow ?? 0)}</td>
+																<td class="py-1 pr-4">{fmtRub(e.tickets ?? 0)}</td>
+																<td class="py-1 pr-4"
+																	>{fmtRub(
+																		(e.tickets ?? 0) > 0 ? (e.sales ?? 0) / e.tickets : 0
+																	)}</td
+																>
+																<td class="py-1 pr-4">{e.seances ?? 0}</td>
+																<td class="py-1 pr-4">{fmtPercent01(e.occupancy ?? null, 0)}</td>
+																<td class="py-1">{fmtPercent01(e.share ?? 0, 1)}</td>
+															</tr>
+														{/each}
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</td>
+								</tr>
+							{/if}
 						{/each}
 					</tbody>
 				</table>
