@@ -733,8 +733,10 @@
 				<h2 class="mb-8 text-3xl font-bold">Общая информация</h2>
 			</section>
 			<div class="mb-6 flex gap-3"></div>
+
 			<!-- NEED TO ADD FUNCTION CONVERT BUDGET TO MLN -->
 			<section class="mx-auto w-full max-w-6xl">
+				<!-- //TODO: FIX DATA 
 				<div class=" mx-auto flex max-w-6xl flex-wrap justify-between p-6 whitespace-nowrap">
 					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
 						<div class="text-gray-400">expenseData МЛН, 2024</div>
@@ -748,7 +750,7 @@
 						<div class="text-gray-400">Бюджетная зависимость, 2024</div>
 						<div class="text-6xl">{finances.find((f) => f.year == financeYear)?.dependence}</div>
 					</h3>
-				</div>
+				</div> -->
 				<h2 class="mb-8 text-3xl font-bold">Внебюджет — {financeYear}</h2>
 				<HorizontalBarChart items={offbudgetData} />
 
