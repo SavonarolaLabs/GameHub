@@ -5,6 +5,11 @@
 	import { filterRows, aggregateByTitleHall, type OtherTypeMode } from '$lib/aggEvents';
 	import type { EndedMode } from '$lib/aggEvents';
 
+	import { goto } from '$app/navigation';
+	import { ArrowLeft } from 'lucide-svelte';
+
+	const goToMain = () => goto(`${base}/`);
+
 	// Берём тип театра из массива данных
 	type Theater = (typeof theaters)[number];
 
@@ -214,6 +219,9 @@
 </svelte:head>
 
 <div class="min-h-screen bg-slate-900 text-white">
+	<button class="back-to-main-btn" on:click={goToMain} aria-label="На главную">
+		<ArrowLeft size={24} />
+	</button>
 	<header class="mx-auto w-full max-w-6xl px-6 py-8">
 		<h1 class="mb-2 text-4xl font-bold">Рейтинг театров</h1>
 		<p class="mb-6 text-gray-400">Сравнение по продажам, билетам и заполняемости</p>
@@ -430,5 +438,27 @@
 <style>
 	.tabular-nums {
 		font-variant-numeric: tabular-nums;
+	}
+	.back-to-main-btn {
+		position: fixed;
+		left: 1.5rem;
+		top: 1.5rem;
+		width: 56px;
+		height: 56px;
+		border-radius: 50%;
+		background: #374151;
+		color: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: all 0.15s ease;
+		border: none;
+		outline: none;
+		z-index: 50;
+	}
+	.back-to-main-btn:hover {
+		transform: scale(1.08);
+		background: #4b5563;
 	}
 </style>
