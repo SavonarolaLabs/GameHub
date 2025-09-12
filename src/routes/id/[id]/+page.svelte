@@ -19,7 +19,7 @@
 	import { theatersStaff } from '$lib/theatersStaff';
 	import { theatersEventsRaw } from '$lib/theatersEventsRaw';
 	import { type EndedMode } from '$lib/aggEvents';
-
+	import { theatersSpacesExtra } from '$lib/theatersSpacesExtra';
 	import {
 		filterRows,
 		aggregateByTitleHall,
@@ -120,6 +120,59 @@
 		];
 	})();
 
+	// --- доп.инфа по площадкам (из theatersSpacesExtra) -----------------
+	const norm = (x?: unknown) => (x ?? '').toString().trim().toLowerCase();
+
+	type ExtraSpace = {
+		spaceId?: number | null;
+		venue_space_short_name?: string;
+		address?: string;
+		okrug?: string;
+		district?: string;
+		maps_link?: string;
+		genre?: string;
+		metro?: string;
+		metro_walk_min?: number | null;
+		has_cafe?: boolean | null;
+		has_buffet?: boolean | null;
+		has_souvenir_shop?: boolean | null;
+	};
+
+	$: spacesExtra = theatersSpacesExtra.find((t) => t.id === theater.id)?.spaces ?? [];
+
+	$: extraById = new Map(
+		spacesExtra.filter((e) => e.spaceId != null).map((e) => [String(e.spaceId), e])
+	);
+
+	// итоговый список площадок с подмешанными полями из extra
+	$: spacesEnriched = theater.spaces.map((s: any) => {
+		const sid = s.id ?? s.space_id ?? s.spaceId ?? null;
+
+		// 1) пытаемся матчить по id
+		let extra = sid != null ? extraById.get(String(sid)) : undefined;
+
+		// 2) если нет — матчим по короткому названию сцены
+		if (!extra) {
+			extra = spacesExtra.find(
+				(e) => norm(e.venue_space_short_name) === norm(s.venue_space_short_name)
+			);
+		}
+
+		return {
+			...s,
+			// не затираем уже имеющееся — только дополняем
+			genre: s.genre ?? extra?.genre,
+			okrug: s.okrug ?? extra?.okrug,
+			district: s.district ?? extra?.district,
+			address: s.address ?? extra?.address,
+			maps_link: s.maps_link ?? extra?.maps_link,
+			metro: s.metro ?? extra?.metro,
+			metro_walk_min: s.metro_walk_min ?? extra?.metro_walk_min,
+			has_cafe: s.has_cafe ?? extra?.has_cafe,
+			has_buffet: s.has_buffet ?? extra?.has_buffet,
+			has_souvenir_shop: s.has_souvenir_shop ?? extra?.has_souvenir_shop
+		};
+	});
 	// Палитра как в прежней верстке (опционально)
 	const obPalette = {
 		total: '#f03066',
@@ -678,7 +731,7 @@
 		<section class="mx-auto w-full max-w-6xl p-6">
 			<h2 class="mb-6 text-2xl font-bold">{theater.spaces.length} площадки / {totalSeats} мест</h2>
 
-			{#each theater.spaces as s, i}
+			{#each spacesEnriched as s, i}
 				<div class="mb-6 rounded-lg bg-slate-700">
 					<button
 						class="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-slate-600"
@@ -726,7 +779,29 @@
 										<span class="text-sm text-gray-400">Адресс:</span>
 										<span>{titleCase(s.address, '—')}</span>
 									</p>
+									{#if s.metro}
+										<p class="mb-4">
+											<span class="text-sm text-gray-400">Метро:</span>
+											<span>
+												{s.metro}
+												{#if s.metro_walk_min != null}
+													· {s.metro_walk_min} мин пешком{/if}
+											</span>
+										</p>
+									{/if}
 
+									<!-- бейджики-удобства -->
+									<div class="mt-2 flex flex-wrap gap-2">
+										{#if s.has_cafe === true}
+											<span class="rounded bg-slate-600 px-2 py-0.5 text-xs">Кафе</span>
+										{/if}
+										{#if s.has_buffet === true}
+											<span class="rounded bg-slate-600 px-2 py-0.5 text-xs">Буфет</span>
+										{/if}
+										{#if s.has_souvenir_shop === true}
+											<span class="rounded bg-slate-600 px-2 py-0.5 text-xs">Сувениры</span>
+										{/if}
+									</div>
 									{#if safeHref(s.maps_link)}
 										<a
 											class="mb-6 inline-block text-blue-400 underline"
