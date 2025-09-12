@@ -505,19 +505,32 @@
 				</svg>
 			</button>
 			{#if BaseInfoOpen}
-				<!-- СОТРУДНИКИ -->
-				<div class="flex flex-wrap justify-between whitespace-nowrap">
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">СОТРУДНИКИ</div>
-						<div class="text-9xl">{theater.employees}</div>
+				<div class="flex flex-wrap justify-between gap-6">
+					<h3 class="mt-8 mb-3 flex flex-col-reverse text-lg font-semibold">
+						<div class="text-xs tracking-wide text-gray-400 uppercase">СОТРУДНИКИ</div>
+						<div class="text-4xl leading-none sm:text-5xl md:text-6xl lg:text-7xl">
+							{fmtInt(staffTotal)}
+						</div>
 					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">ХУДОЖЕСТВЕННЫЙ ПЕРСОНАЛ</div>
-						<div class="text-9xl">{theater.artistic_staff}</div>
+					<h3 class="mt-8 mb-3 flex flex-col-reverse text-lg font-semibold">
+						<div class="text-xs tracking-wide text-gray-400 uppercase">
+							АДМИНИСТРАТИВНЫЙ ПЕРСОНАЛ
+						</div>
+						<div class="text-4xl leading-none sm:text-5xl md:text-6xl lg:text-7xl">
+							{fmtInt(staffAdmin)}
+						</div>
 					</h3>
-					<h3 class="mt-10 mb-4 flex flex-col-reverse text-xl font-semibold">
-						<div class="text-gray-400">АРТИСТЫ</div>
-						<div class="text-9xl">{theater.cast}</div>
+					<h3 class="mt-8 mb-3 flex flex-col-reverse text-lg font-semibold">
+						<div class="text-xs tracking-wide text-gray-400 uppercase">ХУДОЖЕСТВЕННЫЙ ПЕРСОНАЛ</div>
+						<div class="text-4xl leading-none sm:text-5xl md:text-6xl lg:text-7xl">
+							{fmtInt(staffArtistic)}
+						</div>
+					</h3>
+					<h3 class="mt-8 mb-3 flex flex-col-reverse text-lg font-semibold">
+						<div class="text-xs tracking-wide text-gray-400 uppercase">АРТИСТЫ</div>
+						<div class="text-4xl leading-none sm:text-5xl md:text-6xl lg:text-7xl">
+							{fmtInt(staffArtists)}
+						</div>
 					</h3>
 				</div>
 
