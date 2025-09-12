@@ -500,7 +500,7 @@ export const hr = [
 		fullName: 'ДУРОВА Тереза Ганнибаловна',
 		position: 'художественный руководитель',
 		organization: 'ГБУК г. Москвы "Театриум на Серпуховке под руководством Терезы Дуровой"',
-		organizationInn: '#N/A',
+		organizationInn: '7725054895',
 		hrId: '28',
 		photo: '28.jpg',
 		contractStart: '',

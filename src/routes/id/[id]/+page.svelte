@@ -538,6 +538,8 @@
 				<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
 					{#each hr.filter((h) => h.organizationInn == theater.id && (h.position.toLowerCase() == 'директор' || h.position
 									.toLowerCase()
+									.startsWith('художественный руководитель') || h.position
+									.toLowerCase()
 									.startsWith('художественный') || h.position
 									.toLowerCase()
 									.startsWith('генеральный директор'))) as p}
