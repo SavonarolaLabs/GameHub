@@ -16,7 +16,7 @@
 	import { theatersOffbudget } from '$lib/theatersOffbudget';
 	import PersonPopup from '$lib/PersonPopup.svelte';
 	import HorizontalBarChart from '$lib/HorizontalBarChart.svelte';
-
+	import { theatersStaff } from '$lib/theatersStaff';
 	import { theatersEventsRaw } from '$lib/theatersEventsRaw';
 	import { type EndedMode } from '$lib/aggEvents';
 
@@ -388,6 +388,22 @@
 
 	/** форматируем числовое значение ₽ с пробелами-тысячниками */
 	const fmtRub = (n: number) => new Intl.NumberFormat('ru-RU').format(n);
+
+	// Найдём строку со штатами для текущего театра (id = ИНН)
+	$: staffRow = theatersStaff.find((x) => x.id === theater.id) ?? null;
+	$: staffMeta = staffRow?.meta ?? null;
+	$: staff = staffRow?.staff ?? null;
+
+	// Удобный форматтер целых чисел (пробелы-тысячники)
+	const fmtInt = (n?: number | null) =>
+		n == null ? '—' : new Intl.NumberFormat('ru-RU').format(Math.round(n));
+
+	// Фоллбэк к полям старой структуры, если в новом файле чего-то нет
+	$: staffTotal = staff?.total ?? theater.employees ?? null;
+	$: staffArtistic = staff?.artistic ?? theater.artistic_staff ?? null;
+	$: staffArtists = staff?.artists ?? theater.cast ?? null;
+	$: staffAdmin = staff?.admin ?? null;
+	$: staffOther = staff?.other ?? null;
 </script>
 
 <!-- переключатель года -->
