@@ -84,7 +84,7 @@ function findIdx(headers, pred, required = true, nameForError = 'column') {
 }
 
 /* -------- настройки файлов -------- */
-const SOURCE = process.argv[2] || 'Expences_20.08.2025.csv';
+const SOURCE = process.argv[2] || 'Expenses_15092025.csv';
 const TARGET = process.argv[3] || 'theatersExpenses.js';
 const EXPORT = 'theatersExpenses';
 

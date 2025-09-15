@@ -76,7 +76,7 @@ function findIdx(headers, pred, required = true, nameForError = 'column') {
 }
 
 /* --- файлы и словарь токенов для категорий --- */
-const SOURCE = process.argv[2] || 'theatersOffbudget_20.08.2025.csv';
+const SOURCE = process.argv[2] || 'Ofbudget_15092025.csv';
 const TARGET = process.argv[3] || 'theatersOffbudget.js';
 const EXPORT = 'theatersOffbudget';
 
