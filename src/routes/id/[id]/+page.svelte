@@ -76,7 +76,22 @@
   <rect x="120" y="160" width="400" height="40" rx="8" fill="#6b7280"/>
   <rect x="160" y="120" width="320" height="30" rx="6" fill="#9ca3af"/>
 </svg>`);
-
+	// 🔶 плейсхолдер для ФОТОБАНКА (иконка камеры в кружке)
+	const photobankFallback = svgDataURI(`
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#475569"/>
+      <stop offset="1" stop-color="#334155"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#g)"/>
+  <circle cx="64" cy="64" r="46" fill="#1f2937"/>
+  <rect x="36" y="54" width="56" height="30" rx="6" fill="#64748b"/>
+  <rect x="44" y="48" width="20" height="10" rx="3" fill="#94a3b8"/>
+  <circle cx="64" cy="69" r="12" fill="#0ea5e9"/>
+  <circle cx="64" cy="69" r="6" fill="#e2e8f0"/>
+</svg>`);
 	// Удобный геттер фото сотрудника: если пусто — сразу плейсхолдер
 	const getStaffPhoto = (file?: string | null) => (file ? hrimg(file) : staffFallback);
 
@@ -861,19 +876,35 @@
 
 					<div class="relative h-30">
 						<div class="flex items-start space-x-3">
-							<a target="_blank" class="flex flex-col gap-2" href={theater.fotobankLink}>
-								<img
-									class="size-16 rounded-full"
-									src={socialsimg(theater.id + '_logo.jpg')}
-									alt=""
-								/>
-								<div>
-									<div class="text-sm text-gray-400">Фотобанк</div>
-									<!-- <div class="text-sm text-gray-400">{titleCase(p.position)}</div>
-								<div class="text-sm text-gray-400">{formatPhone(trimTitles(p.phone))}</div>
-								<div class="text-sm text-gray-400">{trimTitles(p.email)}</div> -->
+							{#if safeHref(theater.fotobankLink)}
+								<a target="_blank" class="flex flex-col gap-2" href={theater.fotobankLink}>
+									<img
+										class="size-16 rounded-full"
+										src={socialsimg(theater.id + '_logo.jpg')}
+										alt="Фотобанк"
+										onerror={(e) => onImgError(e, photobankFallback)}
+									/>
+									<div>
+										<div class="text-sm text-gray-400">Фотобанк</div>
+									</div>
+								</a>
+							{:else}
+								<!-- если ссылки нет — показываем плейсхолдер и «глушим» клики -->
+								<div
+									class="flex cursor-not-allowed flex-col gap-2 opacity-70"
+									title="Ссылка на фотобанк не указана"
+								>
+									<img
+										class="size-16 rounded-full"
+										src={photobankFallback}
+										alt="Фотобанк"
+										onerror={(e) => onImgError(e, photobankFallback)}
+									/>
+									<div>
+										<div class="text-sm text-gray-400">Фотобанк</div>
+									</div>
 								</div>
-							</a>
+							{/if}
 						</div>
 						<div class="absolute top-16 flex gap-4"></div>
 					</div>
