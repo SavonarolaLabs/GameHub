@@ -467,6 +467,195 @@
 	$: staffArtists = staff?.artists ?? theater.cast ?? null;
 	$: staffAdmin = staff?.admin ?? null;
 	$: staffOther = staff?.other ?? null;
+
+	//Детализация по спектаклям:
+	// === ВЛОЖЕННОСТЬ ДЛЯ ТАБЛИЦЫ «СПЕКТАКЛИ» ===
+	let expandedDetail = new Set<string>(); // раскрытые строки 1-го уровня (мероприятия)
+
+	// Стабильный ключ мероприятия (Название + Сцена)
+	function detailKey(e: { title: string; hall: string }) {
+		return `${e.title}__${e.hall}`;
+	}
+	function toggleDetail(key: string) {
+		const next = new Set(expandedDetail);
+		if (next.has(key)) next.delete(key);
+		else next.add(key);
+		expandedDetail = next;
+	}
+
+	// При смене фильтров сбрасываем раскрытия
+	$: {
+		groupMode;
+		financeYear;
+		selectedSeason;
+		onlyMainStage;
+		otherMode;
+		endedMode;
+		expandedDetail = new Set();
+	}
+
+	// Формат процента 0..1 → "##.#%"
+	function fmtPercent01(x?: number | null, digits = 0) {
+		if (x == null) return '—';
+		return `${(x * 100).toFixed(digits)}%`;
+	}
+
+	// Универсальные парсеры даты/времени (как в рейтинге)
+	function _pick(obj: any, keys: string[]) {
+		return keys.find((k) => obj[k] != null) ? obj[keys.find((k) => obj[k] != null)!] : undefined;
+	}
+	function _parseMaybeDate(input: any): Date | null {
+		if (input == null) return null;
+		if (input instanceof Date) return input;
+		if (typeof input === 'number') return new Date(input);
+		if (typeof input === 'string') {
+			const d1 = new Date(input);
+			if (!Number.isNaN(+d1)) return d1;
+
+			const m = input.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})(?:[ T](\d{1,2}):(\d{2}))?$/);
+			if (m) {
+				const [, dd, mm, yyyy, hh, mi] = m;
+				const year = (yyyy.length === 2 ? 2000 + Number(yyyy) : Number(yyyy)) || 0;
+				const date = new Date(
+					year,
+					Number(mm) - 1,
+					Number(dd),
+					hh ? Number(hh) : 0,
+					mi ? Number(mi) : 0
+				);
+				if (!Number.isNaN(+date)) return date;
+			}
+		}
+		return null;
+	}
+	function _dateFromRow(r: any): Date | null {
+		let dtLike =
+			_pick(r, [
+				'datetime',
+				'dateTime',
+				'date_time',
+				'dt',
+				'start',
+				'startAt',
+				'start_at',
+				'startDateTime',
+				'start_datetime',
+				'when'
+			]) ?? r.date;
+
+		let timeLike = _pick(r, [
+			'time',
+			'startTime',
+			'start_time',
+			'showTime',
+			'performanceTime',
+			'sessionTime'
+		]);
+
+		let d = _parseMaybeDate(dtLike);
+		if (d) return d;
+
+		if (r.date && timeLike) {
+			const base = _parseMaybeDate(r.date);
+			if (base) {
+				const [h, m] = String(timeLike).split(':').map(Number);
+				if (!Number.isNaN(h)) base.setHours(h, Number.isNaN(m) ? 0 : m);
+				return base;
+			}
+		}
+		const ts = _pick(r, ['ts', 'timestamp']);
+		return _parseMaybeDate(ts);
+	}
+	const fmtDate = (d: Date | null, fallback?: string) =>
+		d ? d.toLocaleDateString('ru-RU') : (fallback ?? '—');
+	const fmtTime = (d: Date | null, fallback?: string) =>
+		d ? d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : (fallback ?? '—');
+
+	// Сеансы для конкретной строки (Название+Сцена) с учётом текущих фильтров
+	function sessionsForEvent(e: { title: string; hall: string }) {
+		// Берём уже отфильтрованные "сырые" ряды под текущие фильтры
+		const same = (filteredRaw as any[]).filter((r) => r.title === e.title && r.hall === e.hall);
+
+		// Сумма продаж театра в текущем срезе — для расчёта доли
+		const theaterTotal = (eventSales as any[]).reduce((s, v) => s + (v.sales ?? 0), 0);
+
+		return (
+			same
+				.map((r: any) => {
+					const sales = r.sales ?? 0;
+					const tickets = r.tickets ?? 0;
+					const avgPrice = tickets > 0 ? sales / tickets : 0;
+
+					const dt = _dateFromRow(r);
+					const dateStr = dt ? fmtDate(dt) : (r.date ?? '—');
+					const timeStr = dt ? fmtTime(dt) : (r.time ?? r.startTime ?? '—');
+
+					const capacity = r.capacity ?? r.totalCapacity ?? r.seats ?? null;
+					const occupancy =
+						typeof r.occupancy === 'number'
+							? r.occupancy
+							: capacity
+								? (tickets ?? 0) / capacity
+								: null;
+
+					const share = theaterTotal > 0 ? sales / theaterTotal : 0;
+
+					return {
+						...r,
+						sales,
+						tickets,
+						avgPrice,
+						occupancy,
+						share,
+						_dt: dt,
+						_dateStr: dateStr,
+						_timeStr: timeStr
+					};
+				})
+				// Сортировка: свежие сверху (можешь поменять на по выручке)
+				.sort((a: any, b: any) => (+b._dt || 0) - (+a._dt || 0))
+		);
+	}
+
+	// === СОРТИРОВКА ДЛЯ ТАБЛИЦЫ «СПЕКТАКЛИ» ===
+	type SortKey =
+		| 'sales'
+		| 'salesPerShow'
+		| 'tickets'
+		| 'avgPrice'
+		| 'seances'
+		| 'occupancy'
+		| 'share';
+
+	let sortBy: SortKey = 'sales';
+	let sortDir: 'desc' | 'asc' = 'desc';
+
+	const thBtnClass = (k: SortKey) =>
+		`flex items-center gap-1 hover:underline ${sortBy === k ? 'text-blue-400' : ''}`;
+
+	function setSort(k: SortKey) {
+		if (sortBy === k) sortDir = sortDir === 'desc' ? 'asc' : 'desc';
+		else {
+			sortBy = k;
+			sortDir = 'desc';
+		}
+	}
+
+	// вспомогательно: null/undefined уводим «в конец»
+	function valueForSort(row: any, key: SortKey) {
+		const v = row[key];
+		if (v == null || Number.isNaN(v)) return -Infinity; // чтобы пустые были в конце при desc
+		return v;
+	}
+
+	// Отсортированный список для отображения
+	$: rowsSorted = [...rowsWithDelta].sort((a, b) => {
+		const va = valueForSort(a, sortBy);
+		const vb = valueForSort(b, sortBy);
+		if (va === vb) return 0;
+		const mul = sortDir === 'desc' ? -1 : 1;
+		return va > vb ? mul : -mul;
+	});
 </script>
 
 <!-- переключатель года -->
@@ -960,28 +1149,210 @@
 						<thead class="border-b border-slate-700 text-gray-400">
 							<tr>
 								<th class="py-2 pr-3 text-right">№</th>
-								<!-- NEW -->
-								<th class="py-2 pr-4">Название</th>
+
+								<th class="py-2 pr-4">
+									<!-- «Название» обычно не сортируем — можно оставить текстом;
+				     но если нужно — сделай button и добавь ключ 'title' -->
+									Название
+								</th>
+
 								<th class="py-2 pr-4">Сцена</th>
-								<th class="py-2 pr-4">Продажи</th>
-								<th class="py-2 pr-4">на 1 показ</th>
-								<th class="py-2 pr-4">Билетов</th>
-								<th class="py-2 pr-4">Цена</th>
-								<!-- NEW -->
-								<th class="py-2 pr-4">Сеансов</th>
-								<th class="py-2 pr-4">Загрузка</th>
-								<th class="py-2">Доля выручки</th>
+
+								<th class="py-2 pr-4">
+									<button class={thBtnClass('sales')} onclick={() => setSort('sales')}>
+										Продажи
+										{#if sortBy === 'sales'}
+											<svg
+												class="h-3 w-3 transition-transform {sortDir === 'desc'
+													? ''
+													: 'rotate-180'}"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M19 9l-7 7-7-7"
+												/>
+											</svg>
+										{/if}
+									</button>
+								</th>
+
+								<th class="py-2 pr-4">
+									<button
+										class={thBtnClass('salesPerShow')}
+										onclick={() => setSort('salesPerShow')}
+									>
+										на 1 показ
+										{#if sortBy === 'salesPerShow'}
+											<svg
+												class="h-3 w-3 transition-transform {sortDir === 'desc'
+													? ''
+													: 'rotate-180'}"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M19 9l-7 7-7-7"
+												/>
+											</svg>
+										{/if}
+									</button>
+								</th>
+
+								<th class="py-2 pr-4">
+									<button class={thBtnClass('tickets')} onclick={() => setSort('tickets')}>
+										Билетов
+										{#if sortBy === 'tickets'}
+											<svg
+												class="h-3 w-3 transition-transform {sortDir === 'desc'
+													? ''
+													: 'rotate-180'}"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M19 9l-7 7-7-7"
+												/>
+											</svg>
+										{/if}
+									</button>
+								</th>
+
+								<th class="py-2 pr-4">
+									<button class={thBtnClass('avgPrice')} onclick={() => setSort('avgPrice')}>
+										Цена
+										{#if sortBy === 'avgPrice'}
+											<svg
+												class="h-3 w-3 transition-transform {sortDir === 'desc'
+													? ''
+													: 'rotate-180'}"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M19 9l-7 7-7-7"
+												/>
+											</svg>
+										{/if}
+									</button>
+								</th>
+
+								<th class="py-2 pr-4">
+									<button class={thBtnClass('seances')} onclick={() => setSort('seances')}>
+										Сеансов
+										{#if sortBy === 'seances'}
+											<svg
+												class="h-3 w-3 transition-transform {sortDir === 'desc'
+													? ''
+													: 'rotate-180'}"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M19 9l-7 7-7-7"
+												/>
+											</svg>
+										{/if}
+									</button>
+								</th>
+
+								<th class="py-2 pr-4">
+									<button class={thBtnClass('occupancy')} onclick={() => setSort('occupancy')}>
+										Загрузка
+										{#if sortBy === 'occupancy'}
+											<svg
+												class="h-3 w-3 transition-transform {sortDir === 'desc'
+													? ''
+													: 'rotate-180'}"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M19 9l-7 7-7-7"
+												/>
+											</svg>
+										{/if}
+									</button>
+								</th>
+
+								<th class="py-2">
+									<button class={thBtnClass('share')} onclick={() => setSort('share')}>
+										Доля выручки
+										{#if sortBy === 'share'}
+											<svg
+												class="h-3 w-3 transition-transform {sortDir === 'desc'
+													? ''
+													: 'rotate-180'}"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M19 9l-7 7-7-7"
+												/>
+											</svg>
+										{/if}
+									</button>
+								</th>
 							</tr>
 						</thead>
+
 						<tbody>
-							{#each rowsWithDelta as e, i (e.title + '__' + e.hall)}
-								<tr class="border-b border-slate-800 last:border-none">
-									<!-- № -->
+							{#each rowsSorted as e, i (e.title + '__' + e.hall)}
+								<!-- уровень 1 -->
+								<tr class="border-b border-slate-800 align-top last:border-none">
 									<td class="py-2 pr-3 text-right align-top text-slate-400 tabular-nums">
-										{i + 1}
+										<button
+											class="inline-flex items-center gap-1 text-slate-300 hover:text-white"
+											onclick={() => toggleDetail(detailKey(e))}
+											aria-expanded={expandedDetail.has(detailKey(e))}
+											aria-label="Показать сеансы"
+										>
+											<span>{i + 1}</span>
+											<svg
+												class={'h-3 w-3 transition-transform ' +
+													(expandedDetail.has(detailKey(e)) ? 'rotate-180' : '')}
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M19 9l-7 7-7-7"
+												/>
+											</svg>
+										</button>
 									</td>
 
-									<!-- Название -->
 									<td class="w-[22ch] min-w-0 py-2 pr-4 align-top sm:w-[28ch] md:w-[32ch]">
 										<div
 											class="clamp-2 max-w-full leading-snug break-words whitespace-normal"
@@ -991,14 +1362,10 @@
 										</div>
 									</td>
 
-									<!-- Сцена -->
-									<td
-										class="w-[16ch] py-2 pr-4 align-top break-words whitespace-normal sm:w-[18ch]"
+									<td class="w-[16ch] py-2 pr-4 align-top break-words whitespace-normal sm:w-[18ch]"
+										>{e.hall}</td
 									>
-										{e.hall}
-									</td>
 
-									<!-- Продажи -->
 									<td class="py-2 pr-4 align-top">
 										<div class="flex flex-col leading-tight tabular-nums">
 											<span class="whitespace-nowrap">{fmtRub(Math.round(e.sales))}</span>
@@ -1011,7 +1378,6 @@
 										</div>
 									</td>
 
-									<!-- Продажи/показ -->
 									<td class="py-2 pr-4 align-top">
 										<div class="flex flex-col leading-tight tabular-nums">
 											<span class="whitespace-nowrap">{fmtRub(Math.round(e.salesPerShow))}</span>
@@ -1024,7 +1390,6 @@
 										</div>
 									</td>
 
-									<!-- Билетов -->
 									<td class="py-2 pr-4 align-top">
 										<div class="flex flex-col leading-tight tabular-nums">
 											<span class="whitespace-nowrap">{fmtRub(Math.round(e.tickets))}</span>
@@ -1037,7 +1402,6 @@
 										</div>
 									</td>
 
-									<!-- Ср. цена, ₽ (Продажи / Билетов) -->
 									<td class="py-2 pr-4 align-top">
 										<div class="flex flex-col leading-tight tabular-nums">
 											<span class="whitespace-nowrap">{fmtRub(Math.round(e.avgPrice || 0))}</span>
@@ -1050,7 +1414,6 @@
 										</div>
 									</td>
 
-									<!-- Сеансов -->
 									<td class="py-2 pr-4 align-top">
 										<div class="flex flex-col leading-tight tabular-nums">
 											<span class="whitespace-nowrap">{e.seances}</span>
@@ -1063,7 +1426,6 @@
 										</div>
 									</td>
 
-									<!-- Заполняемость -->
 									<td class="py-2 pr-4 align-top">
 										<div class="flex flex-col leading-tight tabular-nums">
 											<span class="whitespace-nowrap">{Math.round((e.occupancy ?? 0) * 100)}%</span>
@@ -1076,7 +1438,6 @@
 										</div>
 									</td>
 
-									<!-- Доля выручки -->
 									<td class="py-2 align-top">
 										<div class="flex flex-col leading-tight tabular-nums">
 											<span class="whitespace-nowrap">{Math.round((e.share ?? 0) * 100)}%</span>
@@ -1089,6 +1450,45 @@
 										</div>
 									</td>
 								</tr>
+
+								{#if expandedDetail.has(detailKey(e))}
+									<tr class="bg-slate-800/60">
+										<td colspan="10" class="p-0">
+											<div class="px-4 pt-1 pb-3">
+												<div class="overflow-x-auto">
+													<table class="w-full min-w-[60rem] text-left text-xs sm:text-sm">
+														<thead class="border-b border-slate-700 text-gray-400">
+															<tr>
+																<th class="py-1 pr-3 text-right">№</th>
+																<th class="py-1 pr-4">Дата</th>
+																<th class="py-1 pr-4">Время</th>
+																<th class="py-1 pr-4">Продажи</th>
+																<th class="py-1 pr-4">Билетов</th>
+																<th class="py-1 pr-4">Ср. цена</th>
+																<th class="py-1 pr-4">Заполняемость</th>
+																<th class="py-1">Доля выручки</th>
+															</tr>
+														</thead>
+														<tbody>
+															{#each sessionsForEvent(e) as s, k}
+																<tr class="border-b border-slate-800 last:border-none">
+																	<td class="py-1 pr-3 text-right text-slate-400">{k + 1}</td>
+																	<td class="py-1 pr-4 whitespace-nowrap">{s._dateStr}</td>
+																	<td class="py-1 pr-4 whitespace-nowrap">{s._timeStr}</td>
+																	<td class="py-1 pr-4">{fmtRub(s.sales)}</td>
+																	<td class="py-1 pr-4">{fmtRub(s.tickets)}</td>
+																	<td class="py-1 pr-4">{fmtRub(s.avgPrice)}</td>
+																	<td class="py-1 pr-4">{fmtPercent01(s.occupancy ?? null, 0)}</td>
+																	<td class="py-1">{fmtPercent01(s.share ?? 0, 1)}</td>
+																</tr>
+															{/each}
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</td>
+									</tr>
+								{/if}
 							{/each}
 						</tbody>
 					</table>
