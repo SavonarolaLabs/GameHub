@@ -51,6 +51,34 @@
 				.filter((n) => Number.isFinite(n))
 		)
 	).sort((a, b) => b - a);
+	// --- универсальный фоллбек для <img> ----------------------------------------
+	function onImgError(e: Event, fallback: string) {
+		const img = e.currentTarget as HTMLImageElement;
+		if (img && img.src !== fallback) img.src = fallback;
+	}
+
+	// SVG → data URI
+	const svgDataURI = (svg: string) => 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+
+	// 🔶 плейсхолдер для СОТРУДНИКОВ (кружок-аватар)
+	const staffFallback = svgDataURI(`
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
+  <rect width="100%" height="100%" fill="#334155"/>
+  <circle cx="64" cy="48" r="26" fill="#64748b"/>
+  <rect x="26" y="82" width="76" height="34" rx="17" fill="#64748b"/>
+</svg>`);
+
+	// 🔷 плейсхолдер для ПЛОЩАДОК (иконка сцены)
+	const spaceFallback = svgDataURI(`
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="100%" height="100%" fill="#1f2937"/>
+  <rect x="80" y="220" width="480" height="40" rx="8" fill="#4b5563"/>
+  <rect x="120" y="160" width="400" height="40" rx="8" fill="#6b7280"/>
+  <rect x="160" y="120" width="320" height="30" rx="6" fill="#9ca3af"/>
+</svg>`);
+
+	// Удобный геттер фото сотрудника: если пусто — сразу плейсхолдер
+	const getStaffPhoto = (file?: string | null) => (file ? hrimg(file) : staffFallback);
 
 	// Автовыбор сезона при переключении режима
 	$: if (groupMode === 'season' && selectedSeason == null && availableSeasons.length) {
@@ -327,7 +355,7 @@
 	function showPersonBio(p) {
 		selectedPerson.name = p.fullName;
 		selectedPerson.position = p.position;
-		selectedPerson.photo = hrimg(p.photo);
+		selectedPerson.photo = getStaffPhoto(p.photo); // <-- тут
 		selectedPerson.biography = p.biography;
 		showPopup = true;
 	}
@@ -785,9 +813,10 @@
 								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 								<img
 									class="size-16 cursor-pointer rounded-full"
-									src={hrimg(p.photo)}
+									src={getStaffPhoto(p.photo)}
 									alt=""
 									onclick={() => showPersonBio(p)}
+									onerror={(e) => onImgError(e, staffFallback)}
 								/>
 
 								<div>
@@ -879,9 +908,10 @@
 									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 									<img
 										class="size-16 cursor-pointer rounded-full"
-										src={hrimg(p.photo)}
+										src={getStaffPhoto(p.photo)}
 										alt=""
 										onclick={() => showPersonBio(p)}
+										onerror={(e) => onImgError(e, staffFallback)}
 									/>
 
 									<div>
@@ -999,15 +1029,12 @@
 								<div
 									class="flex h-40 items-center justify-center overflow-hidden rounded bg-slate-600"
 								>
-									{#if s.photo}
-										<img
-											class="h-full w-full object-cover"
-											src={spaceimg(s.photo)}
-											alt={s.venue_space_short_name}
-										/>
-									{:else}
-										<span class="text-gray-400">Фото недоступно</span>
-									{/if}
+									<img
+										class="h-full w-full object-cover"
+										src={s.photo ? spaceimg(s.photo) : spaceFallback}
+										alt={s.venue_space_short_name}
+										onerror={(e) => onImgError(e, spaceFallback)}
+									/>
 								</div>
 							</div>
 						</div>

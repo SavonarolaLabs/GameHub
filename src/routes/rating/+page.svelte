@@ -525,7 +525,7 @@
 		<!-- Переключатель вида -->
 		<div class="mb-4 flex gap-2">
 			<button
-				class={'rounded-md px-3 py-1 text-sm font-semibold ' +
+				class={'rounded-md px-3 py-1 text-xl font-semibold ' +
 					(viewMode === 'theaters'
 						? 'bg-sky-600/60 text-sky-300 ring-1 ring-sky-500/40 hover:bg-sky-500'
 						: 'bg-slate-600 text-gray-300 hover:bg-slate-700')}
@@ -534,7 +534,7 @@
 				Театры
 			</button>
 			<button
-				class={'rounded-md px-3 py-1 text-sm font-semibold ' +
+				class={'rounded-md px-3 py-1 text-xl font-semibold ' +
 					(viewMode === 'events'
 						? 'bg-sky-600/60 text-sky-300 ring-1 ring-sky-500/40 hover:bg-sky-500'
 						: 'bg-slate-600 text-gray-300 hover:bg-slate-700')}
