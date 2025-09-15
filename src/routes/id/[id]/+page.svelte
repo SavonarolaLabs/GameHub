@@ -281,6 +281,16 @@
 		return raw.trim();
 	}
 
+	// показываем только если это конечное положительное число
+	const hasStat = (n?: number | null) => typeof n === 'number' && Number.isFinite(n) && n > 0;
+
+	$: staffCards = [
+		{ label: 'СОТРУДНИКИ', value: staffTotal },
+		{ label: 'АДМИНИСТРАТИВНЫЙ ПЕРСОНАЛ', value: staffAdmin },
+		{ label: 'ХУДОЖЕСТВЕННЫЙ ПЕРСОНАЛ', value: staffArtistic },
+		{ label: 'АРТИСТЫ', value: staffArtists }
+	].filter((c) => hasStat(c.value));
+
 	// чтобы не рисовать битую ссылку если пусто/пробелы
 	const safeHref = (url?: string | null) => (url && url.trim() ? url : null);
 
@@ -558,34 +568,18 @@
 				</svg>
 			</button>
 			{#if BaseInfoOpen}
-				<div class="flex flex-wrap justify-between gap-6">
-					<h3 class="mt-8 mb-3 flex flex-col-reverse text-lg font-semibold">
-						<div class="text-xs tracking-wide text-gray-400 uppercase">СОТРУДНИКИ</div>
-						<div class="text-4xl leading-none sm:text-5xl md:text-6xl lg:text-7xl">
-							{fmtInt(staffTotal)}
-						</div>
-					</h3>
-					<h3 class="mt-8 mb-3 flex flex-col-reverse text-lg font-semibold">
-						<div class="text-xs tracking-wide text-gray-400 uppercase">
-							АДМИНИСТРАТИВНЫЙ ПЕРСОНАЛ
-						</div>
-						<div class="text-4xl leading-none sm:text-5xl md:text-6xl lg:text-7xl">
-							{fmtInt(staffAdmin)}
-						</div>
-					</h3>
-					<h3 class="mt-8 mb-3 flex flex-col-reverse text-lg font-semibold">
-						<div class="text-xs tracking-wide text-gray-400 uppercase">ХУДОЖЕСТВЕННЫЙ ПЕРСОНАЛ</div>
-						<div class="text-4xl leading-none sm:text-5xl md:text-6xl lg:text-7xl">
-							{fmtInt(staffArtistic)}
-						</div>
-					</h3>
-					<h3 class="mt-8 mb-3 flex flex-col-reverse text-lg font-semibold">
-						<div class="text-xs tracking-wide text-gray-400 uppercase">АРТИСТЫ</div>
-						<div class="text-4xl leading-none sm:text-5xl md:text-6xl lg:text-7xl">
-							{fmtInt(staffArtists)}
-						</div>
-					</h3>
-				</div>
+				{#if staffCards.length}
+					<div class="flex flex-wrap justify-between gap-6">
+						{#each staffCards as c}
+							<h3 class="mt-8 mb-3 flex flex-col-reverse text-lg font-semibold">
+								<div class="text-xs tracking-wide text-gray-400 uppercase">{c.label}</div>
+								<div class="text-4xl leading-none sm:text-5xl md:text-6xl lg:text-7xl">
+									{fmtInt(c.value)}
+								</div>
+							</h3>
+						{/each}
+					</div>
+				{/if}
 
 				<h3 class="mt-10 mb-4 text-xl font-semibold">РУКОВОДСТВО</h3>
 				<div class="grid gap-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
