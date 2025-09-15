@@ -1571,7 +1571,12 @@
 	</button>
 </div>
 
-<PersonPopup bind:isOpen={showPopup} person={selectedPerson} on:close={() => (showPopup = false)} />
+<PersonPopup
+	bind:isOpen={showPopup}
+	person={selectedPerson}
+	fallbackSrc={staffFallback}
+	on:close={() => (showPopup = false)}
+/>
 
 <style>
 	.back-to-main-btn {

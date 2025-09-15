@@ -1,19 +1,31 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount, afterUpdate } from 'svelte';
 
 	export let isOpen = false;
 	export let person: {
 		name: string;
 		position: string;
-		photo: string;
+		photo: string | null;
 		biography: string;
 	} = {
 		name: 'Иванов Александр Петрович',
 		position: 'Художественный руководитель',
 		photo: 'https://via.placeholder.com/200x250/4A5568/FFFFFF?text=Фото',
-		biography:
-			'Заслуженный артист Российской Федерации, выпускник Московского государственного института культуры. Начал свою карьеру в 1995 году в Московском академическом театре. За время работы поставил более 40 спектаклей, включая классические произведения русской и зарубежной драматургии. Лауреат премии "Золотая маска" за лучшую режиссуру драматического спектакля. Под его руководством театр получил множество престижных наград и признание критиков. Активно занимается педагогической деятельностью, преподает в Театральном институте имени Б. Щукина. Автор методических пособий по театральному искусству и статей в профессиональных изданиях.'
+		biography: 'Заслуженный артист Российской Федерации, выпускник МГИК. ...'
 	};
+
+	// Встроенный SVG-плейсхолдер для сотрудников (кружок-аватар)
+	const defaultStaffFallback =
+		'data:image/svg+xml;utf8,' +
+		encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="160">
+  <rect width="100%" height="100%" fill="#334155"/>
+  <circle cx="64" cy="56" r="28" fill="#64748b"/>
+  <rect x="20" y="108" width="88" height="40" rx="20" fill="#64748b"/>
+</svg>`);
+
+	/** Можно передать свой плейсхолдер извне; если пусто — используем встроенный */
+	export let fallbackSrc: string = defaultStaffFallback;
 
 	const dispatch = createEventDispatcher();
 
@@ -23,35 +35,59 @@
 	}
 
 	function handleBackdropClick(event: MouseEvent) {
-		if (event.target === event.currentTarget) {
-			closePopup();
-		}
+		if (event.target === event.currentTarget) closePopup();
+	}
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Escape') closePopup();
 	}
 
-	function handleKeydown(event: KeyboardEvent) {
-		if (event.key === 'Escape') {
-			closePopup();
-		}
+	/** Ссылки на оба <img> */
+	let imgSmall: HTMLImageElement | null = null;
+	let imgLarge: HTMLImageElement | null = null;
+
+	/** Навесить надёжный onerror на указанный <img> */
+	function attachOnError(el: HTMLImageElement | null) {
+		if (!el) return;
+		el.onerror = () => {
+			// защита от зацикливания
+			if (fallbackSrc && el.src !== fallbackSrc) {
+				el.src = fallbackSrc;
+			}
+		};
 	}
+
+	onMount(() => {
+		attachOnError(imgSmall);
+		attachOnError(imgLarge);
+	});
+
+	// Если меняется person.photo или сам элемент, переустановим обработчики
+	afterUpdate(() => {
+		attachOnError(imgSmall);
+		attachOnError(imgLarge);
+	});
+
+	// Удобные "источники" для картинок с мгновенным фоллбеком, если photo пусто
+	$: photoSrc = person.photo && person.photo.trim() ? person.photo : fallbackSrc;
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 
 {#if isOpen}
 	<!-- Backdrop -->
 	<div
 		class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-[#0009] p-4"
-		on:click={handleBackdropClick}
+		onclick={handleBackdropClick}
 		role="dialog"
 		aria-modal="true"
 		aria-labelledby="popup-title"
 	>
 		<!-- Modal -->
-		<div class="max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-lg bg-white shadow-2xl">
+		<div class="max-h[90vh] w-full max-w-2xl overflow-hidden rounded-lg bg-white shadow-2xl">
 			<!-- Header -->
 			<div class="relative bg-gradient-to-r from-slate-700 to-slate-800 p-6 text-white">
 				<button
-					on:click={closePopup}
+					onclick={closePopup}
 					class="absolute top-4 right-4 text-white transition-colors hover:text-gray-300"
 					aria-label="Закрыть"
 				>
@@ -66,12 +102,14 @@
 				</button>
 
 				<div class="flex items-center space-x-4">
-					<!-- Photo -->
+					<!-- Photo (маленькая) -->
 					<div class="flex-shrink-0">
 						<img
-							src={person.photo}
+							bind:this={imgSmall}
+							src={photoSrc}
 							alt={person.name}
 							class="h-24 w-20 rounded-lg border-2 border-white object-cover shadow-lg"
+							onerror={() => {}}
 						/>
 					</div>
 
@@ -89,9 +127,11 @@
 					<!-- Large Photo -->
 					<div class="mb-6 flex justify-center">
 						<img
-							src={person.photo}
+							bind:this={imgLarge}
+							src={photoSrc}
 							alt={person.name}
 							class="h-60 w-48 rounded-lg object-cover shadow-lg"
+							onerror={() => {}}
 						/>
 					</div>
 
@@ -109,7 +149,7 @@
 			<div class="border-t bg-gray-50 px-6 py-4">
 				<div class="flex justify-end">
 					<button
-						on:click={closePopup}
+						onclick={closePopup}
 						class="rounded-lg bg-slate-600 px-6 py-2 font-medium text-white transition-colors hover:bg-slate-700"
 					>
 						Закрыть
@@ -125,16 +165,13 @@
 	:global(.overflow-y-auto::-webkit-scrollbar) {
 		width: 6px;
 	}
-
 	:global(.overflow-y-auto::-webkit-scrollbar-track) {
 		background: #f1f5f9;
 	}
-
 	:global(.overflow-y-auto::-webkit-scrollbar-thumb) {
 		background: #cbd5e1;
 		border-radius: 3px;
 	}
-
 	:global(.overflow-y-auto::-webkit-scrollbar-thumb:hover) {
 		background: #94a3b8;
 	}
