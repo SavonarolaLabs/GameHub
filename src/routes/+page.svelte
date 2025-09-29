@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import { goto } from '$app/navigation';
 	import { theaters } from '$lib/theaters-data';
 
 	interface Production {
@@ -8,7 +7,6 @@
 		name: string;
 		foto: string;
 	}
-
 	interface Space {
 		id: number;
 		district: string;
@@ -21,13 +19,11 @@
 		venue_space_id: string | null;
 		photo: string;
 	}
-
 	interface HRPerson {
 		full_name: string;
 		position: string;
 		photo: string | null;
 	}
-
 	interface Theater {
 		id: number;
 		name: string;
@@ -45,9 +41,9 @@
 		yandex_reviews_count: number | null;
 		yandex_rating: number | null;
 	}
+
 	/* ---------------- helpers ---------------- */
 	let searchQuery = '';
-	let filteredTheaters: Theater[] = theaters;
 
 	const norm = (v: unknown) => String(v ?? '').toLowerCase();
 	const seats = (t: Theater) => t.spaces.reduce((s, v) => s + (v.total_capacity ?? 0), 0);
@@ -57,15 +53,12 @@
 		t.hr.find((h) => h.position.trim().toLowerCase().includes('художественный'))?.full_name ?? '—';
 	const img = (file: string) => `${base}/theaters/${file}_1.jpg`;
 
-	function filter() {
-		const query = searchQuery.trim().toLowerCase();
+	// Реактивно считаем отфильтрованный список, без отдельной функции и без on:input
+	$: filteredTheaters = (() => {
+		const q = searchQuery.trim().toLowerCase();
+		if (!q) return theaters;
 
-		if (!query) {
-			filteredTheaters = theaters;
-			return;
-		}
-
-		filteredTheaters = theaters.filter((t) =>
+		return theaters.filter((t) =>
 			[
 				t.name,
 				t.address,
@@ -76,27 +69,13 @@
 				...(t.hr?.flatMap((h) => [h.full_name, h.position]) ?? [])
 			]
 				.map(norm)
-				.some((v) => v.includes(query))
+				.some((v) => v.includes(q))
 		);
-	}
-
-	function navigate(id: number) {
-		goto(`${base}/id/${id}`);
-	}
-
-	function handleKey(event: KeyboardEvent, id: number) {
-		if (event.key === 'Enter' || event.key === ' ') {
-			event.preventDefault();
-			navigate(id);
-		}
-	}
-
-	$: filter();
+	})();
 </script>
 
 <svelte:head>
 	<title>Театры Москвы — Справочник</title>
-
 	<meta
 		name="description"
 		content="Справочник театров Москвы с рейтингами, спектаклями и адресами"
@@ -117,7 +96,6 @@
 					type="text"
 					bind:value={searchQuery}
 					placeholder="Поиск театров…"
-					on:input={filter}
 				/>
 				<svg
 					class="absolute top-1/2 right-4 h-6 w-6 -translate-y-1/2 text-gray-400"
@@ -133,6 +111,7 @@
 					/>
 				</svg>
 			</div>
+
 			<a class="text-blue-300 hover:underline" href={`${base}/rating`}>Рейтинг театров</a>
 		</header>
 	</div>
