@@ -143,19 +143,23 @@
 			{#if filteredTheaters.length}
 				<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 					{#each filteredTheaters as t}
-						<div
-							class="group relative cursor-pointer overflow-hidden rounded-lg bg-slate-800 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-							tabindex="0"
-							role="button"
-							aria-label="Перейти к театру {t.name}"
-							on:click={() => navigate(t.id)}
-							on:keydown={(e) => handleKey(e, t.id)}
+						<a
+							class="group relative block overflow-hidden rounded-lg bg-slate-800 transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none"
+							href={`${base}/id/${t.id}`}
+							aria-label={`Перейти к театру ${t.name}`}
+							style="content-visibility:auto; contain-intrinsic-size:auto 420px;"
+							data-sveltekit-preload-data="hover"
+							data-sveltekit-preload-code="hover"
 						>
-							<!-- image -->
 							<div class="relative h-48 overflow-hidden">
 								<img
 									src={img(t.id)}
 									alt={t.name}
+									loading="lazy"
+									decoding="async"
+									fetchpriority="low"
+									width="800"
+									height="450"
 									class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
 								/>
 								<div
@@ -163,8 +167,9 @@
 								></div>
 								<span
 									class="absolute top-4 right-4 rounded-full bg-yellow-500 px-3 py-1 text-sm font-bold text-black"
-									>★ {t.yandex_rating}</span
 								>
+									★ {t.yandex_rating}
+								</span>
 							</div>
 
 							<!-- content -->
@@ -218,7 +223,7 @@
 									/>
 								</svg>
 							</div>
-						</div>
+						</a>
 					{/each}
 				</div>
 			{:else}
