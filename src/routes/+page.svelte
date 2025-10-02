@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import { theaters } from '$lib/theaters-data';
 
 	interface Production {
 		id: number;
@@ -54,24 +53,6 @@
 	const img = (file: string) => `${base}/theaters/${file}_1.jpg`;
 
 	// Реактивно считаем отфильтрованный список, без отдельной функции и без on:input
-	$: filteredTheaters = (() => {
-		const q = searchQuery.trim().toLowerCase();
-		if (!q) return theaters;
-
-		return theaters.filter((t) =>
-			[
-				t.name,
-				t.address,
-				t.maps_link,
-				...(t.spaces?.flatMap((s) => [s.venue_space_short_name, s.district, s.okrug, s.type]) ??
-					[]),
-				...(t.productions?.map((p) => p.name) ?? []),
-				...(t.hr?.flatMap((h) => [h.full_name, h.position]) ?? [])
-			]
-				.map(norm)
-				.some((v) => v.includes(q))
-		);
-	})();
 </script>
 
 <svelte:head>
@@ -118,113 +99,7 @@
 
 	<!-- grid -->
 	<div class="flex w-full justify-center bg-slate-900">
-		<main class="w-full max-w-6xl px-6 py-8">
-			{#if filteredTheaters.length}
-				<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-					{#each filteredTheaters as t}
-						<a
-							class="group relative block overflow-hidden rounded-lg bg-slate-800 transition-all duration-300 hover:scale-105 hover:shadow-2xl focus:outline-none"
-							href={`${base}/id/${t.id}`}
-							aria-label={`Перейти к театру ${t.name}`}
-							style="content-visibility:auto; contain-intrinsic-size:auto 420px;"
-							data-sveltekit-preload-data="hover"
-							data-sveltekit-preload-code="hover"
-						>
-							<div class="relative h-48 overflow-hidden">
-								<img
-									src={img(t.id)}
-									alt={t.name}
-									loading="lazy"
-									decoding="async"
-									fetchpriority="low"
-									width="800"
-									height="450"
-									class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-								/>
-								<div
-									class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"
-								></div>
-								<span
-									class="absolute top-4 right-4 rounded-full bg-yellow-500 px-3 py-1 text-sm font-bold text-black"
-								>
-									★ {t.yandex_rating}
-								</span>
-							</div>
-
-							<!-- content -->
-							<div class="p-6">
-								<h2
-									class="mb-2 text-xl font-bold text-white transition-colors duration-300 group-hover:text-blue-400"
-								>
-									{t.name}
-								</h2>
-								<p class="mb-3 line-clamp-2 text-sm text-gray-400">{t.address}</p>
-
-								<!-- stats -->
-								<div
-									class="mb-4 flex items-center justify-between rounded-md bg-slate-700 text-sm text-gray-300"
-								>
-									<span class="rounded px-2 py-1">{t.occupancy_percent}% посещаемость</span>
-									<div class="flex space-x-3">
-										<span>{t.yandex_reviews_count} отзывов</span>
-										<span>{t.yandex_ratings_count} оценок</span>
-									</div>
-								</div>
-
-								<!-- venues -->
-								<p class="mb-4 text-sm text-gray-400">
-									{t.spaces.length} площадки / {seats(t)} мест
-								</p>
-
-								<!-- hr -->
-								<div class="space-y-1 text-xs text-gray-400">
-									<div><span class="font-semibold">Директор:</span> {dir(t)}</div>
-									<div><span class="font-semibold">Худ. руководитель:</span> {artDir(t)}</div>
-								</div>
-							</div>
-
-							<!-- hover overlay -->
-							<div
-								class="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-							>
-								<div class="absolute inset-0 bg-blue-600/10"></div>
-								<svg
-									class="absolute right-4 bottom-4 h-6 w-6 text-blue-400"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M9 5l7 7-7 7"
-									/>
-								</svg>
-							</div>
-						</a>
-					{/each}
-				</div>
-			{:else}
-				<!-- empty -->
-				<div class="py-16 text-center text-gray-400">
-					<svg class="mx-auto mb-4 h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.334-5.29-3.291M6 20.291A11.955 11.955 0 0112 18c2.34 0 4.29.79 5.29 2.291"
-						/>
-					</svg>
-					<h3 class="mb-2 text-xl font-semibold">Театры не найдены</h3>
-					<p>Попробуйте изменить поисковый запрос</p>
-				</div>
-			{/if}
-
-			{#if searchQuery.trim()}
-				<p class="mt-8 text-center text-gray-400">Найдено театров: {filteredTheaters.length}</p>
-			{/if}
-		</main>
+		<main class="w-full max-w-6xl px-6 py-8"></main>
 	</div>
 
 	<!-- footer -->
