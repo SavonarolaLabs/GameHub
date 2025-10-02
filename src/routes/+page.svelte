@@ -1,35 +1,67 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import { Users2, Building2, Network, Rocket } from 'lucide-svelte';
+	import {
+		Users2,
+		Building2,
+		Network,
+		Rocket,
+		CalendarDays,
+		Store,
+		BookOpen,
+		Plane
+	} from 'lucide-svelte';
 
 	type Card = { href: string; title: string; desc: string; icon: any };
 	const cards: Card[] = [
-		{
-			href: `${base}/about`,
-			title: 'О нас',
-			desc: 'Миссия, команда, партнёры и как к нам присоединиться.',
-			icon: Building2
-		},
+		{ href: `${base}/about`, title: 'О нас', desc: 'Миссия, команда, партнёры.', icon: Building2 },
 		{
 			href: `${base}/community`,
 			title: 'Комьюнити',
-			desc: 'Категории участников, демостенд проектов, общие чаты и ссылки.',
+			desc: 'Категории участников, демо-проекты, ссылки.',
 			icon: Network
 		},
 		{
 			href: `${base}/infrastructure`,
-			title: 'Инфраструктура кластера',
-			desc: 'Просмотровый зал, выставочная зона, фотограмметрия, студии, спортзал, ЦОД и др.',
+			title: 'Инфраструктура',
+			desc: 'Площадки, студии, сервисы.',
 			icon: Users2
 		},
 		{
 			href: `${base}/programs`,
 			title: 'Программы кластера',
-			desc: 'Все меры поддержки и проекты с удобными фильтрами и тегами.',
+			desc: 'Меры поддержки и проекты.',
 			icon: Rocket
+		},
+
+		// Новые разделы
+		{
+			href: `${base}/events`,
+			title: 'Мероприятия отрасли',
+			desc: 'Календарь, фильтры и поиск.',
+			icon: CalendarDays
+		},
+		{
+			href: `${base}/market`,
+			title: 'Hub Market',
+			desc: 'Услуги кластера и вакансии.',
+			icon: Store
+		},
+		{
+			href: `${base}/library`,
+			title: 'Библиотека',
+			desc: 'Гайды, документы, шаблоны.',
+			icon: BookOpen
+		},
+		{
+			href: `${base}/residency`,
+			title: 'Релокация / резидентство',
+			desc: 'Условия, FAQ, как подать заявку.',
+			icon: Plane
 		}
 	];
 </script>
+
+<!-- остальной код страницы — без изменений -->
 
 <svelte:head>
 	<title>Кластер видеоигр — Главная</title>

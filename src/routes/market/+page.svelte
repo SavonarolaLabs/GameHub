@@ -1,0 +1,23 @@
+<svelte:head><title>Hub Market — Кластер видеоигр</title></svelte:head>
+
+<section class="mx-auto max-w-7xl px-6 py-10">
+	<h1 class="mb-6 text-3xl font-bold md:text-4xl">Hub Market</h1>
+	<p class="mb-6 text-slate-300">Маркетплейс услуг кластера и вакансий.</p>
+
+	<div class="grid gap-6 sm:grid-cols-2">
+		<a
+			href="./services"
+			class="rounded-xl border border-slate-800 bg-slate-900/40 p-6 hover:bg-slate-900"
+		>
+			<h2 class="text-lg font-semibold">Услуги кластера</h2>
+			<p class="mt-2 text-sm text-slate-400">Оборудование, площадки, экспертиза.</p>
+		</a>
+		<a
+			href="./jobs"
+			class="rounded-xl border border-slate-800 bg-slate-900/40 p-6 hover:bg-slate-900"
+		>
+			<h2 class="text-lg font-semibold">Вакансии</h2>
+			<p class="mt-2 text-sm text-slate-400">Работа в резидентах и партнёрах кластера.</p>
+		</a>
+	</div>
+</section>
