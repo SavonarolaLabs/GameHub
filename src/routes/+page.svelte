@@ -5,6 +5,7 @@
 	import InfraCarousel from '$lib/components/InfraCarousel.svelte';
 	import EventsSection from '$lib/components/EventsSection.svelte';
 	import ResidentFormSection from '$lib/components/ResidentFormSection.svelte';
+	import SiteFooter from '$lib/components/SiteFooter.svelte';
 
 	import {
 		Users2,
@@ -93,7 +94,7 @@
 	<div class="relative mx-auto max-w-7xl px-6 pt-14 pb-8">
 		<h1 class="mb-4 text-4xl font-extrabold tracking-tight md:text-6xl">Кластер видеоигр</h1>
 		<p class="max-w-2xl text-lg text-slate-300 md:text-xl">
-			Экосистема для разработчиков игр: площадки, оборудование, программы и сообщество.
+			Эта часть на всякий случай, чтобы исходные разделы видно было, которые хотим добавить
 		</p>
 	</div>
 </section>
@@ -117,9 +118,9 @@
 	</div>
 
 	<!-- при желании: быстрая ссылка на новости -->
-	<div class="mt-10">
+	<!-- <div class="mt-10">
 		<a class="text-sm text-blue-300 hover:underline" href={`${base}/news`}
 			>Новости кластера (скоро)</a
 		>
-	</div>
+	</div> -->
 </section>

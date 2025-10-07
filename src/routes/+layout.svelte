@@ -1,5 +1,7 @@
 <script lang="ts">
 	import '../app.css';
+	import SiteFooter from '$lib/components/SiteFooter.svelte';
+
 	import { base } from '$app/paths';
 	let { children } = $props();
 
@@ -29,9 +31,5 @@
 
 	<main class="flex-1">{@render children()}</main>
 
-	<footer class="border-t border-slate-800 bg-slate-900">
-		<p class="mx-auto max-w-7xl px-6 py-6 text-center text-slate-400">
-			&copy; {new Date().getFullYear()} Кластер видеоигр
-		</p>
-	</footer>
+	<SiteFooter />
 </div>
