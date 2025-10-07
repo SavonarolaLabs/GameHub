@@ -1,5 +1,11 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+	import HeroSection from '$lib/components/HeroSection.svelte';
+	import BenefitsSection from '$lib/components/BenefitsSection.svelte';
+	import InfraCarousel from '$lib/components/InfraCarousel.svelte';
+	import EventsSection from '$lib/components/EventsSection.svelte';
+	import ResidentFormSection from '$lib/components/ResidentFormSection.svelte';
+
 	import {
 		Users2,
 		Building2,
@@ -61,8 +67,6 @@
 	];
 </script>
 
-<!-- остальной код страницы — без изменений -->
-
 <svelte:head>
 	<title>Кластер видеоигр — Главная</title>
 	<meta
@@ -70,6 +74,19 @@
 		content="Кластер видеоигр: участники, инфраструктура, программы поддержки и комьюнити."
 	/>
 </svelte:head>
+
+<HeroSection
+	title="Moscow game hub"
+	subtitle="Одно место для разработки игр: инфраструктура, менторы, сообщество и программы поддержки."
+	ctaText="Связаться с нами"
+	ctaHref={`${base}/contact`}
+	imageSrc={`${base}/images/hero-gamepad.png`}
+/>
+
+<BenefitsSection />
+<InfraCarousel />
+<EventsSection />
+<ResidentFormSection on:submit={(e) => console.log('payload:', e.detail)} />
 
 <section class="relative">
 	<div class="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-950"></div>
